@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class damageListener implements Listener {
 
     private final GemManager gm = Main.getSingletonManager().gemManager;
-    private final ArrayList<Integer> noFall = new ArrayList<>(Arrays.asList(3,6));
+    private final ArrayList<String> noFall = new ArrayList<>(Arrays.asList("Air","Lightning"));
 
     @EventHandler
     public void onDamage(EntityDamageEvent e){
@@ -27,7 +27,7 @@ public class damageListener implements Listener {
     private void checkIfFall(Player p, EntityDamageEvent event){
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) return;
         for (ItemStack i : gm.getPlayerGems(p)){
-            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(Main.getGemPowerKey(), PersistentDataType.INTEGER))){
+            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(Main.getGemPowerKey(), PersistentDataType.STRING))){
                 event.setCancelled(true);
                 return;
             }

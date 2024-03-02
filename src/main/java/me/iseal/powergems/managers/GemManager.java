@@ -97,7 +97,12 @@ public class GemManager {
     public ItemStack createGem(int gemInt){
         return generateItemStack(gemInt, 1);
     }
-
+    public ItemStack createGem(String gemName, int gemLvl){
+        return generateItemStack(lookUpID(gemName), gemLvl);
+    }
+    public ItemStack createGem(String gemName){
+        return generateItemStack(lookUpID(gemName), 1);
+    }
     public ItemStack createGem(){
         return generateItemStack(rand.nextInt(9) + 1, 1);
     }

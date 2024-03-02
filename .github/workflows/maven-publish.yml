@@ -1,0 +1,52 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Build and Release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Run Maven package
+        run: mvn clean package
+
+      - name: Extract version from pom.xml
+        uses: entimaniac/read-pom-version-action@1.0.0
+        id: getVersion
+
+      - name: Set Release version env variable
+        run: |
+          echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Print version
+        run: echo "Project version is ${{ steps.getVersion.outputs.version }}"
+
+      - name: Create release draft
+        uses: ncipollo/release-action@v1
+        id: createDraft
+        with:
+          name: "v${{ steps.getVersion.outputs.version }}"
+          artifacts: "target/output/*.jar"
+          commit: ${{ github.sha }}
+          tag: ${{ steps.getVersion.outputs.version }}
+          draft: false
+          prerelease: ${{ env.PRERELEASE }}
+          body: |
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ steps.getVersion.outputs.version }} from pom.xml.
+      

@@ -6,7 +6,7 @@
 
     <groupId>me.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.3.0.0-DEV2</version>
+    <version>3.3.0.1-DEV1</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -38,6 +38,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <outputFile>target/output/${project.artifactId}-${project.version}.jar</outputFile>
                             <relocations>
                                 <relocation>
                                     <pattern>com.jeff_media.updatechecker</pattern>
@@ -71,11 +72,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
             </plugin>
         </plugins>
         <resources>

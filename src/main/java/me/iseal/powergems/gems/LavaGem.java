@@ -23,7 +23,7 @@ import static me.iseal.powergems.Main.config;
 public class LavaGem extends Gem {
 
     private Utils u = sm.utils;
-    private lavaTargetListener ltl = new lavaTargetListener();
+    private final lavaTargetListener ltl = new lavaTargetListener();
     private ArrayList<Material> blockedBlocks;
     {
         try {
