@@ -11,18 +11,12 @@ import me.iseal.powergems.listeners.powerListeners.*;
 import me.iseal.powergems.managers.*;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.AdvancedPie;
-import org.bstats.charts.SimpleBarChart;
-import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -78,6 +72,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new checkUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new reloadConfigCommand());
         l.info("Registering bstats metrics");
+        @SuppressWarnings("unused")
         Metrics metrics = new Metrics(plugin, 20723);
         //TODO: addon api
     }
