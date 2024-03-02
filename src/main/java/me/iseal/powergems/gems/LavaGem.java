@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import static me.iseal.powergems.Main.config;
 
 
-@SuppressWarnings("unchecked")
+
 public class LavaGem extends Gem {
 
     private lavaTargetListener ltl = new lavaTargetListener();
