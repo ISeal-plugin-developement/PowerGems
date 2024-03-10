@@ -3,11 +3,9 @@ package me.iseal.powergems.gems;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.listeners.powerListeners.lavaTargetListener;
 import me.iseal.powergems.misc.Gem;
-import me.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -16,7 +14,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static me.iseal.powergems.Main.config;
 
