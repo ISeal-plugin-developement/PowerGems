@@ -3,6 +3,7 @@ package me.iseal.powergems.gems;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.listeners.powerListeners.lavaTargetListener;
 import me.iseal.powergems.misc.Gem;
+import me.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
