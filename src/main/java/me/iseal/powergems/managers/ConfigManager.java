@@ -60,4 +60,8 @@ public class ConfigManager {
     public boolean isRandomizedColors() {
         return config.getBoolean("randomizedColors");
     }
+
+    public boolean allowOnlyOneGem() {
+        return config.getBoolean("allowOnlyOneGem");
+    }
 }

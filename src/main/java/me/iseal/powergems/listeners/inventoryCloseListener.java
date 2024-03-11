@@ -22,18 +22,16 @@ public class inventoryCloseListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent e){
-        if (!(e.getInventory().getHolder() instanceof Player)) {
+        if (!(e.getInventory().getHolder() instanceof Player plr)) {
             return;
         }
-        if (!(e.getView().getBottomInventory() instanceof PlayerInventory)) {
+        if (!(e.getView().getBottomInventory() instanceof PlayerInventory pi)) {
             return;
         }
-        Player plr = (Player) e.getInventory().getHolder();
-        checkIfMultipleGems(plr);
+        //checkIfMultipleGems(plr);
         if (!e.getView().getBottomInventory().containsAtLeast(randomGem, 1)){
             return;
         }
-        PlayerInventory pi = (PlayerInventory) e.getView().getBottomInventory();
         int nOfGems = 0;
         int intAt = -1;
         for (ItemStack item : pi.getContents()){

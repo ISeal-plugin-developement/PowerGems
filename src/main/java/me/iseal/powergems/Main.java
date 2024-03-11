@@ -10,6 +10,7 @@ import me.iseal.powergems.listeners.passivePowerListeners.damageListener;
 import me.iseal.powergems.listeners.powerListeners.*;
 import me.iseal.powergems.managers.*;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
+import me.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -52,6 +53,7 @@ public final class Main extends JavaPlugin {
         isGemExplosionKey = new NamespacedKey(this, "is_gem_explosion");
         sm.initLater();
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
+        if (sm.configManager.allowOnlyOneGem()) new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         l.info("Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new useEvent(), this);

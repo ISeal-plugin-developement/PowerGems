@@ -71,4 +71,12 @@ public class Utils {
         return blocks;
     }
 
+    public boolean hasAtLeastTwo(Player player, Material material) {
+        int count = player.getInventory().all(material).values().stream()
+                .mapToInt(ItemStack::getAmount)
+                .sum();
+        if (player.getInventory().getItemInOffHand().getType() == material) count += player.getInventory().getItemInOffHand().getAmount();
+        return count >= 2;
+    }
+
 }
