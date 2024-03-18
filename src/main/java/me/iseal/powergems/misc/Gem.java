@@ -22,6 +22,8 @@ public abstract class Gem {
 
     public void call(Action action, Player plr, ItemStack item){
         if (action.equals(Action.PHYSICAL)) return;
+        level = gm.getLevel(item);
+        this.plr = plr;
         if (plr.isSneaking()) {
             if (checkIfCooldown("shift", plr)){
                 return;
@@ -41,8 +43,6 @@ public abstract class Gem {
             rightClick(plr);
             cm.setRightClickCooldown(plr, configManager.getStartingCooldown(caller.getName())-configManager.getGemCooldownBoost()*level, caller);
         }
-        this.plr = plr;
-        level = gm.getLevel(item);
     }
 
     protected boolean checkIfCooldown(String action, Player plr){

@@ -23,7 +23,7 @@ commands:
 permissions:
     powergems.givegem:
         description: Permission to use /givegem
-        default: true
+        default: op
     powergems.giveallgem:
         description: Permission to use /giveallgem
         default: op
