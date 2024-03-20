@@ -1,5 +1,6 @@
 package me.iseal.powergems.managers;
 
+import de.leonhard.storage.Yaml;
 import me.iseal.powergems.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,11 +17,16 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class RecipeManager implements Listener {
 
     private GemManager gemManager = null;
+    private final Yaml recipes = new Yaml("recipes", Main.getPlugin().getDataFolder()+"\\config\\");
+    private final Logger l = Bukkit.getLogger();
     
     public void initiateRecipes(){
         gemManager = Main.getSingletonManager().gemManager;
@@ -67,39 +73,99 @@ public class RecipeManager implements Listener {
     }
 
     private void craftRecipe(){
+        try {
             String key = "gem_craft_recipe";
             NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
-            ShapedRecipe sr = new ShapedRecipe(nk,Main.getSingletonManager().gemManager.getRandomGemItem());
-            sr.shape("ndn","dgd","ndn");
-            sr.setIngredient('n', Material.NETHERITE_BLOCK);
-            sr.setIngredient('d', Material.DIAMOND_BLOCK);
-            sr.setIngredient('g', Material.NETHER_STAR);
+            ShapedRecipe sr = new ShapedRecipe(nk, Main.getSingletonManager().gemManager.getRandomGemItem());
+            HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
+            if (!arr.containsKey("shape")) {
+                arr.put("shape", "nen,ege,nen");
+            }
+            if (!arr.containsKey("ingredients")) {
+                HashMap<String, String> defaultIngredients = new HashMap<>();
+                defaultIngredients.put("n", "NETHERITE_BLOCK");
+                defaultIngredients.put("e", "NETHER_STAR");
+                defaultIngredients.put("g", "DIAMOND_BLOCK");
+                arr.put("ingredients", defaultIngredients);
+            }
+
+            // Save the changes to the recipes Yaml file
+            recipes.set("gem_craft_recipe", arr);
+            String[] shape = arr.get("shape").toString().split(",");
+            sr.shape(shape[0], shape[1], shape[2]);
+            Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
+            for (Map.Entry<String, String> entry : ingredients.entrySet()) {
+                sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+            }
             Bukkit.getServer().addRecipe(sr);
+        } catch (Exception e){
+            l.severe("Error while creating gem crafting recipe, check the configuration file.");
+            l.severe("Disabling plugin to prevent errors.");
+            l.severe(e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
+        }
     }
 
     private void upgradeRecipe(){
-        ItemStack oldStack;
-        ItemStack newStack;
-        for (ItemStack i : gemManager.getAllGems().values()){
-            oldStack = i;
-            for (int level = 2; level <= 5; level++) {
-                newStack = oldStack.clone();
-                ItemMeta im = newStack.getItemMeta();
-                PersistentDataContainer pdc = im.getPersistentDataContainer();
-                pdc.set(Main.getGemLevelKey(), PersistentDataType.INTEGER, level);
-                im = gemManager.createLore(im);
-                newStack.setItemMeta(im);
-                //generate namespacedkey based on name+level
-                String key = generateName(im.getDisplayName())+"_"+level+"_upgrade";
-                NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
-                ShapedRecipe sr = new ShapedRecipe(nk,newStack);
-                sr.shape("nen","ege","nen");
+        String key = "";
+        try {
+            ItemStack oldStack;
+            ItemStack newStack;
+            for (ItemStack i : gemManager.getAllGems().values()) {
+                oldStack = i;
+                for (int level = 2; level <= 5; level++) {
+                    newStack = oldStack.clone();
+                    ItemMeta im = newStack.getItemMeta();
+                    PersistentDataContainer pdc = im.getPersistentDataContainer();
+                    pdc.set(Main.getGemLevelKey(), PersistentDataType.INTEGER, level);
+                    im = gemManager.createLore(im);
+                    newStack.setItemMeta(im);
+                    //generate namespacedkey based on name+level
+                    key = generateName(im.getDisplayName()) + "_" + level + "_upgrade";
+                    NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
+                    ShapedRecipe sr = new ShapedRecipe(nk, newStack);
+                    HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
+                    if (!arr.containsKey("shape")) {
+                        arr.put("shape", "nen,ege,nen");
+                    }
+                    if (!arr.containsKey("ingredients")) {
+                        HashMap<String, String> defaultIngredients = new HashMap<>();
+                        defaultIngredients.put("n", Material.NETHERITE_INGOT.name());
+                        defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
+                        arr.put("ingredients", defaultIngredients);
+                    }
+
+                    // Save the changes to the recipes Yaml file
+                    recipes.set(key, arr);
+                    String[] shape = arr.get("shape").toString().split(",");
+                    char[] shapeChars = shape[2].toCharArray();
+                    shapeChars[2] = 'g';
+                    shape[2] = String.valueOf(shapeChars);
+                    sr.shape(shape[0], shape[2], shape[2]);
+                    Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
+                    for (Map.Entry<String, String> entry : ingredients.entrySet()) {
+                        if (entry.getKey().equals("g")) {
+                            continue;
+                        }
+                        sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+                    }
+                    sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
+                    Bukkit.getServer().addRecipe(sr);
+                /*sr.shape("nen","ege","nen");
                 sr.setIngredient('n', Material.NETHERITE_INGOT);
                 sr.setIngredient('e', Material.EXPERIENCE_BOTTLE);
                 sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
-                Bukkit.getServer().addRecipe(sr);
-                oldStack = newStack;
+                Bukkit.getServer().addRecipe(sr);*/
+                    oldStack = newStack;
+                    key = "";
+                }
             }
+        } catch (Exception e){
+            l.severe("Error while creating gem upgrade recipes, check the configuration file.");
+            l.severe("Last key: "+key);
+            l.severe("Disabling plugin to prevent errors.");
+            l.severe(e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }
     private static String generateName(String s){
