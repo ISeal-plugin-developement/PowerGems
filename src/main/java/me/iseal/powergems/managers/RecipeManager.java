@@ -80,6 +80,7 @@ public class RecipeManager implements Listener {
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "nen,ege,nen");
+                l.info("Shape not found for crafting (is the file malformed?), using default shape.");
             }
             if (!arr.containsKey("ingredients")) {
                 HashMap<String, String> defaultIngredients = new HashMap<>();
@@ -87,6 +88,7 @@ public class RecipeManager implements Listener {
                 defaultIngredients.put("e", "NETHER_STAR");
                 defaultIngredients.put("g", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
+                l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
             }
 
             // Save the changes to the recipes Yaml file
@@ -127,12 +129,14 @@ public class RecipeManager implements Listener {
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
                     if (!arr.containsKey("shape")) {
                         arr.put("shape", "nen,ege,nen");
+                        l.info("Shape not found for "+key+" (is the file malformed?), using default shape.");
                     }
                     if (!arr.containsKey("ingredients")) {
                         HashMap<String, String> defaultIngredients = new HashMap<>();
                         defaultIngredients.put("n", Material.NETHERITE_INGOT.name());
                         defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
                         arr.put("ingredients", defaultIngredients);
+                        l.info("Ingredients not found for "+key+" (is the file malformed?), using default ingredients.");
                     }
 
                     // Save the changes to the recipes Yaml file
