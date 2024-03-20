@@ -34,9 +34,6 @@ jobs:
         run: |
           echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Print version
-        run: echo "Project version is ${{ steps.getVersion.outputs.version }}"
-
       - name: Create release draft
         uses: ncipollo/release-action@v1
         id: createDraft
@@ -49,4 +46,6 @@ jobs:
           prerelease: ${{ env.PRERELEASE }}
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ steps.getVersion.outputs.version }} from pom.xml.
+            Changelog for this version: ${{ github.event.head_commit.message }}
+
       
