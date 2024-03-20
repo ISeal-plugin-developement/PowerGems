@@ -142,10 +142,10 @@ public class RecipeManager implements Listener {
                     // Save the changes to the recipes Yaml file
                     recipes.set(key, arr);
                     String[] shape = arr.get("shape").toString().split(",");
-                    char[] shapeChars = shape[2].toCharArray();
-                    shapeChars[2] = 'g';
-                    shape[2] = String.valueOf(shapeChars);
-                    sr.shape(shape[0], shape[2], shape[2]);
+                    char[] shapeChars = shape[1].toCharArray();
+                    shapeChars[1] = 'g';
+                    shape[1] = String.valueOf(shapeChars);
+                    sr.shape(shape[0], shape[1], shape[2]);
                     Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
                     for (Map.Entry<String, String> entry : ingredients.entrySet()) {
                         if (entry.getKey().equals("g")) {
