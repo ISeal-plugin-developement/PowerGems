@@ -6,7 +6,7 @@
 
     <groupId>me.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.3.2.0-RC2</version>
+    <version>3.3.2.0</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
