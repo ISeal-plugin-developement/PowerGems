@@ -79,14 +79,14 @@ public class RecipeManager implements Listener {
             ShapedRecipe sr = new ShapedRecipe(nk, Main.getSingletonManager().gemManager.getRandomGemItem());
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
             if (!arr.containsKey("shape")) {
-                arr.put("shape", "nen,ege,nen");
+                arr.put("shape", "ndn,dgd,ndn");
                 l.info("Shape not found for crafting (is the file malformed?), using default shape.");
             }
             if (!arr.containsKey("ingredients")) {
                 HashMap<String, String> defaultIngredients = new HashMap<>();
                 defaultIngredients.put("n", "NETHERITE_BLOCK");
-                defaultIngredients.put("e", "NETHER_STAR");
-                defaultIngredients.put("g", "DIAMOND_BLOCK");
+                defaultIngredients.put("g", "NETHER_STAR");
+                defaultIngredients.put("d", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
                 l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
             }
