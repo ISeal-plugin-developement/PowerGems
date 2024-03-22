@@ -6,12 +6,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class giveGemCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class giveGemCommand implements CommandExecutor, TabCompleter {
 
     private final SingletonManager sm = Main.getSingletonManager();
+    private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
+
+    {
+        sm.gemManager.getAllGems().forEach( ((integer, itemStack) -> {
+            possibleTabCompletions.add(sm.gemManager.lookUpName(integer));
+        }));
+    }
     
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
@@ -34,7 +46,16 @@ public class giveGemCommand implements CommandExecutor {
                 plr.getInventory().addItem(sm.gemManager.createGem(Integer.valueOf(gemNumString)));
                 return true;
             } else {
-                plr.getInventory().addItem(sm.gemManager.createGem());
+                if (sm.gemManager.lookUpID(gemNumString) != -1){
+                    String gemLvlString = args[1];
+                    if (isNumber(gemLvlString)) {
+                        sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString), Integer.valueOf(gemLvlString));
+                    } else {
+                        sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString));
+                    }
+                    return true;
+                }
+                plr.sendMessage(ChatColor.DARK_RED+"Invalid gem name / ID.");
                 return true;
             }
         }
@@ -49,4 +70,16 @@ public class giveGemCommand implements CommandExecutor {
         }
     }
 
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for (String str : possibleTabCompletions){
+            if (str.toLowerCase().contains(args[0].toLowerCase())){
+                toReturn.add(str);
+            }
+        }
+        return toReturn;
+    }
 }

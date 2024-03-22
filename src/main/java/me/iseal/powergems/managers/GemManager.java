@@ -358,7 +358,22 @@ public class GemManager {
         if (!pdc.has(gemLevelKey, PersistentDataType.INTEGER)) {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);
         }
-        return pdc.get(Main.getGemLevelKey(), PersistentDataType.INTEGER);
+        return pdc.get(gemLevelKey, PersistentDataType.INTEGER);
+    }
+
+    /**
+    * Returns the name of a gem's power.
+    * If the item is invalid, returns an empty string
+    * @param item The ItemStack to check.
+    * @return The name of the gem's power, or an empty string if the item is invalid
+     */
+    public String getName(ItemStack item) {
+        if (!isGem(item)) return "";
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        if (!pdc.has(gemPowerKey, PersistentDataType.STRING)) {
+            return "";
+        }
+        return pdc.get(gemPowerKey, PersistentDataType.STRING);
     }
 
     /**
