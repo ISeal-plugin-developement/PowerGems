@@ -30,6 +30,7 @@ public class ConfigManager {
         config.setDefault("randomizedColors", false);
         config.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         config.setDefault("delayToUseGemsOnJoin", 30);
+        config.setDefault("gemCreationAttempts", 10);
         config.setDefault("blockedLavaBlocks", new Material[]{Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK});
     }
 
@@ -63,5 +64,9 @@ public class ConfigManager {
 
     public boolean allowOnlyOneGem() {
         return config.getBoolean("allowOnlyOneGem");
+    }
+
+    public int getGemCreationAttempts() {
+        return config.getInt("gemCreationAttempts");
     }
 }

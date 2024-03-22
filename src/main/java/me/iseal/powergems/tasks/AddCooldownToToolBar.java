@@ -24,10 +24,10 @@ public class AddCooldownToToolBar extends BukkitRunnable {
             }
             if (gm.isGem(plr.getInventory().getItemInMainHand())) {
                 Class<?> clazz = gm.getGemClass(plr.getInventory().getItemInMainHand());
-                plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(cm.getFormattedTimer(plr, clazz, "right")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr, clazz, "left")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr,clazz,"shift")));
+                plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(cm.getFormattedTimer(plr, clazz, "left")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr, clazz, "right")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr,clazz,"shift")));
             } else if (gm.isGem(plr.getInventory().getItemInOffHand())) {
                 Class<?> clazz = gm.getGemClass(plr.getInventory().getItemInOffHand());
-                plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(cm.getFormattedTimer(plr, clazz, "right")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr, clazz, "left")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr,clazz,"shift")));
+                plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(cm.getFormattedTimer(plr, clazz, "left")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr, clazz, "right")+ChatColor.GREEN+" | "+cm.getFormattedTimer(plr,clazz,"shift")));
 
             }
         });

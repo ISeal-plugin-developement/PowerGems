@@ -57,6 +57,7 @@ public class inventoryCloseListener implements Listener {
         }
     }
 
+    @Deprecated(since = "3.3.1.0", forRemoval = true)
     private void checkIfMultipleGems(Player plr){
         if (!Main.config.getBoolean("allowOnlyOneGem")){
             return;
