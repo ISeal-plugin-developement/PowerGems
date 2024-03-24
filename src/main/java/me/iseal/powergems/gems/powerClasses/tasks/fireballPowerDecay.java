@@ -29,7 +29,6 @@ public class fireballPowerDecay extends BukkitRunnable {
         }
         if (currentPower <= 0){
             tdm.chargingFireball.remove(plr);
-            cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, FireGem.class.getName()), FireGem.class);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED+"You failed to launch the fireball."));
             this.cancel();
             return;
@@ -37,7 +36,6 @@ public class fireballPowerDecay extends BukkitRunnable {
         if (currentPower >= 100){
             spawnFireball();
             tdm.chargingFireball.remove(plr);
-            cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, FireGem.class.getName()), FireGem.class);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED+"You successfully launched the fireball."));
             this.cancel();
             return;

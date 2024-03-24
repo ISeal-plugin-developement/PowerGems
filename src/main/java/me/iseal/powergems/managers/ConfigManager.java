@@ -46,8 +46,8 @@ public class ConfigManager {
         return activeGems.getOrSetDefault(name+"GemActive", true);
     }
 
-    public int getStartingCooldown(String name) {
-        return cooldowns.getOrSetDefault(name+"Cooldown", 60);
+    public int getStartingCooldown(String name,String ability) {
+        return cooldowns.getOrSetDefault(name+ability+"Cooldown", 60);
     }
 
     public boolean getGiveGemOnFirstLogin() {

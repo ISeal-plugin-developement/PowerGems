@@ -29,19 +29,19 @@ public abstract class Gem {
                 return;
             }
             shiftClick(plr);
-            cm.setShiftClickCooldown(plr, configManager.getStartingCooldown(caller.getSimpleName())-configManager.getGemCooldownBoost()*level, caller);
+            cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
         } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
             if (checkIfCooldown("left", plr)){
                 return;
             }
             leftClick(plr);
-            cm.setLeftClickCooldown(plr, configManager.getStartingCooldown(caller.getSimpleName())-configManager.getGemCooldownBoost()*level, caller);
+            cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
         } else if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
             if (checkIfCooldown("right", plr)){
                 return;
             }
             rightClick(plr);
-            cm.setRightClickCooldown(plr, configManager.getStartingCooldown(caller.getSimpleName())-configManager.getGemCooldownBoost()*level, caller);
+            cm.setRightClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Right"), caller);
         }
     }
 

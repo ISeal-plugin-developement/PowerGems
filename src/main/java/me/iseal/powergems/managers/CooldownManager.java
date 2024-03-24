@@ -128,8 +128,8 @@ public class CooldownManager {
         return ChatColor.DARK_RED+endTime;
     }
 
-    public long getFullCooldown(int level, String name) {
-        return cm.getStartingCooldown(name)-cm.getGemCooldownBoost()*level;
+    public long getFullCooldown(int level, String name, String ability) {
+        return cm.getStartingCooldown(name,ability)-cm.getGemCooldownBoost()*level;
     }
 
     public void cancelCooldowns() {
