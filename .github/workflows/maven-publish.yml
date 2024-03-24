@@ -23,29 +23,29 @@ jobs:
           java-version: 17
           distribution: temurin
 
+      - name: Set env variables
+        run: |
+          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
+          echo "EXECUTE=$(mvn help:evaluate -Dexpression=execute -q -DforceStdout)" >> $GITHUB_ENV
+
       - name: Run Maven package
+        if: ${{ env.EXECUTE == 'true' }}
         run: mvn clean package
 
-      - name: Extract version from pom.xml
-        uses: entimaniac/read-pom-version-action@1.0.0
-        id: getVersion
-
-      - name: Set Release version env variable
-        run: |
-          echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
-
-      - name: Create release draft
+      - name: Create release
+        if: ${{ env.EXECUTE == 'true' }}
         uses: ncipollo/release-action@v1
-        id: createDraft
+        id: release
         with:
           name: "v${{ steps.getVersion.outputs.version }}"
           artifacts: "target/output/*.jar"
           commit: ${{ github.sha }}
-          tag: ${{ steps.getVersion.outputs.version }}
+          tag: ${{ env.VERSION }}
           draft: false
           prerelease: ${{ env.PRERELEASE }}
           body: |
-            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ steps.getVersion.outputs.version }} from pom.xml.
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
             Changelog for this version: ${{ github.event.head_commit.message }}
 
       
