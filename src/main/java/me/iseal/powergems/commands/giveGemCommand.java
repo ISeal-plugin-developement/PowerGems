@@ -47,12 +47,14 @@ public class giveGemCommand implements CommandExecutor, TabCompleter {
                 return true;
             } else {
                 if (sm.gemManager.lookUpID(gemNumString) != -1){
-                    String gemLvlString = args[1];
-                    if (isNumber(gemLvlString)) {
-                        sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString), Integer.valueOf(gemLvlString));
-                    } else {
-                        sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString));
+                    if (args.length >= 2) {
+                        String gemLvlString = args[1];
+                        if (isNumber(gemLvlString)){
+                            plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString), Integer.valueOf(gemLvlString)));
+                            return true;
+                        }
                     }
+                    plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString)));
                     return true;
                 }
                 plr.sendMessage(ChatColor.DARK_RED+"Invalid gem name / ID.");
@@ -75,9 +77,11 @@ public class giveGemCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         ArrayList<String> toReturn = new ArrayList<>();
-        for (String str : possibleTabCompletions){
-            if (str.toLowerCase().contains(args[0].toLowerCase())){
-                toReturn.add(str);
+        if (args.length == 1){
+            for (String str : possibleTabCompletions){
+                if (str.toLowerCase().contains(args[0].toLowerCase())){
+                    toReturn.add(str);
+                }
             }
         }
         return toReturn;
