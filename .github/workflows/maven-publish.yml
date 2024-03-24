@@ -38,7 +38,7 @@ jobs:
         uses: ncipollo/release-action@v1
         id: release
         with:
-          name: "v${{ steps.getVersion.outputs.version }}"
+          name: "v${{ env.VERSION }}"
           artifacts: "target/output/*.jar"
           commit: ${{ github.sha }}
           tag: ${{ env.VERSION }}
