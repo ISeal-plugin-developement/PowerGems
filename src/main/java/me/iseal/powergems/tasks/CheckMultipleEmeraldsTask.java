@@ -13,9 +13,9 @@ import java.util.Random;
 
 public class CheckMultipleEmeraldsTask extends BukkitRunnable {
 
-    Utils ut = Main.getSingletonManager().utils;
-    GemManager dm = Main.getSingletonManager().gemManager;
-    Random random = new Random();
+    private final Utils ut = Main.getSingletonManager().utils;
+    private final GemManager dm = Main.getSingletonManager().gemManager;
+    private final Random random = new Random();
 
     @Override
     public void run() {
@@ -42,6 +42,8 @@ public class CheckMultipleEmeraldsTask extends BukkitRunnable {
                         gems.remove(gem);
                     }
                 }
+                //For redundancy
+                gems.clear();
             }
         });
     }

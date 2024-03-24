@@ -69,4 +69,8 @@ public class ConfigManager {
     public int getGemCreationAttempts() {
         return config.getInt("gemCreationAttempts");
     }
+
+    public boolean doGemDescriptions() {
+        return config.getBoolean("gemsHaveDescriptions");
+    }
 }
