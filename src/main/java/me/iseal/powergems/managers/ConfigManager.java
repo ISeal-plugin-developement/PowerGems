@@ -28,6 +28,7 @@ public class ConfigManager {
         config.setDefault("doDecayOnLevel1", false);
         config.setDefault("dragonEggHalfCooldown", true);
         config.setDefault("randomizedColors", false);
+        config.setDefault("allowMovingGems", false);
         config.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         config.setDefault("delayToUseGemsOnJoin", 30);
         config.setDefault("gemCreationAttempts", 10);
