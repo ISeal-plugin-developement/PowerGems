@@ -1,0 +1,1 @@
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND) licence.
