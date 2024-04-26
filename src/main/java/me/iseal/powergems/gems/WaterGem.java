@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -33,8 +35,21 @@ public class WaterGem extends Gem {
 
     @Override
     protected void leftClick(Player plr) {
-        System.out.println("Not implemeted yet");
-        
+        Location loc = plr.getLocation();
+        loc.setY(loc.getY() - 1);
+        int halfRadius = level*2;
+        // Itinerate in a square around the location
+        for (int x = -halfRadius; x <= halfRadius; x++) {
+            for (int z = -halfRadius; z <= halfRadius; z++) {
+                Location pos = new Location(loc.getWorld(), loc.getX() + x, loc.getY(), loc.getZ() + z);
+                Block block = pos.getBlock();
+                if (block.getType() != Material.FARMLAND) continue;
+                Farmland farmland = (Farmland) block.getBlockData();
+                farmland.setMoisture(farmland.getMaximumMoisture());
+                block.setBlockData(farmland);
+                block.applyBoneMeal(BlockFace.UP);
+            }
+        }
     }
 
     @Override
