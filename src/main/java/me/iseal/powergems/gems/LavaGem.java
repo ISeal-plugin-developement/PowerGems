@@ -4,9 +4,11 @@ import me.iseal.powergems.Main;
 import me.iseal.powergems.listeners.powerListeners.lavaTargetListener;
 import me.iseal.powergems.misc.Gem;
 import me.iseal.powergems.misc.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -15,22 +17,14 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static me.iseal.powergems.Main.config;
 
 public class LavaGem extends Gem {
 
-    private Utils u = sm.utils;
     private final lavaTargetListener ltl = new lavaTargetListener();
-    private ArrayList<Material> blockedBlocks;
-    {
-        try {
-            blockedBlocks = (ArrayList<Material>) config.getList("blockedLavaBlocks");
-        } catch (ClassCastException e){
-            Bukkit.getLogger().warning("Config file shaped incorrectly, resorting to default state");
-            blockedBlocks = new ArrayList<>();
-        }
-    }
+    private final Utils u = Main.getSingletonManager().utils;
 
     @Override
     public void call(Action act, Player plr, ItemStack item){
@@ -40,32 +34,28 @@ public class LavaGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        plr.sendMessage(ChatColor.DARK_RED+"This ability has been temporarily disabled.");
-        /*int radius = 5;
+        int radius = 5;
         int times = (level/2)+1;
-        HashMap<Block, Material> toChangeBack = new HashMap<>();
 
         while (times != 0) {
-            ArrayList<Block> blocks = u.getSquareOutlineCoordinates(plr, radius);
-            for (Block block : blocks) {
-                if (blockedBlocks.contains(block.getType())){
-                    continue;
+            ArrayList<Block> blocks = u.getSquareOutlineAirBlocks(plr, radius);
+            //Set the blocks to lava
+            blocks.forEach(nullBlock -> {
+                nullBlock.setType(Material.LAVA);
+            });
+
+            //Set the blocks to air
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    blocks.forEach(nullBlock -> {
+                        nullBlock.setType(Material.AIR);
+                    });
                 }
-                toChangeBack.put(block, block.getType());
-                block.setType(Material.LAVA);
-            }
+            }, 600+(times*20));
             times--;
             radius = radius+3;
         }
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (Block b : toChangeBack.keySet()){
-                    b.setType(toChangeBack.get(b));
-                }
-            }
-        }, 1200L);*/
     }
 
     @Override

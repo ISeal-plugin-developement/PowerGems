@@ -76,6 +76,7 @@ public class GemManager {
             case "Sand" -> 7;
             case "Ice" -> 8;
             case "Lava" -> 9;
+            case "Water" -> 10;
             default -> -1;
         };
     }
@@ -96,6 +97,7 @@ public class GemManager {
             case 7 -> "Sand";
             case 8 -> "Ice";
             case 9 -> "Lava";
+            case 10 -> "Water";
             default -> "Error";
         };
     }
@@ -173,10 +175,10 @@ public class GemManager {
      * @return An ItemStack representing the created gem.
      */
     public ItemStack createGem(){
-        int random =rand.nextInt(9) + 1;
+        int random =rand.nextInt(10) + 1;
         int repeating = 0;
         while (!cm.isGemActive(lookUpName(random)) && repeating < cm.getGemCreationAttempts()){
-            random = rand.nextInt(9) + 1;
+            random = rand.nextInt(10) + 1;
             repeating++;
         }
         if (repeating >= cm.getGemCreationAttempts()){
@@ -332,8 +334,8 @@ public class GemManager {
      * @return A HashMap where the keys are gem numbers and the values are ItemStacks representing the gems.
      */
     public HashMap<Integer, ItemStack> getAllGems(){
-        HashMap<Integer, ItemStack> allGems = new HashMap<>(9);
-        for (int i = 1; i <= 9; i++) {
+        HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
+        for (int i = 1; i <= 10; i++) {
             allGems.put(i,generateItemStack(i, 1));
         }
         return allGems;

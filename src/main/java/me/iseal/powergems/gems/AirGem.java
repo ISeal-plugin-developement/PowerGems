@@ -33,6 +33,7 @@ public class AirGem extends Gem {
         Player targetplr = (Player) result.getHitEntity();
         if (targetplr == null){
             plr.sendMessage(ChatColor.DARK_RED+"You need to aim at a player to do that");
+            return;
         }
         Location playerLocation = plr.getLocation();
         Location targetLocation = targetplr.getLocation();

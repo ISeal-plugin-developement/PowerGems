@@ -3,7 +3,6 @@ package me.iseal.powergems.gems;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.gems.powerClasses.tasks.fireballPowerDecay;
 import me.iseal.powergems.misc.Gem;
-import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

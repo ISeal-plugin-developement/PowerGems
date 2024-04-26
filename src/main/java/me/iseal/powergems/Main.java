@@ -5,12 +5,14 @@ import me.iseal.powergems.commands.checkUpdateCommand;
 import me.iseal.powergems.commands.giveAllGemCommand;
 import me.iseal.powergems.commands.giveGemCommand;
 import me.iseal.powergems.commands.reloadConfigCommand;
+import me.iseal.powergems.gems.powerClasses.tasks.WaterGemPassive;
 import me.iseal.powergems.listeners.*;
 import me.iseal.powergems.listeners.passivePowerListeners.damageListener;
 import me.iseal.powergems.listeners.powerListeners.*;
 import me.iseal.powergems.managers.*;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
 import me.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
+
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -74,6 +76,8 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new giveAllGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new checkUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new reloadConfigCommand());
+        l.info("Registering tasks");
+        new WaterGemPassive().runTaskTimer(this, 0, 15);
         l.info("Registering bstats metrics");
         @SuppressWarnings("unused")
         Metrics metrics = new Metrics(plugin, 20723);

@@ -21,7 +21,7 @@ public class CheckMultipleEmeraldsTask extends BukkitRunnable {
     public void run() {
         ArrayList<ItemStack> gems = new ArrayList<>();
         Bukkit.getServer().getOnlinePlayers().forEach(player -> {
-            if (ut.hasAtLeastTwo(player, Material.EMERALD)) {
+            if (ut.hasAtLeastXAmount(player, Material.EMERALD, 2)) {
                 player.getInventory().all(Material.EMERALD)
                         .values()
                         .forEach(itemStack -> {
