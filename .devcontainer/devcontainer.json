@@ -1,0 +1,34 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+	"name": "Java",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/java:1-17-buster",
+
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "true",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {},
+		"ghcr.io/devcontainers-contrib/features/maven-sdkman:2": {}
+	},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Xsyntos.minecraftenv",
+                "github.copilot",
+                "github.copilot-chat",
+                "vscjava.vscode-java-pack",
+                "redhat.java",
+                "vscjava.vscode-java-debug",
+                "vscjava.vscode-java-test",
+                "vscjava.vscode-maven"
+            ]
+        }
+    },
+
+	"postCreateCommand": "java -version"
+}
