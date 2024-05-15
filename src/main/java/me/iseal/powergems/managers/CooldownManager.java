@@ -21,21 +21,23 @@ public class CooldownManager {
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
         if (cm.isDragonEggHalfCooldown()) {
             if (player.getInventory().contains(Material.DRAGON_EGG)) {
-                rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+                rightClickCooldowns
+                        .add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
                 return;
             }
         }
-        rightClickCooldowns.add(new CooldownObject(player, fromClass, (time*1000)+System.currentTimeMillis()));
+        rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 1000) + System.currentTimeMillis()));
     }
 
     public void setLeftClickCooldown(Player player, long time, Class<?> fromClass) {
         if (cm.isDragonEggHalfCooldown()) {
             if (player.getInventory().contains(Material.DRAGON_EGG)) {
-                leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+                leftClickCooldowns
+                        .add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
                 return;
             }
         }
-        leftClickCooldowns.add(new CooldownObject(player, fromClass, (time*1000)+System.currentTimeMillis()));
+        leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 1000) + System.currentTimeMillis()));
     }
 
     public void setShiftClickCooldown(Player plr, long time, Class<?> caller) {
@@ -45,7 +47,7 @@ public class CooldownManager {
                 return;
             }
         }
-        shiftClickCooldowns.add(new CooldownObject(plr, caller, (time*1000)+System.currentTimeMillis()));
+        shiftClickCooldowns.add(new CooldownObject(plr, caller, (time * 1000) + System.currentTimeMillis()));
     }
 
     public boolean isRightClickOnCooldown(Player player, Class<?> fromClass) {
@@ -60,11 +62,11 @@ public class CooldownManager {
         return getShiftClickCooldown(plr, caller) > System.currentTimeMillis();
     }
 
-    public long getRightClickCooldown(Player player, Class<?> fromClass){
-        for (CooldownObject co : rightClickCooldowns){
-            if (co.getPlayer() == player){
-                if (co.getFromClass() == fromClass){
-                    if (co.getTime() < System.currentTimeMillis()){
+    public long getRightClickCooldown(Player player, Class<?> fromClass) {
+        for (CooldownObject co : rightClickCooldowns) {
+            if (co.getPlayer() == player) {
+                if (co.getFromClass() == fromClass) {
+                    if (co.getTime() < System.currentTimeMillis()) {
                         leftClickCooldowns.remove(co);
                         continue;
                     }
@@ -75,11 +77,11 @@ public class CooldownManager {
         return 0;
     }
 
-    public long getLeftClickCooldown(Player player, Class<?> fromClass){
-        for (CooldownObject co : leftClickCooldowns){
-            if (co.getPlayer() == player){
-                if (co.getFromClass() == fromClass){
-                    if (co.getTime() < System.currentTimeMillis()){
+    public long getLeftClickCooldown(Player player, Class<?> fromClass) {
+        for (CooldownObject co : leftClickCooldowns) {
+            if (co.getPlayer() == player) {
+                if (co.getFromClass() == fromClass) {
+                    if (co.getTime() < System.currentTimeMillis()) {
                         leftClickCooldowns.remove(co);
                         continue;
                     }
@@ -91,10 +93,10 @@ public class CooldownManager {
     }
 
     public long getShiftClickCooldown(Player plr, Class<?> caller) {
-        for (CooldownObject co : shiftClickCooldowns){
-            if (co.getPlayer() == plr){
-                if (co.getFromClass() == caller){
-                    if (co.getTime() < System.currentTimeMillis()){
+        for (CooldownObject co : shiftClickCooldowns) {
+            if (co.getPlayer() == plr) {
+                if (co.getFromClass() == caller) {
+                    if (co.getTime() < System.currentTimeMillis()) {
                         shiftClickCooldowns.remove(co);
                         continue;
                     }
@@ -107,17 +109,21 @@ public class CooldownManager {
 
     public String getFormattedTimer(Player plr, Class<?> caller, String action) {
         long cooldownMillis = 0;
-        if (action.equals("left")){
-            if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis()) return ChatColor.GREEN+"Ready";
+        if (action.equals("left")) {
+            if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis())
+                return ChatColor.GREEN + "Ready";
             cooldownMillis = getLeftClickCooldown(plr, caller) - System.currentTimeMillis();
-        } else if (action.equals("right")){
-            if (getRightClickCooldown(plr, caller) < System.currentTimeMillis()) return ChatColor.GREEN+"Ready";
+        } else if (action.equals("right")) {
+            if (getRightClickCooldown(plr, caller) < System.currentTimeMillis())
+                return ChatColor.GREEN + "Ready";
             cooldownMillis = getRightClickCooldown(plr, caller) - System.currentTimeMillis();
-        } else if (action.equals("shift")){
-            if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis()) return ChatColor.GREEN+"Ready";
+        } else if (action.equals("shift")) {
+            if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis())
+                return ChatColor.GREEN + "Ready";
             cooldownMillis = getShiftClickCooldown(plr, caller) - System.currentTimeMillis();
         }
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(cooldownMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(cooldownMillis));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(cooldownMillis)
+                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(cooldownMillis));
         long minutes = TimeUnit.MILLISECONDS.toMinutes(cooldownMillis);
         String endTime;
         if (seconds < 10) {
@@ -125,11 +131,11 @@ public class CooldownManager {
         } else {
             endTime = String.format("0%d:%d", minutes, seconds);
         }
-        return ChatColor.DARK_RED+endTime;
+        return ChatColor.DARK_RED + endTime;
     }
 
     public long getFullCooldown(int level, String name, String ability) {
-        return cm.getStartingCooldown(name,ability)-cm.getGemCooldownBoost()*level;
+        return cm.getStartingCooldown(name, ability) - cm.getGemCooldownBoost() * level;
     }
 
     public void cancelCooldowns() {

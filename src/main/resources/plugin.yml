@@ -1,7 +1,7 @@
 name: PowerGems
-version: '${project.version}'
+version: "${project.version}"
 main: me.iseal.powergems.Main
-api-version: '1.19'
+api-version: "1.19"
 author: ISeal
 commands:
   givegem:
@@ -21,23 +21,23 @@ commands:
     usage: /reloadconfig
     permission: powergems.reloadconfig
 permissions:
-    powergems.givegem:
-        description: Permission to use /givegem
-        default: op
-    powergems.giveallgem:
-        description: Permission to use /giveallgem
-        default: op
-    powergems.checkupdates:
-        description: Permission to use /checkupdates
-        default: true
-    powergems.reloadconfig:
-        description: Permission to use /reloadconfig
-        default: op
-    powergems.*:
-        description: Permission to use all PowerGems commands
-        default: op
-        children:
-            powergems.givegem: true
-            powergems.giveallgem: true
-            powergems.checkupdates: true
-            powergems.reloadconfig: true
+  powergems.givegem:
+    description: Permission to use /givegem
+    default: op
+  powergems.giveallgem:
+    description: Permission to use /giveallgem
+    default: op
+  powergems.checkupdates:
+    description: Permission to use /checkupdates
+    default: true
+  powergems.reloadconfig:
+    description: Permission to use /reloadconfig
+    default: op
+  powergems.*:
+    description: Permission to use all PowerGems commands
+    default: op
+    children:
+      powergems.givegem: true
+      powergems.giveallgem: true
+      powergems.checkupdates: true
+      powergems.reloadconfig: true

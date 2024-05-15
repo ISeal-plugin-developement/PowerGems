@@ -21,34 +21,34 @@ public class inventoryCloseListener implements Listener {
     private final Random rand = new Random();
 
     @EventHandler
-    public void onClose(InventoryCloseEvent e){
+    public void onClose(InventoryCloseEvent e) {
         if (!(e.getInventory().getHolder() instanceof Player plr)) {
             return;
         }
         if (!(e.getView().getBottomInventory() instanceof PlayerInventory pi)) {
             return;
         }
-        //checkIfMultipleGems(plr);
-        if (!e.getView().getBottomInventory().containsAtLeast(randomGem, 1)){
+        // checkIfMultipleGems(plr);
+        if (!e.getView().getBottomInventory().containsAtLeast(randomGem, 1)) {
             return;
         }
         int nOfGems = 0;
         int intAt = -1;
-        for (ItemStack item : pi.getContents()){
+        for (ItemStack item : pi.getContents()) {
             intAt++;
-            if (item == null || !item.isSimilar(randomGem)){
+            if (item == null || !item.isSimilar(randomGem)) {
                 continue;
             }
-            nOfGems+= item.getAmount();
+            nOfGems += item.getAmount();
             pi.setItem(intAt, null);
         }
-        if (Main.config.getBoolean("allowOnlyOneGem")){
+        if (Main.config.getBoolean("allowOnlyOneGem")) {
             pi.addItem(gm.createGem());
         } else {
             World plrWorld = plr.getWorld();
             Location plrPos = plr.getLocation();
             for (int i = 0; i < nOfGems; i++) {
-                if (pi.firstEmpty() == -1){
+                if (pi.firstEmpty() == -1) {
                     plrWorld.dropItem(plrPos, gm.createGem());
                     continue;
                 }
@@ -58,27 +58,27 @@ public class inventoryCloseListener implements Listener {
     }
 
     @Deprecated(since = "3.3.1.0", forRemoval = true)
-    private void checkIfMultipleGems(Player plr){
-        if (!Main.config.getBoolean("allowOnlyOneGem")){
+    private void checkIfMultipleGems(Player plr) {
+        if (!Main.config.getBoolean("allowOnlyOneGem")) {
             return;
         }
         HashMap<ItemStack, Integer> gems = new HashMap<>(3);
         final PlayerInventory plrInv = plr.getInventory();
         int index = 0;
-        for (ItemStack i : plrInv.getContents()){
-            if (gm.isGem(i)){
+        for (ItemStack i : plrInv.getContents()) {
+            if (gm.isGem(i)) {
                 i.setAmount(1);
                 gems.put(i, index);
                 plrInv.setItem(index, null);
             }
             index++;
         }
-        if (gems.isEmpty()){
+        if (gems.isEmpty()) {
             return;
         }
-        if (gems.size() == 1){
+        if (gems.size() == 1) {
             ItemStack firstGem = gems.keySet().stream().findFirst().get();
-            if (gems.get(firstGem) == -1){
+            if (gems.get(firstGem) == -1) {
                 plrInv.setItemInOffHand(firstGem);
                 return;
             }
@@ -86,7 +86,7 @@ public class inventoryCloseListener implements Listener {
             return;
         }
         ItemStack randomGem = gems.keySet().stream().skip(rand.nextInt(gems.size())).findFirst().get();
-        if (gems.get(randomGem) == -1){
+        if (gems.get(randomGem) == -1) {
             plrInv.setItemInOffHand(randomGem);
             return;
         }

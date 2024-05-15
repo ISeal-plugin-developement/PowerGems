@@ -17,15 +17,15 @@ public class Utils {
 
     private final GemManager gemManager = Main.getSingletonManager().gemManager;
 
-    public boolean isLeftClick(Action a){
+    public boolean isLeftClick(Action a) {
         return a.equals(Action.LEFT_CLICK_BLOCK) || a.equals(Action.LEFT_CLICK_AIR);
     }
 
-    public Material[] ItemStackToMaterial(ItemStack[] items){
+    public Material[] ItemStackToMaterial(ItemStack[] items) {
         Material[] transformed = new Material[items.length];
         int i = 0;
-        for (ItemStack item : items){
-            if (item == null){
+        for (ItemStack item : items) {
+            if (item == null) {
                 transformed[i] = null;
             } else {
                 transformed[i] = item.getType();
@@ -35,13 +35,13 @@ public class Utils {
         return transformed;
     }
 
-    public boolean checkIfEqualMaterial(Material[] a1, Material[] a2){
+    public boolean checkIfEqualMaterial(Material[] a1, Material[] a2) {
         int i = 0;
-        for (Material mat : a1){
-            if (mat == null){
+        for (Material mat : a1) {
+            if (mat == null) {
                 return false;
             }
-            if (Objects.equals(mat.toString(), a2[i].toString())){
+            if (Objects.equals(mat.toString(), a2[i].toString())) {
                 return false;
             }
             i++;
@@ -62,7 +62,8 @@ public class Utils {
         // Create an array to store the coordinates of the square outline.
         ArrayList<Block> blocks = new ArrayList<>();
 
-        // Iterate over the start and end coordinates to generate the square outline coordinates.
+        // Iterate over the start and end coordinates to generate the square outline
+        // coordinates.
         for (int x = startX; x <= endX; x++) {
             blocks.add(new Location(center.getWorld(), x, center.getBlockY(), startZ).getBlock());
             blocks.add(new Location(center.getWorld(), x, center.getBlockY(), endZ).getBlock());
@@ -89,7 +90,8 @@ public class Utils {
         // Create an array to store the coordinates of the square outline.
         ArrayList<Block> blocks = new ArrayList<>();
 
-        // Iterate over the start and end coordinates to generate the square outline coordinates.
+        // Iterate over the start and end coordinates to generate the square outline
+        // coordinates.
         for (int x = startX; x <= endX; x++) {
             blocks.add(new Location(center.getWorld(), x, center.getBlockY(), startZ).getBlock());
             blocks.add(new Location(center.getWorld(), x, center.getBlockY(), endZ).getBlock());
@@ -99,7 +101,7 @@ public class Utils {
             blocks.add(new Location(center.getWorld(), endX, center.getBlockY(), z).getBlock());
         }
 
-        //Check for air blocks
+        // Check for air blocks
         blocks.removeIf(block -> !block.isEmpty());
 
         // Return the array of square outline coordinates.
@@ -110,15 +112,17 @@ public class Utils {
         int count = player.getInventory().all(material).values().stream()
                 .mapToInt(ItemStack::getAmount)
                 .sum();
-        if (player.getInventory().getItemInOffHand().getType() == material) count += player.getInventory().getItemInOffHand().getAmount();
+        if (player.getInventory().getItemInOffHand().getType() == material)
+            count += player.getInventory().getItemInOffHand().getAmount();
         return count >= x;
     }
 
-    public ArrayList<ItemStack> getUserGems(Player plr){
+    public ArrayList<ItemStack> getUserGems(Player plr) {
         ArrayList<ItemStack> gems = new ArrayList<>();
-        if (!hasAtLeastXAmount(plr, Material.EMERALD, 1)) return gems;
-        for (ItemStack item : plr.getInventory().getContents()){
-            if (gemManager.isGem(item)){
+        if (!hasAtLeastXAmount(plr, Material.EMERALD, 1))
+            return gems;
+        for (ItemStack item : plr.getInventory().getContents()) {
+            if (gemManager.isGem(item)) {
                 gems.add(item);
             }
         }

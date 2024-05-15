@@ -14,22 +14,22 @@ public class iceTargetListener implements Listener {
     ArrayList<Player> iceNoTargetList = new ArrayList<>();
 
     @EventHandler
-    public void onTarget(EntityTargetLivingEntityEvent e){
-        if (iceNoTargetList.size() > 0){
+    public void onTarget(EntityTargetLivingEntityEvent e) {
+        if (iceNoTargetList.size() > 0) {
             Entity targeter = e.getEntity();
-            if (targeter instanceof Snowman){
-                if (iceNoTargetList.contains(e.getTarget())){
+            if (targeter instanceof Snowman) {
+                if (iceNoTargetList.contains(e.getTarget())) {
                     e.setCancelled(true);
                 }
             }
         }
     }
 
-    public void addToList(Player plr){
+    public void addToList(Player plr) {
         iceNoTargetList.add(plr);
     }
 
-    public void removeFromList(Player plr){
+    public void removeFromList(Player plr) {
         iceNoTargetList.remove(plr);
     }
 

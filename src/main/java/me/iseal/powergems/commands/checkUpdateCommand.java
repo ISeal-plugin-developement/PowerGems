@@ -12,8 +12,9 @@ public class checkUpdateCommand implements CommandExecutor {
     UpdaterManager um = Main.getSingletonManager().updaterManager;
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender.hasPermission(command.getPermission())){
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
+            @NotNull String[] args) {
+        if (sender.hasPermission(command.getPermission())) {
             sender.sendMessage("Starting check");
             um.startUpdate(sender);
             return true;

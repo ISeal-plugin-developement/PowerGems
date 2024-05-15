@@ -8,21 +8,21 @@ public class CooldownObject {
     private Class<?> fromClass;
     private long time;
 
-    public CooldownObject(Player plr, Class<?> fromClass, long time){
+    public CooldownObject(Player plr, Class<?> fromClass, long time) {
         this.plr = plr;
         this.fromClass = fromClass;
         this.time = time;
     }
 
-    public Player getPlayer(){
+    public Player getPlayer() {
         return plr;
     }
 
-    public Class<?> getFromClass(){
+    public Class<?> getFromClass() {
         return fromClass;
     }
 
-    public long getTime(){
+    public long getTime() {
         return time;
     }
 

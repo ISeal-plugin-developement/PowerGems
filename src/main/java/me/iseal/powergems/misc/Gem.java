@@ -20,24 +20,25 @@ public abstract class Gem {
     protected ConfigManager configManager = sm.configManager;
     protected int level;
 
-    public void call(Action action, Player plr, ItemStack item){
-        if (action.equals(Action.PHYSICAL)) return;
+    public void call(Action action, Player plr, ItemStack item) {
+        if (action.equals(Action.PHYSICAL))
+            return;
         level = gm.getLevel(item);
         this.plr = plr;
         if (plr.isSneaking()) {
-            if (checkIfCooldown("shift", plr)){
+            if (checkIfCooldown("shift", plr)) {
                 return;
             }
             shiftClick(plr);
             cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
-        } else if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK){
-            if (checkIfCooldown("left", plr)){
+        } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            if (checkIfCooldown("left", plr)) {
                 return;
             }
             leftClick(plr);
             cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
-        } else if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
-            if (checkIfCooldown("right", plr)){
+        } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+            if (checkIfCooldown("right", plr)) {
                 return;
             }
             rightClick(plr);
@@ -45,12 +46,12 @@ public abstract class Gem {
         }
     }
 
-    protected boolean checkIfCooldown(String action, Player plr){
-        if(action.equals("left")){
+    protected boolean checkIfCooldown(String action, Player plr) {
+        if (action.equals("left")) {
             return cm.isLeftClickOnCooldown(plr, caller);
-        } else if(action.equals("right")){
+        } else if (action.equals("right")) {
             return cm.isRightClickOnCooldown(plr, caller);
-        } else if (action.equals("shift")){
+        } else if (action.equals("shift")) {
             return cm.isShiftClickOnCooldown(plr, caller);
         }
         return false;

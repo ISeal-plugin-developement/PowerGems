@@ -25,29 +25,27 @@ public class strenghtMoveListener implements Listener {
             }
             if (to.distance(startingLocation) > radius && from.distance(startingLocation) > 6) {
                 return;
-            }
-            else if (to.distance(startingLocation) < radius) {
+            } else if (to.distance(startingLocation) < radius) {
                 if (from.distance(startingLocation) < radius) {
                     return;
-                }
-                else {
+                } else {
                     event.setCancelled(true);
                     player.teleport(from);
-                    player.sendMessage(ChatColor.DARK_RED+"You cannot enter the Arena!");
+                    player.sendMessage(ChatColor.DARK_RED + "You cannot enter the Arena!");
                     return;
                 }
             }
         }
     }
 
-    public void addStartingLocation(Location l){
-        if (!startingLocations.contains(l)){
+    public void addStartingLocation(Location l) {
+        if (!startingLocations.contains(l)) {
             startingLocations.add(l);
         }
     }
 
-    public void removeStartingLocation(Location l){
-        if (startingLocations.contains(l)){
+    public void removeStartingLocation(Location l) {
+        if (startingLocations.contains(l)) {
             startingLocations.remove(l);
         }
     }

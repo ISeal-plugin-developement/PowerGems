@@ -20,12 +20,15 @@ import org.bukkit.util.Vector;
 public class IronGem extends Gem {
 
     private final TempDataManager tdm = Main.getSingletonManager().tempDataManager;
-    private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification", 8, AttributeModifier.Operation.ADD_NUMBER);
-    private final AttributeModifier toughnessModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification", 4, AttributeModifier.Operation.ADD_NUMBER);
-    private final AttributeModifier knockbackAttribute = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification - Knockback", 5, AttributeModifier.Operation.ADD_NUMBER);
+    private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification",
+            8, AttributeModifier.Operation.ADD_NUMBER);
+    private final AttributeModifier toughnessModifier = new AttributeModifier(Main.getAttributeUUID(),
+            "Iron Fortification", 4, AttributeModifier.Operation.ADD_NUMBER);
+    private final AttributeModifier knockbackAttribute = new AttributeModifier(Main.getAttributeUUID(),
+            "Iron Fortification - Knockback", 5, AttributeModifier.Operation.ADD_NUMBER);
 
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
@@ -33,38 +36,40 @@ public class IronGem extends Gem {
     @Override
     protected void rightClick(Player plr) {
         plr.getWorld().spawnParticle(Particle.CRIT, plr.getLocation().add(0, 1, 0), 20);
-        plr.setAbsorptionAmount(2*level);
+        plr.setAbsorptionAmount(2 * level);
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         try {
             knockbackInstance.addModifier(knockbackAttribute);
         } catch (IllegalArgumentException ex) {
-            l.warning("[PowerGems] "+plr.getDisplayName()+" used Iron Gem Shift while already having the modifiers, please report this to the developer");
+            l.warning("[PowerGems] " + plr.getDisplayName()
+                    + " used Iron Gem Shift while already having the modifiers, please report this to the developer");
         }
         plr.setVelocity(new Vector(0, 0, 0));
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
-            if (op.isOnline()) {;
+            if (op.isOnline()) {
+                ;
                 plr.setAbsorptionAmount(0.0);
                 knockbackInstance.removeModifier(knockbackAttribute);
             } else {
                 tdm.ironRightLeft.add(op.getUniqueId());
             }
-        }, 150*level);
+        }, 150 * level);
     }
 
     @Override
     protected void leftClick(Player plr) {
         Vector direction = plr.getEyeLocation().getDirection();
-        for (int i = 0; i < 20+(level*2); i++) {
+        for (int i = 0; i < 20 + (level * 2); i++) {
             Vector coneDirection = direction.clone().rotateAroundY(i * 20);
-            Arrow sa = plr.launchProjectile(Arrow.class,coneDirection);
+            Arrow sa = plr.launchProjectile(Arrow.class, coneDirection);
             sa.setBounce(true);
             sa.setDamage(level);
             sa.setVelocity(sa.getVelocity().multiply(level));
             sa.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
             sa.getPersistentDataContainer().set(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN, true);
         }
-        for (int i = 0; i < 5+level; i++) {
+        for (int i = 0; i < 5 + level; i++) {
             Arrow sa = plr.launchProjectile(Arrow.class);
             sa.setBounce(true);
             sa.setDamage(level);
@@ -81,7 +86,8 @@ public class IronGem extends Gem {
             armorAttribute.addModifier(armorModifier);
             toughnessAttribute.addModifier(toughnessModifier);
         } catch (IllegalArgumentException ex) {
-            l.warning("[PowerGems] "+plr.getDisplayName()+" used Iron Gem Shift while already having the modifiers, please report this to the developer");
+            l.warning("[PowerGems] " + plr.getDisplayName()
+                    + " used Iron Gem Shift while already having the modifiers, please report this to the developer");
         }
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
@@ -94,13 +100,14 @@ public class IronGem extends Gem {
         }, 200);
     }
 
-    public void removeShiftModifiers(Player plr){
+    public void removeShiftModifiers(Player plr) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         armorAttribute.removeModifier(armorModifier);
         toughnessAttribute.removeModifier(toughnessModifier);
     }
-    public void removeRightModifiers(Player plr){
+
+    public void removeRightModifiers(Player plr) {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         knockbackInstance.removeModifier(knockbackAttribute);
     }

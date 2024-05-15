@@ -20,7 +20,7 @@ public class StrenghArena implements Listener {
 
     public StrenghArena(Player player) {
         this.player = player;
-        if (player == null){
+        if (player == null) {
             this.StartingLocation = null;
         } else {
             this.StartingLocation = player.getLocation();
@@ -32,6 +32,7 @@ public class StrenghArena implements Listener {
         sm.strenghtMoveListen.addStartingLocation(StartingLocation);
         new BukkitRunnable() {
             int currentTime = 0;
+
             public void run() {
                 if (currentTime >= 20) {
                     sm.strenghtMoveListen.removeStartingLocation(StartingLocation);

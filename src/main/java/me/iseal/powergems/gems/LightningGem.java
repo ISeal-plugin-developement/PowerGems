@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 public class LightningGem extends Gem {
 
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
@@ -22,15 +22,15 @@ public class LightningGem extends Gem {
     @Override
     protected void rightClick(Player plr) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
-        if (possibleTarget == null){
-            plr.sendMessage(ChatColor.DARK_RED+"You must be looking at a block to do that");
+        if (possibleTarget == null) {
+            plr.sendMessage(ChatColor.DARK_RED + "You must be looking at a block to do that");
             return;
         }
         Location targetLocation = possibleTarget.getLocation();
         World plrWorld = plr.getWorld();
         plrWorld.strikeLightning(targetLocation);
-        for(Entity e : plrWorld.getNearbyEntities(targetLocation,5,5,5)){
-            if (e instanceof LivingEntity){
+        for (Entity e : plrWorld.getNearbyEntities(targetLocation, 5, 5, 5)) {
+            if (e instanceof LivingEntity) {
                 plrWorld.strikeLightning(e.getLocation());
             }
         }
@@ -49,7 +49,7 @@ public class LightningGem extends Gem {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-        for (Entity e : world.getNearbyEntities(playerLocation,5,5,5)){
+        for (Entity e : world.getNearbyEntities(playerLocation, 5, 5, 5)) {
             if (e instanceof LivingEntity) {
                 if (e != plr) {
                     ((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1200, 0));
