@@ -21,8 +21,7 @@ public class CooldownManager {
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
         if (cm.isDragonEggHalfCooldown()) {
             if (player.getInventory().contains(Material.DRAGON_EGG)) {
-                rightClickCooldowns
-                        .add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+                rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
                 return;
             }
         }
@@ -32,8 +31,7 @@ public class CooldownManager {
     public void setLeftClickCooldown(Player player, long time, Class<?> fromClass) {
         if (cm.isDragonEggHalfCooldown()) {
             if (player.getInventory().contains(Material.DRAGON_EGG)) {
-                leftClickCooldowns
-                        .add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+                leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
                 return;
             }
         }

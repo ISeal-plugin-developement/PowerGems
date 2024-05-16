@@ -442,8 +442,7 @@ public class GemManager {
             return null;
         try {
             return Class.forName("me.iseal.powergems.gems."
-                    + item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING)
-                    + "Gem");
+                    + item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING)+ "Gem");
         } catch (Exception e) {
             return null;
         }

@@ -156,13 +156,6 @@ public class RecipeManager implements Listener {
                     }
                     sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
                     Bukkit.getServer().addRecipe(sr);
-                    /*
-                     * sr.shape("nen","ege","nen");
-                     * sr.setIngredient('n', Material.NETHERITE_INGOT);
-                     * sr.setIngredient('e', Material.EXPERIENCE_BOTTLE);
-                     * sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
-                     * Bukkit.getServer().addRecipe(sr);
-                     */
                     oldStack = newStack;
                     key = "";
                 }

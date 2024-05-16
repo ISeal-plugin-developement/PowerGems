@@ -5,7 +5,7 @@ name: Build and Release
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
 
 jobs:
   build-and-release:
@@ -47,3 +47,4 @@ jobs:
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
             Changelog for this version: ${{ github.event.head_commit.message }}
+            

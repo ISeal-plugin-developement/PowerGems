@@ -25,12 +25,10 @@ public class damageListener implements Listener {
         checkIfFall(plr, e);
     }
 
-    private void checkIfFall(Player p, EntityDamageEvent event) {
-        if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL))
-            return;
-        for (ItemStack i : gm.getPlayerGems(p)) {
-            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(Main.getGemPowerKey(),
-                    PersistentDataType.STRING))) {
+    private void checkIfFall(Player p, EntityDamageEvent event){
+        if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) return;
+        for (ItemStack i : gm.getPlayerGems(p)){
+            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(Main.getGemPowerKey(), PersistentDataType.STRING))){
                 event.setCancelled(true);
                 return;
             }

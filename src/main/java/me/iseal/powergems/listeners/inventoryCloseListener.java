@@ -28,7 +28,7 @@ public class inventoryCloseListener implements Listener {
         if (!(e.getView().getBottomInventory() instanceof PlayerInventory pi)) {
             return;
         }
-        // checkIfMultipleGems(plr);
+        //checkIfMultipleGems(plr);
         if (!e.getView().getBottomInventory().containsAtLeast(randomGem, 1)) {
             return;
         }
