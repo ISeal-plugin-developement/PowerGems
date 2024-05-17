@@ -8,7 +8,7 @@ import me.iseal.powergems.misc.Utils;
 
 public class SingletonManager {
 
-    //Classes
+    // Classes
 
     public GemManager gemManager;
     public strenghtMoveListener strenghtMoveListen;
@@ -22,7 +22,7 @@ public class SingletonManager {
     public fallingBlockHitListener fallingBlockHitListen;
     public TempDataManager tempDataManager;
 
-    public void init(){
+    public void init() {
         configManager = new ConfigManager();
         updaterManager = new UpdaterManager();
         tempDataManager = new TempDataManager();

@@ -42,7 +42,7 @@ public class CheckMultipleEmeraldsTask extends BukkitRunnable {
                         gems.remove(gem);
                     }
                 }
-                //For redundancy
+                // For redundancy
                 gems.clear();
             }
         });

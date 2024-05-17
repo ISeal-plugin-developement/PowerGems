@@ -14,18 +14,22 @@ public class noGemHittingListener implements Listener {
     sandMoveListener sml = Main.getSingletonManager().sandMoveListen;
 
     @EventHandler
-    public void onBreak(BlockBreakEvent e){
+    public void onBreak(BlockBreakEvent e) {
         if (sml.hasBlock(e.getBlock())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onHit(EntityDamageByEntityEvent e){
-        if (e.getEntity() instanceof Player) return;
-        if (!(e.getDamager() instanceof Player)) return;
-        if (e.getEntity().getPersistentDataContainer() == null) return;
-        if (!e.getEntity().getPersistentDataContainer().has(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN)) return;
+    public void onHit(EntityDamageByEntityEvent e) {
+        if (e.getEntity() instanceof Player)
+            return;
+        if (!(e.getDamager() instanceof Player))
+            return;
+        if (e.getEntity().getPersistentDataContainer() == null)
+            return;
+        if (!e.getEntity().getPersistentDataContainer().has(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN))
+            return;
         e.setCancelled(true);
     }
 

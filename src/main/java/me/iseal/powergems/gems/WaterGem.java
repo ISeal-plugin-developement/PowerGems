@@ -18,32 +18,35 @@ import me.iseal.powergems.misc.Gem;
 import me.iseal.powergems.Main;
 
 public class WaterGem extends Gem {
-    
+
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
 
     @Override
     protected void rightClick(Player plr) {
-        if (plr.getEyeLocation().getBlock().getType() != Material.WATER || plr.getLocation().getBlock().getType() != Material.WATER) return;
-        plr.setVelocity(plr.getVelocity().add(plr.getLocation().getDirection().multiply(level/2)));
+        if (plr.getEyeLocation().getBlock().getType() != Material.WATER
+                || plr.getLocation().getBlock().getType() != Material.WATER)
+            return;
+        plr.setVelocity(plr.getVelocity().add(plr.getLocation().getDirection().multiply(level / 2)));
         World world = plr.getWorld();
-        world.spawnParticle(Particle.BUBBLE_COLUMN_UP, plr.getLocation(), 5*level);
+        world.spawnParticle(Particle.BUBBLE_COLUMN_UP, plr.getLocation(), 5 * level);
     }
 
     @Override
     protected void leftClick(Player plr) {
         Location loc = plr.getLocation();
         loc.setY(loc.getY() - 1);
-        int halfRadius = level*2;
+        int halfRadius = level * 2;
         // Itinerate in a square around the location
         for (int x = -halfRadius; x <= halfRadius; x++) {
             for (int z = -halfRadius; z <= halfRadius; z++) {
                 Location pos = new Location(loc.getWorld(), loc.getX() + x, loc.getY(), loc.getZ() + z);
                 Block block = pos.getBlock();
-                if (block.getType() != Material.FARMLAND) continue;
+                if (block.getType() != Material.FARMLAND)
+                    continue;
                 Farmland farmland = (Farmland) block.getBlockData();
                 farmland.setMoisture(farmland.getMaximumMoisture());
                 block.setBlockData(farmland);
@@ -56,9 +59,9 @@ public class WaterGem extends Gem {
     protected void shiftClick(Player plr) {
         // Get the player's position
         Location playerPos = plr.getLocation();
-        int halfRadius = 1+level/2;
+        int halfRadius = 1 + level / 2;
 
-        // Calculate the start  and end positions of the cube
+        // Calculate the start and end positions of the cube
         int startX = playerPos.getBlockX() - halfRadius;
         int startY = playerPos.getBlockY() - halfRadius;
         int startZ = playerPos.getBlockZ() - halfRadius;
@@ -73,7 +76,8 @@ public class WaterGem extends Gem {
                     // Set the block to water
                     Location pos = new Location(plr.getWorld(), x, y, z);
                     Block block = pos.getBlock();
-                    if (!block.isEmpty()) continue;
+                    if (!block.isEmpty())
+                        continue;
                     block.setType(Material.WATER);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
                         block.setType(Material.AIR);

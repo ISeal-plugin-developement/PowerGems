@@ -25,46 +25,46 @@ import java.util.stream.Collectors;
 public class RecipeManager implements Listener {
 
     private GemManager gemManager = null;
-    private final Yaml recipes = new Yaml("recipes", Main.getPlugin().getDataFolder()+"\\config\\");
+    private final Yaml recipes = new Yaml("recipes", Main.getPlugin().getDataFolder() + "\\config\\");
     private final Logger l = Bukkit.getLogger();
-    
-    public void initiateRecipes(){
+
+    public void initiateRecipes() {
         gemManager = Main.getSingletonManager().gemManager;
         if (Main.config.getBoolean("canUpgradeGems")) {
             upgradeRecipe();
         }
-        if (Main.config.getBoolean("canCraftGems")){
+        if (Main.config.getBoolean("canCraftGems")) {
             craftRecipe();
         }
     }
 
     @EventHandler
-    public void onItemPickup(InventoryClickEvent e){
-        if (e.getInventory().getType() != InventoryType.WORKBENCH){
+    public void onItemPickup(InventoryClickEvent e) {
+        if (e.getInventory().getType() != InventoryType.WORKBENCH) {
             return;
         }
-        if (!e.getInventory().contains(Material.NETHERITE_BLOCK)){
+        if (!e.getInventory().contains(Material.NETHERITE_BLOCK)) {
             return;
         }
         ItemStack i = e.getInventory().getItem(0);
-        if (i == null){
+        if (i == null) {
             return;
         }
-        if (!i.hasItemMeta()){
+        if (!i.hasItemMeta()) {
             return;
         }
-        if (!i.getItemMeta().getPersistentDataContainer().has(Main.getIsRandomGemKey(), PersistentDataType.BYTE)){
+        if (!i.getItemMeta().getPersistentDataContainer().has(Main.getIsRandomGemKey(), PersistentDataType.BYTE)) {
             return;
         }
-        if (e.getCurrentItem() == null){
+        if (e.getCurrentItem() == null) {
             return;
         }
-        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())){
+        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
             return;
         }
         if (Main.config.getBoolean("allowOnlyOneGem")) {
             for (ItemStack is : e.getWhoClicked().getInventory().getContents()) {
-              if (gemManager.isGem(is)) {
+                if (gemManager.isGem(is)) {
                     e.getWhoClicked().getInventory().remove(is);
                 }
             }
@@ -72,7 +72,7 @@ public class RecipeManager implements Listener {
         e.setCurrentItem(gemManager.createGem());
     }
 
-    private void craftRecipe(){
+    private void craftRecipe() {
         try {
             String key = "gem_craft_recipe";
             NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
@@ -100,7 +100,7 @@ public class RecipeManager implements Listener {
                 sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
             }
             Bukkit.getServer().addRecipe(sr);
-        } catch (Exception e){
+        } catch (Exception e) {
             l.severe("Error while creating gem crafting recipe, check the configuration file.");
             l.severe("Disabling plugin to prevent errors.");
             l.severe(e.getMessage());
@@ -108,7 +108,7 @@ public class RecipeManager implements Listener {
         }
     }
 
-    private void upgradeRecipe(){
+    private void upgradeRecipe() {
         String key = "";
         try {
             ItemStack oldStack;
@@ -122,21 +122,22 @@ public class RecipeManager implements Listener {
                     pdc.set(Main.getGemLevelKey(), PersistentDataType.INTEGER, level);
                     im = gemManager.createLore(im);
                     newStack.setItemMeta(im);
-                    //generate namespacedkey based on name+level
+                    // generate namespacedkey based on name+level
                     key = generateName(im.getDisplayName()) + "_" + level + "_upgrade";
                     NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
                     ShapedRecipe sr = new ShapedRecipe(nk, newStack);
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
                     if (!arr.containsKey("shape")) {
                         arr.put("shape", "nen,ege,nen");
-                        l.info("Shape not found for "+key+" (is the file malformed?), using default shape.");
+                        l.info("Shape not found for " + key + " (is the file malformed?), using default shape.");
                     }
                     if (!arr.containsKey("ingredients")) {
                         HashMap<String, String> defaultIngredients = new HashMap<>();
                         defaultIngredients.put("n", Material.NETHERITE_INGOT.name());
                         defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
                         arr.put("ingredients", defaultIngredients);
-                        l.info("Ingredients not found for "+key+" (is the file malformed?), using default ingredients.");
+                        l.info("Ingredients not found for " + key
+                                + " (is the file malformed?), using default ingredients.");
                     }
 
                     // Save the changes to the recipes Yaml file
@@ -155,35 +156,32 @@ public class RecipeManager implements Listener {
                     }
                     sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
                     Bukkit.getServer().addRecipe(sr);
-                /*sr.shape("nen","ege","nen");
-                sr.setIngredient('n', Material.NETHERITE_INGOT);
-                sr.setIngredient('e', Material.EXPERIENCE_BOTTLE);
-                sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
-                Bukkit.getServer().addRecipe(sr);*/
                     oldStack = newStack;
                     key = "";
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             l.severe("Error while creating gem upgrade recipes, check the configuration file.");
-            l.severe("Last key: "+key);
+            l.severe("Last key: " + key);
             l.severe("Disabling plugin to prevent errors.");
             l.severe(e.getMessage());
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }
-    private static String generateName(String s){
+
+    private static String generateName(String s) {
         s = s.replace(" ", "_");
         StringBuilder finalString = new StringBuilder();
         boolean lastWas = false;
-        ArrayList<Character> characterList = (ArrayList<Character>) s.chars().mapToObj(c -> (char)c).collect(Collectors.toList());
+        ArrayList<Character> characterList = (ArrayList<Character>) s.chars().mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
 
         for (int i = 0; i < characterList.size(); i++) {
-            if (characterList.get(i).toString().equals("§")){
+            if (characterList.get(i).toString().equals("§")) {
                 lastWas = true;
                 continue;
             }
-            if (lastWas){
+            if (lastWas) {
                 lastWas = false;
                 continue;
             }

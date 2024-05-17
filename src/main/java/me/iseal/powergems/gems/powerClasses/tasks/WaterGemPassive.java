@@ -20,12 +20,12 @@ public class WaterGemPassive extends BukkitRunnable {
             utils.getUserGems(player).forEach(gem -> {
                 if (gemManager.getGemName(gem).equalsIgnoreCase("Water")) {
                     if (player.getLocation().getBlock().isLiquid()) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20, 0));  
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20, 0));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 0));
                     }
                 }
-                });
-       
             });
-        }
+
+        });
     }
+}

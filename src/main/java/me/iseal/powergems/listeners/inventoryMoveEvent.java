@@ -22,14 +22,14 @@ public class inventoryMoveEvent implements Listener {
         Player plr = (Player) event.getWhoClicked();
         switch (event.getClick()) {
             case NUMBER_KEY:
-                System.out.println("Hotbar button = "+event.getHotbarButton());
-                System.out.println("Raw slot id = "+event.getRawSlot());
+                System.out.println("Hotbar button = " + event.getHotbarButton());
+                System.out.println("Raw slot id = " + event.getRawSlot());
                 AtomicInteger id = new AtomicInteger();
                 List<ItemStack> inventory = Arrays.asList(plr.getInventory().getContents().clone());
                 Collections.reverse(inventory);
                 inventory.forEach(item -> {
                     if (item != null) {
-                        System.out.println("Item id "+id+" is equal to: "+item.toString());
+                        System.out.println("Item id " + id + " is equal to: " + item.toString());
                     }
                     id.incrementAndGet();
                 });

@@ -13,7 +13,6 @@ public class fallingBlockHitListener implements Listener {
 
     List<String> entityList = new ArrayList<String>();
 
-
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof FallingBlock) {
@@ -31,7 +30,8 @@ public class fallingBlockHitListener implements Listener {
 
     public void removeEntityBlock(UUID id) {
         String uuid = id.toString();
-        if (this.entityList.contains(uuid)) this.entityList.remove(uuid);
+        if (this.entityList.contains(uuid))
+            this.entityList.remove(uuid);
     }
 
     public boolean containsBlock(UUID id) {
