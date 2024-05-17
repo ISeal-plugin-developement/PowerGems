@@ -38,10 +38,10 @@ jobs:
         uses: ncipollo/release-action@v1
         id: preRelease
         with:
-          name: "v${{ env.VERSION }}-${{ github.sha}}"
+          name: "v${{ env.VERSION }}"
           artifacts: "target/output/*.jar"
           commit: ${{ github.sha }}
-          tag: ${{ env.VERSION }}
+          tag: "${{ env.VERSION }}-${{ github.sha }}"
           draft: false
           prerelease: true
           body: |
