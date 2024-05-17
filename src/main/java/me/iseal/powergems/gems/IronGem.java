@@ -47,7 +47,7 @@ public class IronGem extends Gem {
         plr.setVelocity(new Vector(0, 0, 0));
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
-            if (op.isOnline()) {;
+            if (op.isOnline()) {
                 plr.setAbsorptionAmount(0.0);
                 knockbackInstance.removeModifier(knockbackAttribute);
             } else {
