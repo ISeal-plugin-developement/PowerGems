@@ -3,10 +3,7 @@ package me.iseal.powergems.gems;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.gems.powerClasses.tasks.fireballPowerDecay;
 import me.iseal.powergems.misc.Gem;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -57,15 +54,13 @@ public class FireGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        if (sm.tempDataManager.chargingFireball.containsKey(plr)){
-            plr.sendMessage(ChatColor.DARK_RED+"You are already charging a fireball.");
-            return;
+        Location plrEyeLoc = plr.getEyeLocation();
+        World world = plr.getWorld();
+        plrEyeLoc.add(0, -0.5, 0);
+
+        // Spawn particles that move to certain location
+        for (int i = 0; i < 10; i++) {
+            world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
         }
-        fireballPowerDecay fpd = new fireballPowerDecay();
-        fpd.plr = plr;
-        fpd.currentPower = 10;
-        fpd.level = level;
-        fpd.runTaskTimer(Main.getPlugin(), 2, 10);
-        sm.tempDataManager.chargingFireball.put(plr, fpd);
     }
 }

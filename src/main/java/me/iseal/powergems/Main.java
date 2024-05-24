@@ -71,16 +71,22 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
+        l.info("Registered listeners");
         l.info("Registering commands");
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new giveGemCommand());
         Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new giveAllGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new checkUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new reloadConfigCommand());
+        Bukkit.getServer().getPluginCommand("debug").setExecutor(new me.iseal.powergems.commands.debugCommand());
+        l.info("Registered commands");
         l.info("Registering tasks");
         new WaterGemPassive().runTaskTimer(this, 0, 15);
-        l.info("Registering bstats metrics");
-        @SuppressWarnings("unused")
-        Metrics metrics = new Metrics(plugin, 20723);
+        l.info("Registered tasks");
+        if (sm.configManager.isAllowBStatsMetrics()) {
+            l.info("Registering bstats metrics");
+            @SuppressWarnings("unused")
+            Metrics metrics = new Metrics(plugin, 20723);
+        }
         //TODO: addon api
     }
 

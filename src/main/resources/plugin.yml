@@ -20,6 +20,11 @@ commands:
     description: Command to reload the config files
     usage: /reloadconfig
     permission: powergems.reloadconfig
+  debug:
+    description: Debug command
+    usage: /debug
+    aliases: [d, db]
+    permission: powergems.debug
 permissions:
     powergems.givegem:
         description: Permission to use /givegem
@@ -33,6 +38,9 @@ permissions:
     powergems.reloadconfig:
         description: Permission to use /reloadconfig
         default: op
+    powergems.debug:
+        description: Permission to use /debug
+        default: op
     powergems.*:
         description: Permission to use all PowerGems commands
         default: op
@@ -41,3 +49,4 @@ permissions:
             powergems.giveallgem: true
             powergems.checkupdates: true
             powergems.reloadconfig: true
+            powergems.debug: true

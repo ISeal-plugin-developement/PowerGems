@@ -32,6 +32,7 @@ public class ConfigManager {
         config.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         config.setDefault("delayToUseGemsOnJoin", 30);
         config.setDefault("gemCreationAttempts", 10);
+        config.setDefault("allowBStatsMetrics", true);
         config.setDefault("blockedLavaBlocks", new Material[]{Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK});
     }
 
@@ -73,5 +74,8 @@ public class ConfigManager {
 
     public boolean doGemDescriptions() {
         return config.getBoolean("gemsHaveDescriptions");
+    }
+    public boolean isAllowBStatsMetrics() {
+        return config.getBoolean("allowBStatsMetrics");
     }
 }
