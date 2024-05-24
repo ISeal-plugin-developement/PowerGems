@@ -23,20 +23,22 @@ public class fireballPowerDecay extends BukkitRunnable {
 
     @Override
     public void run() {
-        currentPower-=1;
-        if (plr.isSneaking()){
-            currentPower+=10;
+        currentPower -= 1;
+        if (plr.isSneaking()) {
+            currentPower += 10;
         }
-        if (currentPower <= 0){
+        if (currentPower <= 0) {
             tdm.chargingFireball.remove(plr);
-            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED+"You failed to launch the fireball."));
+            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                    new TextComponent(ChatColor.RED + "You failed to launch the fireball."));
             this.cancel();
             return;
         }
-        if (currentPower >= 100){
+        if (currentPower >= 100) {
             spawnFireball();
             tdm.chargingFireball.remove(plr);
-            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED+"You successfully launched the fireball."));
+            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                    new TextComponent(ChatColor.RED + "You successfully launched the fireball."));
             this.cancel();
             return;
         }
@@ -46,17 +48,17 @@ public class fireballPowerDecay extends BukkitRunnable {
             toSay.append("| ");
         }
         toSay.append(ChatColor.GRAY);
-        for (int i = 0; i < 10-nOfBars; i++) {
+        for (int i = 0; i < 10 - nOfBars; i++) {
             toSay.append("| ");
         }
         plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(toSay.toString()));
     }
 
-    private void spawnFireball(){
+    private void spawnFireball() {
         Vector direction = plr.getEyeLocation().getDirection();
         Fireball fireball = plr.launchProjectile(Fireball.class);
         fireball.setVelocity(direction.multiply(2));
-        fireball.setYield(5+level);
+        fireball.setYield(5 + level);
         fireball.setVisualFire(false);
         fireball.setIsIncendiary(Main.config.getBoolean("explosionDamageAllowed"));
         fireball.getPersistentDataContainer().set(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN, true);

@@ -6,7 +6,6 @@ import me.iseal.powergems.misc.Gem;
 import me.iseal.powergems.misc.Utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -17,9 +16,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static me.iseal.powergems.Main.config;
 
 public class LavaGem extends Gem {
 
@@ -27,7 +23,7 @@ public class LavaGem extends Gem {
     private final Utils u = Main.getSingletonManager().utils;
 
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
@@ -35,16 +31,16 @@ public class LavaGem extends Gem {
     @Override
     protected void rightClick(Player plr) {
         int radius = 5;
-        int times = (level/2)+1;
+        int times = (level / 2) + 1;
 
         while (times != 0) {
             ArrayList<Block> blocks = u.getSquareOutlineAirBlocks(plr, radius);
-            //Set the blocks to lava
+            // Set the blocks to lava
             blocks.forEach(nullBlock -> {
                 nullBlock.setType(Material.LAVA);
             });
 
-            //Set the blocks to air
+            // Set the blocks to air
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -52,9 +48,9 @@ public class LavaGem extends Gem {
                         nullBlock.setType(Material.AIR);
                     });
                 }
-            }, 600+(times*20));
+            }, 600 + (times * 20));
             times--;
-            radius = radius+3;
+            radius = radius + 3;
         }
     }
 

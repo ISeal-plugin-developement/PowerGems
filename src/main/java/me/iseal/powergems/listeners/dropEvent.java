@@ -19,7 +19,7 @@ public class dropEvent implements Listener {
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
         ItemStack item = e.getItemDrop().getItemStack();
-        if (gm.isGem(item)){
+        if (gm.isGem(item)) {
             e.setCancelled(true);
         }
     }
@@ -46,7 +46,7 @@ public class dropEvent implements Listener {
             if (current != null) {
                 return;
             }
-            if (gm.isGem(cursor)){
+            if (gm.isGem(cursor)) {
                 e.setCancelled(true);
             }
         }

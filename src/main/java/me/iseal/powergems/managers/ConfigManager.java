@@ -10,10 +10,10 @@ public class ConfigManager {
     Yaml activeGems = null;
     Yaml cooldowns = null;
 
-    public void setUpConfig(){
+    public void setUpConfig() {
         config = new Config("config", Main.getPlugin().getDataFolder().getPath());
-        activeGems = new Yaml("gem_active", Main.getPlugin().getDataFolder()+"\\config\\");
-        cooldowns = new Yaml("cooldowns", Main.getPlugin().getDataFolder()+"\\config\\");
+        activeGems = new Yaml("gem_active", Main.getPlugin().getDataFolder() + "\\config\\");
+        cooldowns = new Yaml("cooldowns", Main.getPlugin().getDataFolder() + "\\config\\");
         Main.config = config;
         config.setDefault("allowOnlyOneGem", false);
         config.setDefault("canDropGems", false);
@@ -33,10 +33,11 @@ public class ConfigManager {
         config.setDefault("delayToUseGemsOnJoin", 30);
         config.setDefault("gemCreationAttempts", 10);
         config.setDefault("allowBStatsMetrics", true);
-        config.setDefault("blockedLavaBlocks", new Material[]{Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK});
+        config.setDefault("blockedLavaBlocks",
+                new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
     }
 
-    public long getGemCooldownBoost(){
+    public long getGemCooldownBoost() {
         return config.getLong("cooldownBoostPerLevelInSeconds");
     }
 
@@ -45,11 +46,11 @@ public class ConfigManager {
     }
 
     public boolean isGemActive(String name) {
-        return activeGems.getOrSetDefault(name+"GemActive", true);
+        return activeGems.getOrSetDefault(name + "GemActive", true);
     }
 
-    public int getStartingCooldown(String name,String ability) {
-        return cooldowns.getOrSetDefault(name+ability+"Cooldown", 60);
+    public int getStartingCooldown(String name, String ability) {
+        return cooldowns.getOrSetDefault(name + ability + "Cooldown", 60);
     }
 
     public boolean getGiveGemOnFirstLogin() {

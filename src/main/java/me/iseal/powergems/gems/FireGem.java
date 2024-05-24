@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 public class FireGem extends Gem {
 
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
@@ -26,7 +26,7 @@ public class FireGem extends Gem {
         Location playerLocation = plr.getLocation();
         World world = plr.getWorld();
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1));
-        int radius = 8*(level/2);
+        int radius = 8 * (level / 2);
         for (int x = playerLocation.getBlockX() - radius; x <= playerLocation.getBlockX() + radius; x++) {
             for (int z = playerLocation.getBlockZ() - radius; z <= playerLocation.getBlockZ() + radius; z++) {
                 Block block = world.getBlockAt(x, playerLocation.getBlockY(), z);
@@ -46,7 +46,7 @@ public class FireGem extends Gem {
         world.createExplosion(playerLocation, 4f, true, false);
         for (Entity entity : plr.getNearbyEntities(6, 6, 6)) {
             if (entity instanceof LivingEntity) {
-                ((LivingEntity) entity).damage(5*(level/2), plr);
+                ((LivingEntity) entity).damage(5 * (level / 2), plr);
                 entity.setFireTicks(100);
             }
         }
@@ -54,6 +54,10 @@ public class FireGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
+        if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
+            plr.sendMessage(ChatColor.DARK_RED + "You are already charging a fireball.");
+            return;
+        }
         Location plrEyeLoc = plr.getEyeLocation();
         World world = plr.getWorld();
         plrEyeLoc.add(0, -0.5, 0);

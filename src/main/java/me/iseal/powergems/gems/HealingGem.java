@@ -10,19 +10,19 @@ import org.bukkit.potion.PotionEffectType;
 public class HealingGem extends Gem {
 
     @Override
-    public void call(Action act, Player plr, ItemStack item){
+    public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
     }
 
     @Override
     protected void rightClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, level-1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, level - 1));
     }
 
     @Override
     protected void leftClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,200, level-1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, level - 1));
     }
 
     @Override

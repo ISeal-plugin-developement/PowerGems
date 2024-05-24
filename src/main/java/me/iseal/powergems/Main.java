@@ -38,15 +38,14 @@ public final class Main extends JavaPlugin {
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = Bukkit.getLogger();
 
-
     @Override
     public void onEnable() {
         l.info("Initializing plugin");
         plugin = this;
         sm = new SingletonManager();
         sm.init();
-        cd = new Yaml("cooldowns", this.getDataFolder()+"\\config\\");
-        gemActive = new Yaml("gem_active", this.getDataFolder()+"\\config\\");
+        cd = new Yaml("cooldowns", this.getDataFolder() + "\\config\\");
+        gemActive = new Yaml("gem_active", this.getDataFolder() + "\\config\\");
         isGemKey = new NamespacedKey(this, "is_power_gem");
         gemPowerKey = new NamespacedKey(this, "gem_power");
         gemLevelKey = new NamespacedKey(this, "gem_level");
@@ -55,16 +54,22 @@ public final class Main extends JavaPlugin {
         isGemExplosionKey = new NamespacedKey(this, "is_gem_explosion");
         sm.initLater();
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
-        if (sm.configManager.allowOnlyOneGem()) new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
+        if (sm.configManager.allowOnlyOneGem())
+            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         l.info("Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new useEvent(), this);
         pluginManager.registerEvents(new enterExitListener(), this);
-        if (config.getBoolean("keepGemsOnDeath")) pluginManager.registerEvents(new deathEvent(), this);
-        if (!config.getBoolean("canDropGems")) pluginManager.registerEvents(new dropEvent(), this);
-        if (!config.getBoolean("explosionDamageAllowed")) pluginManager.registerEvents(new entityExplodeListener(), this);
-        if (config.getBoolean("preventGemPowerTampering")) pluginManager.registerEvents(new noGemHittingListener(), this);
-        //if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new inventoryMoveEvent(), this);
+        if (config.getBoolean("keepGemsOnDeath"))
+            pluginManager.registerEvents(new deathEvent(), this);
+        if (!config.getBoolean("canDropGems"))
+            pluginManager.registerEvents(new dropEvent(), this);
+        if (!config.getBoolean("explosionDamageAllowed"))
+            pluginManager.registerEvents(new entityExplodeListener(), this);
+        if (config.getBoolean("preventGemPowerTampering"))
+            pluginManager.registerEvents(new noGemHittingListener(), this);
+        // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
+        // inventoryMoveEvent(), this);
         pluginManager.registerEvents(new ironProjectileLandListener(), this);
         pluginManager.registerEvents(new inventoryCloseListener(), this);
         pluginManager.registerEvents(new damageListener(), this);
@@ -95,31 +100,40 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
     }
 
+    // getters beyond this point
 
-    //getters beyond this point
+    public static SingletonManager getSingletonManager() {
+        return sm;
+    }
 
-    public static SingletonManager getSingletonManager() { return sm;}
-    public static JavaPlugin getPlugin(){
+    public static JavaPlugin getPlugin() {
         return plugin;
     }
+
     public static NamespacedKey getIsGemKey() {
         return isGemKey;
     }
-    public static NamespacedKey getGemPowerKey(){
+
+    public static NamespacedKey getGemPowerKey() {
         return gemPowerKey;
     }
-    public static NamespacedKey getGemLevelKey(){
+
+    public static NamespacedKey getGemLevelKey() {
         return gemLevelKey;
     }
+
     public static NamespacedKey getIsGemProjectileKey() {
         return isGemProjectileKey;
     }
-    public static NamespacedKey getIsRandomGemKey(){
+
+    public static NamespacedKey getIsRandomGemKey() {
         return isRandomGemKey;
     }
+
     public static NamespacedKey getIsGemExplosionKey() {
         return isGemExplosionKey;
     }
+
     public static UUID getAttributeUUID() {
         return attributeUUID;
     }

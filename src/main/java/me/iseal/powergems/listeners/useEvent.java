@@ -25,7 +25,6 @@ public class useEvent implements Listener {
     private ConfigManager cm = sm.configManager;
     private GemManager gm = sm.gemManager;
 
-
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.PHYSICAL)) {
@@ -35,7 +34,7 @@ public class useEvent implements Listener {
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
         ItemStack item = null;
-        if (offHandItem.getType() == Material.EMERALD && offHandItem.hasItemMeta()){
+        if (offHandItem.getType() == Material.EMERALD && offHandItem.hasItemMeta()) {
             item = offHandItem;
         } else if (mainHandItem.getType() == Material.EMERALD && mainHandItem.hasItemMeta()) {
             item = mainHandItem;
@@ -44,7 +43,8 @@ public class useEvent implements Listener {
         }
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
-        if (dataContainer.has(Main.getIsGemKey(), PersistentDataType.BOOLEAN) && dataContainer.has(Main.getGemPowerKey(), PersistentDataType.STRING)) {
+        if (dataContainer.has(Main.getIsGemKey(), PersistentDataType.BOOLEAN)
+                && dataContainer.has(Main.getGemPowerKey(), PersistentDataType.STRING)) {
             if (tdm.cantUseGems.containsKey(player)) {
                 if (System.currentTimeMillis() < tdm.cantUseGems.get(player)) {
                     player.sendMessage(ChatColor.DARK_RED + "You can't use gems for another " + (tdm.cantUseGems.get(player) - System.currentTimeMillis()) / 1000 + " seconds!");
@@ -53,7 +53,7 @@ public class useEvent implements Listener {
                     tdm.cantUseGems.remove(player);
                 }
             }
-            if (!item.getItemMeta().hasCustomModelData()){
+            if (!item.getItemMeta().hasCustomModelData()) {
                 Bukkit.getLogger().info("Found legacy gem! Migrating...");
                 meta.setCustomModelData(dataContainer.get(Main.getGemPowerKey(), PersistentDataType.INTEGER));
                 item.setItemMeta(meta);
@@ -64,12 +64,12 @@ public class useEvent implements Listener {
         }
     }
 
-    private void handlePower(Player p, Action a, ItemStack item){
-        if (cm.isGemActive(gm.getGemName(item))){
+    private void handlePower(Player p, Action a, ItemStack item) {
+        if (cm.isGemActive(gm.getGemName(item))) {
             gm.runCall(item, a, p);
         } else {
-            p.sendMessage(ChatColor.DARK_RED+"That gem is disabled!");
-            p.sendMessage(ChatColor.DARK_RED+"Ask the server manager if you think it should be activated.");
+            p.sendMessage(ChatColor.DARK_RED + "That gem is disabled!");
+            p.sendMessage(ChatColor.DARK_RED + "Ask the server manager if you think it should be activated.");
         }
     }
 

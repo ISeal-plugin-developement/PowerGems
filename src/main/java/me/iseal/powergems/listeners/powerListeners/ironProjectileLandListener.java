@@ -10,11 +10,11 @@ import org.bukkit.persistence.PersistentDataType;
 public class ironProjectileLandListener implements Listener {
 
     @EventHandler
-    public void onProjLand(ProjectileHitEvent e){
-        if (e.getEntity() instanceof Arrow){
+    public void onProjLand(ProjectileHitEvent e) {
+        if (e.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getEntity();
-            if (arrow.getPersistentDataContainer() != null){
-                if (arrow.getPersistentDataContainer().has(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN)){
+            if (arrow.getPersistentDataContainer() != null) {
+                if (arrow.getPersistentDataContainer().has(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN)) {
                     arrow.remove();
                 }
             }

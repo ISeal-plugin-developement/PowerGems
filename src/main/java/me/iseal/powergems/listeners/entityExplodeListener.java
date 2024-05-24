@@ -9,11 +9,11 @@ import org.bukkit.persistence.PersistentDataType;
 public class entityExplodeListener implements Listener {
 
     @EventHandler
-    public void onExplode(EntityExplodeEvent e){
-        if (!e.getEntity().getPersistentDataContainer().has(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN)){
+    public void onExplode(EntityExplodeEvent e) {
+        if (!e.getEntity().getPersistentDataContainer().has(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN)) {
             return;
         }
-        if (!e.getEntity().getPersistentDataContainer().get(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN)){
+        if (!e.getEntity().getPersistentDataContainer().get(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN)) {
             return;
         }
         e.setCancelled(true);

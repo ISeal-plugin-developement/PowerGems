@@ -33,19 +33,34 @@ jobs:
         if: ${{ env.EXECUTE == 'true' }}
         run: mvn clean package
 
-      - name: Create release
-        if: ${{ env.EXECUTE == 'true' }}
+      - name: Create prerelease
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' }}
         uses: ncipollo/release-action@v1
-        id: release
+        id: preRelease
+        with:
+          name: "v${{ env.VERSION }}"
+          artifacts: "target/output/*.jar"
+          commit: ${{ github.sha }}
+          tag: "${{ env.VERSION }}-${{ github.sha }}"
+          draft: false
+          prerelease: true
+          body: |
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
+            Changelog for this version: ${{ github.event.head_commit.message }}
+            !! THIS IS A PRERELEASE AND NOT FINAL !!
+
+      - name: Create release final
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'false' }}
+        uses: ncipollo/release-action@v1
+        id: finalRelease
         with:
           name: "v${{ env.VERSION }}"
           artifacts: "target/output/*.jar"
           commit: ${{ github.sha }}
           tag: ${{ env.VERSION }}
           draft: false
-          prerelease: ${{ env.PRERELEASE }}
+          prerelease: false
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
             Changelog for this version: ${{ github.event.head_commit.message }}
-
-      
+            
