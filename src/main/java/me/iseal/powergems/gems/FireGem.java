@@ -1,7 +1,5 @@
 package me.iseal.powergems.gems;
 
-import me.iseal.powergems.Main;
-import me.iseal.powergems.gems.powerClasses.tasks.fireballPowerDecay;
 import me.iseal.powergems.misc.Gem;
 import org.bukkit.*;
 import org.bukkit.block.Block;
