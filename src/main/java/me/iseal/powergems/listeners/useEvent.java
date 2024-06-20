@@ -27,7 +27,7 @@ public class useEvent implements Listener {
 
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.PHYSICAL)) {
+        if (e.getAction().equals(Action.PHYSICAL) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             return;
         }
         Player player = e.getPlayer();
