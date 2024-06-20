@@ -1,7 +1,6 @@
 package me.iseal.powergems.gems.powerClasses.tasks;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.gems.FireGem;
 import me.iseal.powergems.managers.CooldownManager;
 import me.iseal.powergems.managers.TempDataManager;
 import net.md_5.bungee.api.ChatMessageType;
