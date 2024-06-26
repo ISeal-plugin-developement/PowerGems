@@ -34,6 +34,9 @@ public class debugCommand implements CommandExecutor {
             case "cancelCooldowns":
                 sm.cooldownManager.cancelCooldowns();
                 break;
+            case "resetConfig":
+                sm.configManager.resetConfig();
+                break;
             default:
                 plr.sendMessage(ChatColor.DARK_RED + "Invalid subcommand.");
                 break;

@@ -1,6 +1,8 @@
 package me.iseal.powergems.managers;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +33,8 @@ public class GemManager {
 
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
-    private ConfigManager cm = null;
+    private GeneralConfigManager gcm = null;
+    private ActiveGemsConfigManager agcm = null;
     private Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
@@ -47,7 +50,8 @@ public class GemManager {
         gemPowerKey = Main.getGemPowerKey();
         gemLevelKey = Main.getGemLevelKey();
         possibleColors = removeElement(ChatColor.values(), ChatColor.MAGIC);
-        cm = Main.getSingletonManager().configManager;
+        gcm = Main.getSingletonManager().configManager.getGeneralConfigManager();
+        agcm = Main.getSingletonManager().configManager.getActiveGemsConfigManager();
     }
 
     /**
@@ -192,11 +196,11 @@ public class GemManager {
     public ItemStack createGem() {
         int random = rand.nextInt(10) + 1;
         int repeating = 0;
-        while (!cm.isGemActive(lookUpName(random)) && repeating < cm.getGemCreationAttempts()) {
+        while (!agcm.isGemActive(lookUpName(random)) && repeating < gcm.getGemCreationAttempts()) {
             random = rand.nextInt(10) + 1;
             repeating++;
         }
-        if (repeating >= cm.getGemCreationAttempts()) {
+        if (repeating >= gcm.getGemCreationAttempts()) {
             l.warning(
                     "Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
             l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
@@ -221,7 +225,7 @@ public class GemManager {
         lore.add(ChatColor.DARK_BLUE + "Level: " + ChatColor.DARK_GREEN
                 + pdc.get(gemLevelKey, PersistentDataType.INTEGER));
 
-        if (cm.doGemDescriptions()) {
+        if (gcm.doGemDescriptions()) {
             switch (gemNumber) {
                 case 1:
                     lore.add(ChatColor.GREEN + "Abilities");
@@ -326,7 +330,7 @@ public class GemManager {
      * @return A string representing the color code.
      */
     private String getColor(int gemNumber) {
-        if (cm.isRandomizedColors()) {
+        if (gcm.isRandomizedColors()) {
             return possibleColors.get(rand.nextInt(possibleColors.size())).toString();
         }
         return switch (gemNumber) {
@@ -468,6 +472,8 @@ public class GemManager {
      * @param item   The ItemStack representing the gem.
      * @param action The Action to perform.
      * @param plr    The player performing the action.
+     *
+     * @throws IllegalArgumentException If the item is not a gem.
      */
     public void runCall(ItemStack item, Action action, Player plr) {
         if (!isGem(item))

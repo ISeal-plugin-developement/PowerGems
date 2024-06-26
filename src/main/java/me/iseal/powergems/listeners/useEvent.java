@@ -1,7 +1,8 @@
 package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.managers.ConfigManager;
+import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
@@ -20,10 +21,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class useEvent implements Listener {
 
-    private SingletonManager sm = Main.getSingletonManager();
-    private TempDataManager tdm = sm.tempDataManager;
-    private ConfigManager cm = sm.configManager;
-    private GemManager gm = sm.gemManager;
+    private final SingletonManager sm = Main.getSingletonManager();
+    private final TempDataManager tdm = sm.tempDataManager;
+    private final ActiveGemsConfigManager agcm = sm.configManager.getActiveGemsConfigManager();
+    private final GemManager gm = sm.gemManager;
 
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
@@ -65,7 +66,7 @@ public class useEvent implements Listener {
     }
 
     private void handlePower(Player p, Action a, ItemStack item) {
-        if (cm.isGemActive(gm.getGemName(item))) {
+        if (agcm.isGemActive(gm.getGemName(item))) {
             gm.runCall(item, a, p);
         } else {
             p.sendMessage(ChatColor.DARK_RED + "That gem is disabled!");

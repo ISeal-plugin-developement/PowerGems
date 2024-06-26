@@ -1,6 +1,7 @@
 package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -12,9 +13,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
-public class deathEvent implements Listener {
+public class DeathEvent implements Listener {
 
     private Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
+    private final GeneralConfigManager generalConfigManager = Main.getSingletonManager().configManager.getGeneralConfigManager();
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
@@ -41,7 +43,7 @@ public class deathEvent implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         final List<ItemStack> toRestore = keepItems.get(e.getPlayer().getUniqueId());
         if (toRestore != null) {
-            if (Main.config.getBoolean("doGemDecay")) {
+            if (generalConfigManager.doGemDecay()) {
                 for (ItemStack item : toRestore) {
                     PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
                     String power = pdc.get(Main.getGemPowerKey(), PersistentDataType.STRING);

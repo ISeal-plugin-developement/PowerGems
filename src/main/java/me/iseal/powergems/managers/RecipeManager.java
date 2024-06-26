@@ -30,7 +30,7 @@ public class RecipeManager implements Listener {
 
     public void initiateRecipes() {
         gemManager = Main.getSingletonManager().gemManager;
-        if (Main.getSingletonManager().configManager.isRandomizedColors()){
+        if (Main.getSingletonManager().configManager.getGeneralConfigManager().isRandomizedColors()){
             l.severe("[PowerGems] Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
             return;
         }

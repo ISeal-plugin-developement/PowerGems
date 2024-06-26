@@ -2,6 +2,7 @@ package me.iseal.powergems.misc;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.*;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -17,7 +18,7 @@ public abstract class Gem {
     protected SingletonManager sm = Main.getSingletonManager();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected ConfigManager configManager = sm.configManager;
+    protected GeneralConfigManager generalConfigManager = sm.configManager.getGeneralConfigManager();
     protected int level;
 
     public void call(Action action, Player plr, ItemStack item) {

@@ -3,7 +3,7 @@ package me.iseal.powergems.listeners;
 import de.leonhard.storage.Json;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.gems.IronGem;
-import me.iseal.powergems.managers.ConfigManager;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
@@ -23,7 +23,7 @@ public class enterExitListener implements Listener {
     private final IronGem ironGem = new IronGem();
     private final GemManager gm = sm.gemManager;
     private final TempDataManager tdm = sm.tempDataManager;
-    private final ConfigManager cm = sm.configManager;
+    private final GeneralConfigManager cm = sm.configManager.getGeneralConfigManager();
     private final long delay = cm.getDelayToUseGems() * 1000;
 
     @EventHandler

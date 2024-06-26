@@ -4,6 +4,7 @@ import me.iseal.powergems.listeners.fallingBlockHitListener;
 import me.iseal.powergems.listeners.powerListeners.iceTargetListener;
 import me.iseal.powergems.listeners.powerListeners.sandMoveListener;
 import me.iseal.powergems.listeners.powerListeners.strenghtMoveListener;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.misc.Utils;
 
 public class SingletonManager {
