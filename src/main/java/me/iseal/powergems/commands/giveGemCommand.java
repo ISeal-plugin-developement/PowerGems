@@ -29,7 +29,7 @@ public class giveGemCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
             @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("Only players can execute this command!");
+            commandSender.sendMessage(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Only players can execute this command!");
             return true;
         }
         Player plr = (Player) commandSender;

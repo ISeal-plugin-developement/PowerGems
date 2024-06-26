@@ -15,11 +15,11 @@ public class reloadConfigCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to use this command!");
             return true;
         }
-        sender.sendMessage(ChatColor.GREEN + "Reloading config...");
+        sender.sendMessage(ChatColor.GREEN + SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Reloading config...");
         Main.config.forceReload();
         Main.gemActive.forceReload();
         Main.cd.forceReload();
-        sender.sendMessage(ChatColor.GREEN + "Config reloaded!");
+        sender.sendMessage(ChatColor.GREEN + SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Config reloaded!");
         return false;
     }
 }

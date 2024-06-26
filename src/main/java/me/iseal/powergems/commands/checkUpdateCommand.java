@@ -15,7 +15,7 @@ public class checkUpdateCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
         if (sender.hasPermission(command.getPermission())) {
-            sender.sendMessage("Starting check");
+            sender.sendMessage(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Starting check");
             um.startUpdate(sender);
             return true;
         }

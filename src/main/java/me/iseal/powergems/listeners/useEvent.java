@@ -48,17 +48,17 @@ public class useEvent implements Listener {
                 && dataContainer.has(Main.getGemPowerKey(), PersistentDataType.STRING)) {
             if (tdm.cantUseGems.containsKey(player)) {
                 if (System.currentTimeMillis() < tdm.cantUseGems.get(player)) {
-                    player.sendMessage(ChatColor.DARK_RED + "You can't use gems for another " + (tdm.cantUseGems.get(player) - System.currentTimeMillis()) / 1000 + " seconds!");
+                    player.sendMessage("You can't use gems for another " + (tdm.cantUseGems.get(player) - System.currentTimeMillis()) / 1000 + " seconds!");
                     return;
                 } else {
                     tdm.cantUseGems.remove(player);
                 }
             }
             if (!item.getItemMeta().hasCustomModelData()) {
-                Bukkit.getLogger().info("Found legacy gem! Migrating...");
+                Bukkit.getLogger().info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Found legacy gem! Migrating...");
                 meta.setCustomModelData(dataContainer.get(Main.getGemPowerKey(), PersistentDataType.INTEGER));
                 item.setItemMeta(meta);
-                Bukkit.getLogger().info("Done!");
+                Bukkit.getLogger().info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Done!");
             }
             Action action = e.getAction();
             handlePower(player, action, item);

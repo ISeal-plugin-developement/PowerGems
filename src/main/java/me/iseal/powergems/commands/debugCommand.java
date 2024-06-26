@@ -17,16 +17,16 @@ public class debugCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.DARK_RED + "You need to be a player to execute this command!");
+            sender.sendMessage(ChatColor.DARK_RED + SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "You need to be a player to execute this command!");
             return true;
         }
         Player plr = (Player) sender;
         if (!plr.hasPermission(command.getPermission())) {
-            plr.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command.");
+            plr.sendMessage("You do not have permission to execute this command.");
             return true;
         }
         if (args.length < 1) {
-            plr.sendMessage(ChatColor.DARK_RED + "You need to specify a subcommand.");
+            plr.sendMessage("You need to specify a subcommand.");
             return true;
         }
 
@@ -38,7 +38,7 @@ public class debugCommand implements CommandExecutor {
                 sm.configManager.resetConfig();
                 break;
             default:
-                plr.sendMessage(ChatColor.DARK_RED + "Invalid subcommand.");
+                plr.sendMessage("Invalid subcommand.");
                 break;
         }
         return true;

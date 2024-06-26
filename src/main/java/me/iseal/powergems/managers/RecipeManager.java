@@ -31,18 +31,18 @@ public class RecipeManager implements Listener {
     public void initiateRecipes() {
         gemManager = Main.getSingletonManager().gemManager;
         if (Main.getSingletonManager().configManager.getGeneralConfigManager().isRandomizedColors()){
-            l.severe("[PowerGems] Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
             return;
         }
         if (Main.config.getBoolean("canUpgradeGems")) {
-            l.info("Creating upgrade recipes...");
+            l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Creating upgrade recipes...");
             upgradeRecipe();
-            l.info("Upgrade recipes created.");
+            l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Upgrade recipes created.");
         }
         if (Main.config.getBoolean("canCraftGems")) {
-            l.info("Creating crafting recipe");
+            l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Creating crafting recipe");
             craftRecipe();
-            l.info("Crafting recipe created.");
+            l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Crafting recipe created.");
         }
     }
 
@@ -88,7 +88,7 @@ public class RecipeManager implements Listener {
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "ndn,dgd,ndn");
-                l.info("Shape not found for crafting (is the file malformed?), using default shape.");
+                l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Shape not found for crafting (is the file malformed?), using default shape.");
             }
             if (!arr.containsKey("ingredients")) {
                 HashMap<String, String> defaultIngredients = new HashMap<>();
@@ -96,7 +96,7 @@ public class RecipeManager implements Listener {
                 defaultIngredients.put("g", "NETHER_STAR");
                 defaultIngredients.put("d", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
-                l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
+                l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Ingredients not found for crafting (is the file malformed?), using default ingredients.");
             }
 
             // Save the changes to the recipes Yaml file
@@ -109,8 +109,8 @@ public class RecipeManager implements Listener {
             }
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
-            l.severe("Error while creating gem crafting recipe, check the configuration file.");
-            l.severe("Disabling plugin to prevent errors.");
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Error while creating gem crafting recipe, check the configuration file.");
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Disabling plugin to prevent errors.");
             l.severe(e.getMessage());
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
@@ -137,14 +137,14 @@ public class RecipeManager implements Listener {
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
                     if (!arr.containsKey("shape")) {
                         arr.put("shape", "nen,ege,nen");
-                        l.info("Shape not found for " + key + " (is the file malformed?), using default shape.");
+                        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Shape not found for " + key + " (is the file malformed?), using default shape.");
                     }
                     if (!arr.containsKey("ingredients")) {
                         HashMap<String, String> defaultIngredients = new HashMap<>();
                         defaultIngredients.put("n", Material.NETHERITE_INGOT.name());
                         defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
                         arr.put("ingredients", defaultIngredients);
-                        l.info("Ingredients not found for " + key
+                        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Ingredients not found for " + key
                                 + " (is the file malformed?), using default ingredients.");
                     }
 
@@ -169,9 +169,9 @@ public class RecipeManager implements Listener {
                 }
             }
         } catch (Exception e) {
-            l.severe("Error while creating gem upgrade recipes, check the configuration file.");
-            l.severe("Last key: " + key);
-            l.severe("Disabling plugin to prevent errors.");
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Error while creating gem upgrade recipes, check the configuration file.");
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Last key: " + key);
+            l.severe(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Disabling plugin to prevent errors.");
             l.severe(e.getMessage());
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }

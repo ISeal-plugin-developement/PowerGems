@@ -40,7 +40,7 @@ public class UpdaterManager extends Thread {
                 .onFail((commandSenders, e) -> handleResult(commandSenders, e, true))
                 .onSuccess((commandSenders, s) -> handleResult(commandSenders, null, false))
                 .checkNow(); // And check right now
-        l.info("Running update check");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Running update check");
     }
 
     /**
@@ -58,9 +58,9 @@ public class UpdaterManager extends Thread {
         for (CommandSender cmdsnr : commandSenders) {
             doneByString = doneByString + cmdsnr.getName() + " ";
         }
-        l.info(checkDoneString + doneByString + (isFail ? "failed" : "successful"));
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + checkDoneString + doneByString + (isFail ? "failed" : "successful"));
         if (isFail) {
-            l.warning("Update test failed with error " + e.getMessage());
+            l.warning(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Update test failed with error " + e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class UpdaterManager extends Thread {
      * @param sender The CommandSender object that requested the update check
      */
     public void startUpdate(CommandSender sender) {
-        l.info(checkRequestedByString + sender.getName());
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + checkRequestedByString + sender.getName());
         uc.checkNow(sender);
     }
 }

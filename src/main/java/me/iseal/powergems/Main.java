@@ -40,7 +40,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        l.info("Initializing plugin");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Initializing plugin");
         plugin = this;
         sm = new SingletonManager();
         sm.init();
@@ -56,7 +56,7 @@ public final class Main extends JavaPlugin {
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
         if (sm.configManager.getGeneralConfigManager().allowOnlyOneGem())
             new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
-        l.info("Registering listeners");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new useEvent(), this);
         pluginManager.registerEvents(new enterExitListener(), this);
@@ -76,19 +76,19 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
-        l.info("Registered listeners");
-        l.info("Registering commands");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registered listeners");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registering commands");
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new giveGemCommand());
         Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new giveAllGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new checkUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new reloadConfigCommand());
         Bukkit.getServer().getPluginCommand("debug").setExecutor(new me.iseal.powergems.commands.debugCommand());
-        l.info("Registered commands");
-        l.info("Registering tasks");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registered commands");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registering tasks");
         new WaterGemPassive().runTaskTimer(this, 0, 15);
-        l.info("Registered tasks");
+        l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registered tasks");
         if (sm.configManager.getGeneralConfigManager().isAllowBStatsMetrics()) {
-            l.info("Registering bstats metrics");
+            l.info(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Registering bstats metrics");
             @SuppressWarnings("unused")
             Metrics metrics = new Metrics(plugin, 20723);
         }

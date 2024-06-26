@@ -18,12 +18,12 @@ public class giveAllGemCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
             @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("Only players can execute this command!");
+            commandSender.sendMessage(SingletonManager.configManager.getGeneralConfigManager().getPluginPrefix() + "Only players can execute this command!");
             return true;
         }
         Player plr = (Player) commandSender;
         if (!plr.hasPermission(command.getPermission())) {
-            plr.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command.");
+            plr.sendMessage("You do not have permission to execute this command.");
             return true;
         }
         if (args.length < 1) {
