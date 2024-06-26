@@ -2,6 +2,7 @@ package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -16,7 +17,7 @@ import java.util.*;
 public class DeathEvent implements Listener {
 
     private Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
-    private final GeneralConfigManager generalConfigManager = Main.getSingletonManager().configManager.getGeneralConfigManager();
+    private final GeneralConfigManager generalConfigManager = SingletonManager.getInstance().configManager.getGeneralConfigManager();
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
@@ -48,10 +49,10 @@ public class DeathEvent implements Listener {
                     PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
                     String power = pdc.get(Main.getGemPowerKey(), PersistentDataType.STRING);
                     if (pdc.get(Main.getGemLevelKey(), PersistentDataType.INTEGER) > 1) {
-                        e.getPlayer().getInventory().addItem(Main.getSingletonManager().gemManager.createGem(power,
+                        e.getPlayer().getInventory().addItem(SingletonManager.getInstance().gemManager.createGem(power,
                                 pdc.get(Main.getGemLevelKey(), PersistentDataType.INTEGER) - 1));
                     } else if (!Main.config.getBoolean("doDecayOnLevel1")) {
-                        e.getPlayer().getInventory().addItem(Main.getSingletonManager().gemManager.createGem(power, 1));
+                        e.getPlayer().getInventory().addItem(SingletonManager.getInstance().gemManager.createGem(power, 1));
                     }
                 }
             } else {

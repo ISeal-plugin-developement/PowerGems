@@ -1,13 +1,10 @@
 package me.iseal.powergems;
 
 import de.leonhard.storage.Yaml;
-import me.iseal.powergems.commands.checkUpdateCommand;
-import me.iseal.powergems.commands.giveAllGemCommand;
-import me.iseal.powergems.commands.giveGemCommand;
-import me.iseal.powergems.commands.reloadConfigCommand;
+import me.iseal.powergems.commands.*;
 import me.iseal.powergems.gems.powerClasses.tasks.WaterGemPassive;
 import me.iseal.powergems.listeners.*;
-import me.iseal.powergems.listeners.passivePowerListeners.damageListener;
+import me.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import me.iseal.powergems.listeners.powerListeners.*;
 import me.iseal.powergems.managers.*;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
@@ -42,7 +39,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         l.info("Initializing plugin");
         plugin = this;
-        sm = new SingletonManager();
+        sm = SingletonManager.getInstance();
         sm.init();
         cd = new Yaml("cooldowns", this.getDataFolder() + "\\config\\");
         gemActive = new Yaml("gem_active", this.getDataFolder() + "\\config\\");
@@ -58,31 +55,31 @@ public final class Main extends JavaPlugin {
             new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         l.info("Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-        pluginManager.registerEvents(new useEvent(), this);
-        pluginManager.registerEvents(new enterExitListener(), this);
+        pluginManager.registerEvents(new UseEvent(), this);
+        pluginManager.registerEvents(new EnterExitListener(), this);
         if (config.getBoolean("keepGemsOnDeath"))
             pluginManager.registerEvents(new DeathEvent(), this);
         if (!config.getBoolean("canDropGems"))
-            pluginManager.registerEvents(new dropEvent(), this);
+            pluginManager.registerEvents(new DropEvent(), this);
         if (!config.getBoolean("explosionDamageAllowed"))
-            pluginManager.registerEvents(new entityExplodeListener(), this);
+            pluginManager.registerEvents(new EntityExplodeListener(), this);
         if (config.getBoolean("preventGemPowerTampering"))
-            pluginManager.registerEvents(new noGemHittingListener(), this);
+            pluginManager.registerEvents(new NoGemHittingListener(), this);
         // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
-        // inventoryMoveEvent(), this);
-        pluginManager.registerEvents(new ironProjectileLandListener(), this);
-        pluginManager.registerEvents(new inventoryCloseListener(), this);
-        pluginManager.registerEvents(new damageListener(), this);
+        // IInventoryMoveEvent(), this);
+        pluginManager.registerEvents(new IronProjectileLandListener(), this);
+        pluginManager.registerEvents(new InventoryCloseListener(), this);
+        pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         l.info("Registered listeners");
         l.info("Registering commands");
-        Bukkit.getServer().getPluginCommand("givegem").setExecutor(new giveGemCommand());
-        Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new giveAllGemCommand());
-        Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new checkUpdateCommand());
-        Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new reloadConfigCommand());
-        Bukkit.getServer().getPluginCommand("debug").setExecutor(new me.iseal.powergems.commands.debugCommand());
+        Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
+        Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new GiveAllGemCommand());
+        Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
+        Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
+        Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
         l.info("Registered commands");
         l.info("Registering tasks");
         new WaterGemPassive().runTaskTimer(this, 0, 15);
@@ -101,11 +98,6 @@ public final class Main extends JavaPlugin {
     }
 
     // getters beyond this point
-
-    public static SingletonManager getSingletonManager() {
-        return sm;
-    }
-
     public static JavaPlugin getPlugin() {
         return plugin;
     }

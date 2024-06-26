@@ -1,6 +1,5 @@
 package me.iseal.powergems.commands;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class giveGemCommand implements CommandExecutor, TabCompleter {
+public class GiveGemCommand implements CommandExecutor, TabCompleter {
 
-    private final SingletonManager sm = Main.getSingletonManager();
+    private final SingletonManager sm = SingletonManager.getInstance();
     private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
 
     {

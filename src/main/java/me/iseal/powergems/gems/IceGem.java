@@ -1,8 +1,8 @@
 package me.iseal.powergems.gems;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.listeners.fallingBlockHitListener;
-import me.iseal.powergems.listeners.powerListeners.iceTargetListener;
+import me.iseal.powergems.listeners.FallingBlockHitListener;
+import me.iseal.powergems.listeners.powerListeners.IceTargetListener;
 import me.iseal.powergems.misc.Gem;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
@@ -16,8 +16,8 @@ import org.bukkit.util.RayTraceResult;
 
 public class IceGem extends Gem {
 
-    private final iceTargetListener itl = sm.iceTargetListen;
-    private final fallingBlockHitListener fbhl = sm.fallingBlockHitListen;
+    private final IceTargetListener itl = sm.iceTargetListen;
+    private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {

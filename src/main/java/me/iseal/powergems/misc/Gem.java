@@ -15,7 +15,7 @@ public abstract class Gem {
     protected Logger l = Bukkit.getLogger();
     protected Player plr;
     protected Class<?> caller = null;
-    protected SingletonManager sm = Main.getSingletonManager();
+    protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
     protected GeneralConfigManager generalConfigManager = sm.configManager.getGeneralConfigManager();

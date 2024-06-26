@@ -2,6 +2,7 @@ package me.iseal.powergems.managers;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,6 +36,7 @@ public class GemManager {
     private ItemStack randomGem = null;
     private GeneralConfigManager gcm = null;
     private ActiveGemsConfigManager agcm = null;
+    private GemMaterialConfigManager gmcm = null;
     private Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
@@ -50,8 +52,9 @@ public class GemManager {
         gemPowerKey = Main.getGemPowerKey();
         gemLevelKey = Main.getGemLevelKey();
         possibleColors = removeElement(ChatColor.values(), ChatColor.MAGIC);
-        gcm = Main.getSingletonManager().configManager.getGeneralConfigManager();
-        agcm = Main.getSingletonManager().configManager.getActiveGemsConfigManager();
+        gcm = SingletonManager.getInstance().configManager.getGeneralConfigManager();
+        agcm = SingletonManager.getInstance().configManager.getActiveGemsConfigManager();
+        gmcm = SingletonManager.getInstance().configManager.getGemMaterialConfigManager();
     }
 
     /**
@@ -134,7 +137,7 @@ public class GemManager {
      */
     public ItemStack getRandomGemItem() {
         if (randomGem == null) {
-            randomGem = new ItemStack(Material.EMERALD);
+            randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
             gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
@@ -355,9 +358,8 @@ public class GemManager {
      * @return An ItemStack representing the created gem.
      */
     private ItemStack generateItemStack(int gemNumber, int gemLevel) {
-        ItemStack holderItem = new ItemStack(Material.EMERALD);
-        ItemMeta reGemMeta = holderItem.getItemMeta();
-        ItemStack finalGem = new ItemStack(Material.EMERALD);
+        ItemStack gemItem = new ItemStack(gmcm.getGemMaterial(lookUpName(gemNumber)));
+        ItemMeta reGemMeta = gemItem.getItemMeta();
         reGemMeta.setDisplayName(getColor(gemNumber) + lookUpName(gemNumber) + " Gem");
         PersistentDataContainer reDataContainer = reGemMeta.getPersistentDataContainer();
         reDataContainer.set(isGemKey, PersistentDataType.BOOLEAN, true);
@@ -365,8 +367,8 @@ public class GemManager {
         reDataContainer.set(gemLevelKey, PersistentDataType.INTEGER, gemLevel);
         reGemMeta = createLore(reGemMeta, gemNumber);
         reGemMeta.setCustomModelData(gemNumber);
-        finalGem.setItemMeta(reGemMeta);
-        return finalGem;
+        gemItem.setItemMeta(reGemMeta);
+        return gemItem;
     }
 
     /**

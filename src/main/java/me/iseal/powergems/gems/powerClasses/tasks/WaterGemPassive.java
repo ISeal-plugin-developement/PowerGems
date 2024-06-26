@@ -2,6 +2,7 @@ package me.iseal.powergems.gems.powerClasses.tasks;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.misc.Utils;
 
 import org.bukkit.Bukkit;
@@ -11,8 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class WaterGemPassive extends BukkitRunnable {
 
-    private final Utils utils = Main.getSingletonManager().utils;
-    private final GemManager gemManager = Main.getSingletonManager().gemManager;
+    private final Utils utils = SingletonManager.getInstance().utils;
+    private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
     @Override
     public void run() {

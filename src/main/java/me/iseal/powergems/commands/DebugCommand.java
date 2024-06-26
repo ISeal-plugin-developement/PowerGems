@@ -1,6 +1,5 @@
 package me.iseal.powergems.commands;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,9 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class debugCommand implements CommandExecutor {
+public class DebugCommand implements CommandExecutor {
 
-    private final SingletonManager sm = Main.getSingletonManager();
+    private final SingletonManager sm = SingletonManager.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,

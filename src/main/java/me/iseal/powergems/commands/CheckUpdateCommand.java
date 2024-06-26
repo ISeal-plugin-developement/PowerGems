@@ -1,15 +1,15 @@
 package me.iseal.powergems.commands;
 
-import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.UpdaterManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class checkUpdateCommand implements CommandExecutor {
+public class CheckUpdateCommand implements CommandExecutor {
 
-    UpdaterManager um = Main.getSingletonManager().updaterManager;
+    private final UpdaterManager um = SingletonManager.getInstance().updaterManager;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,

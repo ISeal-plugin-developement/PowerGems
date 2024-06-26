@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 
-public class sandMoveListener implements Listener {
+public class SandMoveListener implements Listener {
 
     private ArrayList<Block> slowSandList = new ArrayList<>();
 

@@ -3,6 +3,7 @@ package me.iseal.powergems.tasks;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.CooldownManager;
 import me.iseal.powergems.managers.GemManager;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,9 +13,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class AddCooldownToToolBar extends BukkitRunnable {
 
-    private final GemManager gm = Main.getSingletonManager().gemManager;
-    private final CooldownManager cm = Main.getSingletonManager().cooldownManager;
-    private final TempDataManager tdm = Main.getSingletonManager().tempDataManager;
+    private final GemManager gm = SingletonManager.getInstance().gemManager;
+    private final CooldownManager cm = SingletonManager.getInstance().cooldownManager;
+    private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
 
     @Override
     public void run() {

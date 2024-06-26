@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-public class entityExplodeListener implements Listener {
+public class EntityExplodeListener implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {

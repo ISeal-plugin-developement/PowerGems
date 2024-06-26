@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class fallingBlockHitListener implements Listener {
+public class FallingBlockHitListener implements Listener {
 
     List<String> entityList = new ArrayList<String>();
 

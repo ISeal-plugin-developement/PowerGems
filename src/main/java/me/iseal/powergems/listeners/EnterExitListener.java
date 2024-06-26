@@ -16,10 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedList;
 import java.util.UUID;
 
-public class enterExitListener implements Listener {
+public class EnterExitListener implements Listener {
 
     private final Json playerJoined = new Json("playerData", Main.getPlugin().getDataFolder().getPath());
-    private final SingletonManager sm = Main.getSingletonManager();
+    private final SingletonManager sm = SingletonManager.getInstance();
     private final IronGem ironGem = new IronGem();
     private final GemManager gm = sm.gemManager;
     private final TempDataManager tdm = sm.tempDataManager;

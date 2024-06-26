@@ -29,8 +29,8 @@ public class RecipeManager implements Listener {
     private final Logger l = Bukkit.getLogger();
 
     public void initiateRecipes() {
-        gemManager = Main.getSingletonManager().gemManager;
-        if (Main.getSingletonManager().configManager.getGeneralConfigManager().isRandomizedColors()){
+        gemManager = SingletonManager.getInstance().gemManager;
+        if (SingletonManager.getInstance().configManager.getGeneralConfigManager().isRandomizedColors()){
             l.severe("[PowerGems] Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
             return;
         }
@@ -84,7 +84,7 @@ public class RecipeManager implements Listener {
         try {
             String key = "gem_craft_recipe";
             NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
-            ShapedRecipe sr = new ShapedRecipe(nk, Main.getSingletonManager().gemManager.getRandomGemItem());
+            ShapedRecipe sr = new ShapedRecipe(nk, SingletonManager.getInstance().gemManager.getRandomGemItem());
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "ndn,dgd,ndn");

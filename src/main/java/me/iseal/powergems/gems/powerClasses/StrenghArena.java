@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 
 public class StrenghArena implements Listener {
 
-    SingletonManager sm = Main.getSingletonManager();
+    private final SingletonManager sm = SingletonManager.getInstance();
 
     private Player player;
     private Location StartingLocation;

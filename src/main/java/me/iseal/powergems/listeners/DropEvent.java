@@ -1,7 +1,7 @@
 package me.iseal.powergems.listeners;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,9 +12,9 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class dropEvent implements Listener {
+public class DropEvent implements Listener {
 
-    private final GemManager gm = Main.getSingletonManager().gemManager;
+    private final GemManager gm = SingletonManager.getInstance().gemManager;
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {

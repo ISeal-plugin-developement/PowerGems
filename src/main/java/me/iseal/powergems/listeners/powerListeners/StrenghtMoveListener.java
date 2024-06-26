@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.LinkedList;
 
-public class strenghtMoveListener implements Listener {
+public class StrenghtMoveListener implements Listener {
     private final double radius = 5.0;
     private LinkedList<Location> startingLocations = new LinkedList<>();
 

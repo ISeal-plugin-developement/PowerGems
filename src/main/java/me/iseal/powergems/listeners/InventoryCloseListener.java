@@ -2,6 +2,7 @@ package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,10 +15,10 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.HashMap;
 import java.util.Random;
 
-public class inventoryCloseListener implements Listener {
+public class InventoryCloseListener implements Listener {
 
-    private final ItemStack randomGem = Main.getSingletonManager().gemManager.getRandomGemItem();
-    private final GemManager gm = Main.getSingletonManager().gemManager;
+    private final ItemStack randomGem = SingletonManager.getInstance().gemManager.getRandomGemItem();
+    private final GemManager gm = SingletonManager.getInstance().gemManager;
     private final Random rand = new Random();
 
     @EventHandler

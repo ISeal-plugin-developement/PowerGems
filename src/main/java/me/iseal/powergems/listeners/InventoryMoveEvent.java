@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-public class inventoryMoveEvent implements Listener {
+public class InventoryMoveEvent implements Listener {
 
     private final Logger l = Bukkit.getLogger();
 

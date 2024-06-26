@@ -1,24 +1,24 @@
 package me.iseal.powergems.listeners.powerListeners;
 
+import org.bukkit.entity.Blaze;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import java.util.ArrayList;
 
-public class iceTargetListener implements Listener {
+public class LavaTargetListener implements Listener {
 
-    ArrayList<Player> iceNoTargetList = new ArrayList<>();
+    ArrayList<Player> lavaNoTargetList = new ArrayList<>();
 
     @EventHandler
     public void onTarget(EntityTargetLivingEntityEvent e) {
-        if (iceNoTargetList.size() > 0) {
+        if (lavaNoTargetList.size() > 0) {
             Entity targeter = e.getEntity();
-            if (targeter instanceof Snowman) {
-                if (iceNoTargetList.contains(e.getTarget())) {
+            if (targeter instanceof Blaze) {
+                if (lavaNoTargetList.contains(e.getTarget())) {
                     e.setCancelled(true);
                 }
             }
@@ -26,11 +26,11 @@ public class iceTargetListener implements Listener {
     }
 
     public void addToList(Player plr) {
-        iceNoTargetList.add(plr);
+        lavaNoTargetList.add(plr);
     }
 
     public void removeFromList(Player plr) {
-        iceNoTargetList.remove(plr);
+        lavaNoTargetList.remove(plr);
     }
 
 }

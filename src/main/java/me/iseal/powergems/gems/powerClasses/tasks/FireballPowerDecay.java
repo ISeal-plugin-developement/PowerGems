@@ -2,6 +2,7 @@ package me.iseal.powergems.gems.powerClasses.tasks;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.CooldownManager;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,10 +13,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class fireballPowerDecay extends BukkitRunnable {
+public class FireballPowerDecay extends BukkitRunnable {
 
-    private final TempDataManager tdm = Main.getSingletonManager().tempDataManager;
-    private final CooldownManager cm = Main.getSingletonManager().cooldownManager;
+    private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
+    private final CooldownManager cm = SingletonManager.getInstance().cooldownManager;
     public Player plr = null;
     public int currentPower = 0;
     public int level = 1;

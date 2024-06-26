@@ -1,5 +1,6 @@
 package me.iseal.powergems.misc;
 
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +16,7 @@ import java.util.Objects;
 
 public class Utils {
 
-    private final GemManager gemManager = Main.getSingletonManager().gemManager;
+    private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
     public boolean isLeftClick(Action a) {
         return a.equals(Action.LEFT_CLICK_BLOCK) || a.equals(Action.LEFT_CLICK_AIR);

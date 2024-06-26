@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 public class CooldownManager {
 
-    private final GeneralConfigManager cm = Main.getSingletonManager().configManager.getGeneralConfigManager();
-    private final CooldownConfigManager ccm = Main.getSingletonManager().configManager.getCooldownConfigManager();
+    private final GeneralConfigManager cm = SingletonManager.getInstance().configManager.getGeneralConfigManager();
+    private final CooldownConfigManager ccm = SingletonManager.getInstance().configManager.getCooldownConfigManager();
 
     private final BlockingQueue<CooldownObject> rightClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> leftClickCooldowns = new LinkedBlockingQueue<>();

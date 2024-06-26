@@ -1,7 +1,8 @@
 package me.iseal.powergems.gems;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.listeners.powerListeners.lavaTargetListener;
+import me.iseal.powergems.listeners.powerListeners.LavaTargetListener;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.misc.Gem;
 import me.iseal.powergems.misc.Utils;
 
@@ -19,8 +20,8 @@ import java.util.ArrayList;
 
 public class LavaGem extends Gem {
 
-    private final lavaTargetListener ltl = new lavaTargetListener();
-    private final Utils u = Main.getSingletonManager().utils;
+    private final LavaTargetListener ltl = new LavaTargetListener();
+    private final Utils u = SingletonManager.getInstance().utils;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {

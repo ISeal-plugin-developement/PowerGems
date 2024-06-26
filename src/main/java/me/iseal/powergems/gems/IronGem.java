@@ -1,6 +1,7 @@
 package me.iseal.powergems.gems;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
 import me.iseal.powergems.misc.Gem;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ import org.bukkit.util.Vector;
 
 public class IronGem extends Gem {
 
-    private final TempDataManager tdm = Main.getSingletonManager().tempDataManager;
+    private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
     private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification",
             8, AttributeModifier.Operation.ADD_NUMBER);
     private final AttributeModifier toughnessModifier = new AttributeModifier(Main.getAttributeUUID(),

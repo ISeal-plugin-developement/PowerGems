@@ -1,7 +1,8 @@
 package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.listeners.powerListeners.sandMoveListener;
+import me.iseal.powergems.listeners.powerListeners.SandMoveListener;
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,9 +10,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-public class noGemHittingListener implements Listener {
+public class NoGemHittingListener implements Listener {
 
-    sandMoveListener sml = Main.getSingletonManager().sandMoveListen;
+    private final SandMoveListener sml = SingletonManager.getInstance().sandMoveListen;
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {

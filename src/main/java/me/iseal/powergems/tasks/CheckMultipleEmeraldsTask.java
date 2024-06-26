@@ -1,6 +1,7 @@
 package me.iseal.powergems.tasks;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.misc.Utils;
 import me.iseal.powergems.managers.GemManager;
 import org.bukkit.Bukkit;
@@ -13,8 +14,8 @@ import java.util.Random;
 
 public class CheckMultipleEmeraldsTask extends BukkitRunnable {
 
-    private final Utils ut = Main.getSingletonManager().utils;
-    private final GemManager dm = Main.getSingletonManager().gemManager;
+    private final Utils ut = SingletonManager.getInstance().utils;
+    private final GemManager dm = SingletonManager.getInstance().gemManager;
     private final Random random = new Random();
 
     @Override

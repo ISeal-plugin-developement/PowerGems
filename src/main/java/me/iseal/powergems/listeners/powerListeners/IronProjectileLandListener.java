@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-public class ironProjectileLandListener implements Listener {
+public class IronProjectileLandListener implements Listener {
 
     @EventHandler
     public void onProjLand(ProjectileHitEvent e) {
