@@ -23,7 +23,7 @@ public class giveAllGemCommand implements CommandExecutor {
         }
         Player plr = (Player) commandSender;
         if (!plr.hasPermission(command.getPermission())) {
-            plr.sendMessage("You do not have permission to execute this command.");
+            plr.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command.");
             return true;
         }
         if (args.length < 1) {
