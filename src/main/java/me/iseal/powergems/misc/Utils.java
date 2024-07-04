@@ -1,5 +1,6 @@
 package me.iseal.powergems.misc;
 
+import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +18,7 @@ import java.util.Objects;
 public class Utils {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final GemMaterialConfigManager gemMaterialConfigManager = SingletonManager.getInstance().configManager.getGemMaterialConfigManager();
 
     public boolean isLeftClick(Action a) {
         return a.equals(Action.LEFT_CLICK_BLOCK) || a.equals(Action.LEFT_CLICK_AIR);
@@ -131,4 +133,23 @@ public class Utils {
 
     }
 
+    public boolean hasAtLeastXAmountOfGems(Player player, int x) {
+        int totalCount = 0;
+        // Iterate over the player's inventory once
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && gemManager.isGem(item)) {
+                totalCount += item.getAmount();
+                // Early termination if the count reaches or exceeds 'x'
+                if (totalCount >= x) {
+                    return true;
+                }
+            }
+        }
+        // Check the offhand item separately
+        ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        if (offHandItem != null && gemManager.isGem(offHandItem)) {
+            totalCount += offHandItem.getAmount();
+        }
+        return totalCount >= x;
+    }
 }
