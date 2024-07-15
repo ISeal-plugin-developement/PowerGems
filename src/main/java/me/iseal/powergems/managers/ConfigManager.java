@@ -25,7 +25,7 @@ public class ConfigManager {
                 init.invoke(instance);
             }
         } catch(Exception ex){
-            ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass());
+            ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "SET_UP_CONFIG");
         }
     }
 
@@ -48,7 +48,7 @@ public class ConfigManager {
                 registeredConfigInstances.put(clazz, instance);
             }
         } catch (Exception ex) {
-            ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass());
+            ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RESISTER_CONFIG_INSTANCE");
         }
     }
 
@@ -63,7 +63,7 @@ public class ConfigManager {
                 Method init = currentClass.getMethod("resetConfig");
                 init.invoke(instance);
             } catch (Exception ex) {
-                ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass(), currentClass);
+                ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RESET_CONFIG", currentClass);
             }
         }
     }

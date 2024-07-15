@@ -1,7 +1,6 @@
 package me.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
-import de.leonhard.storage.Yaml;
 import me.iseal.powergems.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,6 +33,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("allowBStatsMetrics", true);
         file.setDefault("blockedLavaBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
+        file.setDefault("debugMode", false);
     }
 
     public long getGemCooldownBoost() {
@@ -86,5 +86,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean doGemDecayOnLevelOne() {
         return file.getBoolean("doGemDecayOnLevelOne");
+    }
+    public boolean isDebugMode() {
+        return file.getBoolean("debugMode");
     }
 }

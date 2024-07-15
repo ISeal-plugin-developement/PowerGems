@@ -47,7 +47,7 @@ public class IronGem extends Gem {
         try {
             knockbackInstance.addModifier(knockbackAttribute);
         } catch (IllegalArgumentException ex) {
-            ExceptionHandler.dealWithException(ex, Level.WARNING, this.getClass(), "ALREADY_HAS_IRON_MODIFIERS_RIGHT");
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_RIGHT");
         }
         plr.setVelocity(new Vector(0, 0, 0));
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
@@ -90,7 +90,7 @@ public class IronGem extends Gem {
             armorAttribute.addModifier(armorModifier);
             toughnessAttribute.addModifier(toughnessModifier);
         } catch (IllegalArgumentException ex) {
-            ExceptionHandler.dealWithException(ex, Level.WARNING, this.getClass(), "ALREADY_HAS_IRON_MODIFIERS_SHIFT");
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_SHIFT");
         }
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());

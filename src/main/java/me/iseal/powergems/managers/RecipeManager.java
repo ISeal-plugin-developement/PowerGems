@@ -151,7 +151,7 @@ public class RecipeManager implements Listener {
             }
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
-            ExceptionHandler.dealWithException(e, Level.SEVERE, this.getClass(), "RECIPE_REGISTER_CRAFT");
+            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "RECIPE_REGISTER_CRAFT");
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }
