@@ -34,6 +34,9 @@ public class GemManager {
 
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
+    private SingletonManager sm = null;
+    private ConfigManager cm = null;
+    private NamespacedKeyManager nkm = null;
     private GeneralConfigManager gcm = null;
     private ActiveGemsConfigManager agcm = null;
     private GemMaterialConfigManager gmcm = null;
@@ -41,6 +44,7 @@ public class GemManager {
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
+    private NamespacedKey gemCreationTimeKey = null;
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = Bukkit.getLogger();
 
@@ -48,13 +52,17 @@ public class GemManager {
      * Initializes the gem manager with necessary keys and configurations.
      */
     public void initLater() {
-        isGemKey = Main.getIsGemKey();
-        gemPowerKey = Main.getGemPowerKey();
-        gemLevelKey = Main.getGemLevelKey();
+        sm = SingletonManager.getInstance();
+        cm = sm.configManager;
+        nkm = sm.namespacedKeyManager;
+        isGemKey = nkm.getKey("is_power_gem");
+        gemPowerKey = nkm.getKey("gem_power");
+        gemLevelKey = nkm.getKey("gem_level");
+        gemCreationTimeKey = nkm.getKey("gem_creation_time");
         possibleColors = removeElement(ChatColor.values(), ChatColor.MAGIC);
-        gcm = SingletonManager.getInstance().configManager.getGeneralConfigManager();
-        agcm = SingletonManager.getInstance().configManager.getActiveGemsConfigManager();
-        gmcm = SingletonManager.getInstance().configManager.getGemMaterialConfigManager();
+        gcm = (GeneralConfigManager) cm.getRegisteredConfigInstance(GeneralConfigManager.class);
+        agcm = (ActiveGemsConfigManager) cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
+        gmcm = (GemMaterialConfigManager) cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
     }
 
     /**
@@ -141,7 +149,7 @@ public class GemManager {
             ItemMeta gemMeta = randomGem.getItemMeta();
             gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
-            pdc.set(Main.getIsRandomGemKey(), PersistentDataType.BOOLEAN, true);
+            pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
             randomGem.setItemMeta(gemMeta);
         }
         return randomGem;
@@ -204,9 +212,8 @@ public class GemManager {
             repeating++;
         }
         if (repeating >= gcm.getGemCreationAttempts()) {
-            l.warning(
-                    "Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
-            l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
+            l.warning(gcm.getPluginPrefix()+"Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
+            l.warning(gcm.getPluginPrefix()+"You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
             return null;
         }
         return generateItemStack(random, 1);
@@ -365,6 +372,7 @@ public class GemManager {
         reDataContainer.set(isGemKey, PersistentDataType.BOOLEAN, true);
         reDataContainer.set(gemPowerKey, PersistentDataType.STRING, lookUpName(gemNumber));
         reDataContainer.set(gemLevelKey, PersistentDataType.INTEGER, gemLevel);
+        reDataContainer.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
         reGemMeta = createLore(reGemMeta, gemNumber);
         reGemMeta.setCustomModelData(gemNumber);
         gemItem.setItemMeta(reGemMeta);
@@ -487,8 +495,24 @@ public class GemManager {
             init.invoke(instance, action, plr, item);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("Something went wrong with the dial init");
+            throw new IllegalArgumentException("Something went wrong with the gem init");
         }
     }
 
+    /*
+    * Returns the gem creation time
+    * 
+    * @return The gem creation time, or -1 if it is not a gem
+     */
+    public long getGemCreationTime(ItemStack item) {
+        if (!isGem(item)) {
+            return -1;
+        }
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        if (!pdc.has(gemCreationTimeKey, PersistentDataType.LONG)) {
+            //old gem (migrate it)
+            pdc.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
+        }
+        return pdc.get(gemCreationTimeKey, PersistentDataType.LONG);
+    }
 }

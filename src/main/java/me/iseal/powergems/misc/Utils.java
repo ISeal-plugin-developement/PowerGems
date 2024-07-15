@@ -1,24 +1,29 @@
 package me.iseal.powergems.misc;
 
 import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import me.iseal.powergems.managers.Configuration.GemPowerConfigManager;
 import me.iseal.powergems.managers.SingletonManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
 
+import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Utils {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
-    private final GemMaterialConfigManager gemMaterialConfigManager = SingletonManager.getInstance().configManager.getGemMaterialConfigManager();
 
     public boolean isLeftClick(Action a) {
         return a.equals(Action.LEFT_CLICK_BLOCK) || a.equals(Action.LEFT_CLICK_AIR);
@@ -122,7 +127,7 @@ public class Utils {
 
     public ArrayList<ItemStack> getUserGems(Player plr) {
         ArrayList<ItemStack> gems = new ArrayList<>();
-        if (!hasAtLeastXAmount(plr, Material.EMERALD, 1))
+        if (!hasAtLeastXAmountOfGems(plr, 1))
             return gems;
         for (ItemStack item : plr.getInventory().getContents()) {
             if (gemManager.isGem(item)) {
@@ -133,10 +138,10 @@ public class Utils {
 
     }
 
-    public boolean hasAtLeastXAmountOfGems(Player player, int x) {
+    public boolean hasAtLeastXAmountOfGems(Inventory inv, int x, ItemStack... moreToCheck){
         int totalCount = 0;
         // Iterate over the player's inventory once
-        for (ItemStack item : player.getInventory().getContents()) {
+        for (ItemStack item : inv.getContents()) {
             if (item != null && gemManager.isGem(item)) {
                 totalCount += item.getAmount();
                 // Early termination if the count reaches or exceeds 'x'
@@ -145,11 +150,21 @@ public class Utils {
                 }
             }
         }
-        // Check the offhand item separately
-        ItemStack offHandItem = player.getInventory().getItemInOffHand();
-        if (offHandItem != null && gemManager.isGem(offHandItem)) {
-            totalCount += offHandItem.getAmount();
+
+        for (ItemStack item : moreToCheck) {
+            if (item != null && gemManager.isGem(item)) {
+                totalCount += item.getAmount();
+                // Early termination if the count reaches or exceeds 'x'
+                if (totalCount >= x) {
+                    return true;
+                }
+            }
         }
+
         return totalCount >= x;
+    }
+
+    public boolean hasAtLeastXAmountOfGems(Player player, int x) {
+        return hasAtLeastXAmountOfGems(player.getInventory(), x, player.getInventory().getItemInOffHand());
     }
 }

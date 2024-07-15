@@ -23,8 +23,7 @@ public class UseEvent implements Listener {
 
     private final SingletonManager sm = SingletonManager.getInstance();
     private final TempDataManager tdm = sm.tempDataManager;
-    private final ActiveGemsConfigManager agcm = sm.configManager.getActiveGemsConfigManager();
-    private final GemMaterialConfigManager gmcm = sm.configManager.getGemMaterialConfigManager();
+    private final ActiveGemsConfigManager agcm = (ActiveGemsConfigManager) sm.configManager.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
     private final GemManager gm = sm.gemManager;
 
     @EventHandler

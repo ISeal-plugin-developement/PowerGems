@@ -29,8 +29,10 @@ public class SingletonManager {
     public IceTargetListener iceTargetListen;
     public FallingBlockHitListener fallingBlockHitListen;
     public TempDataManager tempDataManager;
+    public NamespacedKeyManager namespacedKeyManager;
 
     public void init() {
+        namespacedKeyManager = new NamespacedKeyManager();
         configManager = new ConfigManager();
         updaterManager = new UpdaterManager();
         tempDataManager = new TempDataManager();

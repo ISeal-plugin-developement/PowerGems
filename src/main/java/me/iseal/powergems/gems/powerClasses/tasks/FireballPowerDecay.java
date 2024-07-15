@@ -1,7 +1,9 @@
 package me.iseal.powergems.gems.powerClasses.tasks;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.managers.CooldownManager;
+import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
 import net.md_5.bungee.api.ChatMessageType;
@@ -16,7 +18,8 @@ import org.bukkit.util.Vector;
 public class FireballPowerDecay extends BukkitRunnable {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
-    private final CooldownManager cm = SingletonManager.getInstance().cooldownManager;
+    private final GeneralConfigManager gdm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     public Player plr = null;
     public int currentPower = 0;
     public int level = 1;
@@ -60,9 +63,9 @@ public class FireballPowerDecay extends BukkitRunnable {
         fireball.setVelocity(direction.multiply(2));
         fireball.setYield(5 + level);
         fireball.setVisualFire(false);
-        fireball.setIsIncendiary(Main.config.getBoolean("explosionDamageAllowed"));
-        fireball.getPersistentDataContainer().set(Main.getIsGemExplosionKey(), PersistentDataType.BOOLEAN, true);
-        fireball.getPersistentDataContainer().set(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN, true);
+        fireball.setIsIncendiary(gdm.isExplosionDamageAllowed());
+        fireball.getPersistentDataContainer().set(nkm.getKey("is_gem_explosion"), PersistentDataType.BOOLEAN, true);
+        fireball.getPersistentDataContainer().set(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN, true);
     }
 
 }

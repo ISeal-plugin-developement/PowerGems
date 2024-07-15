@@ -23,7 +23,7 @@ public class EnterExitListener implements Listener {
     private final IronGem ironGem = new IronGem();
     private final GemManager gm = sm.gemManager;
     private final TempDataManager tdm = sm.tempDataManager;
-    private final GeneralConfigManager cm = sm.configManager.getGeneralConfigManager();
+    private final GeneralConfigManager cm = (GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final long delay = cm.getDelayToUseGems() * 1000;
 
     @EventHandler

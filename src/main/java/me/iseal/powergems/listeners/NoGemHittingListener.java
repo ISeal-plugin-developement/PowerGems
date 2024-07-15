@@ -2,6 +2,7 @@ package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.listeners.powerListeners.SandMoveListener;
+import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class NoGemHittingListener implements Listener {
 
     private final SandMoveListener sml = SingletonManager.getInstance().sandMoveListen;
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
@@ -29,7 +31,7 @@ public class NoGemHittingListener implements Listener {
             return;
         if (e.getEntity().getPersistentDataContainer() == null)
             return;
-        if (!e.getEntity().getPersistentDataContainer().has(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN))
+        if (!e.getEntity().getPersistentDataContainer().has(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN))
             return;
         e.setCancelled(true);
     }

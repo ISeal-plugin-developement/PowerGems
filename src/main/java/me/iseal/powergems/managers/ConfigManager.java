@@ -1,45 +1,76 @@
 package me.iseal.powergems.managers;
 
-import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import me.iseal.powergems.managers.Configuration.CooldownConfigManager;
-import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.Configuration.*;
+import me.iseal.powergems.misc.ExceptionHandler;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 public class ConfigManager {
 
-    private final GeneralConfigManager generalConfigManager = new GeneralConfigManager();
-    private final ActiveGemsConfigManager activeGemsConfigManager = new ActiveGemsConfigManager();
-    private final CooldownConfigManager cooldownConfigManager = new CooldownConfigManager();
-    private final GemMaterialConfigManager gemMaterialConfigManager = new GemMaterialConfigManager();
+    private final ArrayList<Class< ? extends AbstractConfigManager>> registeredConfigurations = new ArrayList<>(5);
+    private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
 
     public void setUpConfig() {
-        generalConfigManager.setUpConfig();
-        activeGemsConfigManager.setUpConfig();
-        cooldownConfigManager.setUpConfig();
-        gemMaterialConfigManager.setUpConfig();
+        try {
+            for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
+                Object instance = getRegisteredConfigInstance(currentClass);
+                Method init = currentClass.getMethod("setUpConfig");
+                init.invoke(instance);
+            }
+        } catch(Exception ex){
+            ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass());
+        }
     }
 
-    public GeneralConfigManager getGeneralConfigManager() {
-        return generalConfigManager;
+    /*
+    * Gets the instance of a registered config object
+    *
+    * @return The instance, registering it if needed
+     */
+    public Object getRegisteredConfigInstance(Class<? extends AbstractConfigManager> clazz) {
+        if (!registeredConfigInstances.containsKey(clazz)){
+            registerConfigInstance(clazz);
+        }
+        return registeredConfigInstances.get(clazz);
     }
 
-    public ActiveGemsConfigManager getActiveGemsConfigManager() {
-        return activeGemsConfigManager;
+    private void registerConfigInstance(Class<? extends AbstractConfigManager> clazz) {
+        try {
+            if (!registeredConfigInstances.containsKey(clazz)) {
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                registeredConfigInstances.put(clazz, instance);
+            }
+        } catch (Exception ex) {
+            ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass());
+        }
     }
 
-    public CooldownConfigManager getCooldownConfigManager() {
-        return cooldownConfigManager;
-    }
-
-    public GemMaterialConfigManager getGemMaterialConfigManager() {
-        return gemMaterialConfigManager;
+    public static String getConfigFolderPath(){
+        return Main.getPlugin().getDataFolder() + "\\config\\";
     }
 
     public void resetConfig() {
-        generalConfigManager.resetConfig();
-        activeGemsConfigManager.resetConfig();
-        cooldownConfigManager.resetConfig();
-        gemMaterialConfigManager.resetConfig();
+        for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
+            try {
+                Object instance = getRegisteredConfigInstance(currentClass);
+                Method init = currentClass.getMethod("resetConfig");
+                init.invoke(instance);
+            } catch (Exception ex) {
+                ExceptionHandler.dealWithException(ex, Level.SEVERE, this.getClass(), currentClass);
+            }
+        }
+    }
+
+    public void addConfigClass(Class< ? extends AbstractConfigManager > clazz) {
+        if (!registeredConfigurations.contains(clazz))
+            registeredConfigurations.add(clazz);
     }
 
 }

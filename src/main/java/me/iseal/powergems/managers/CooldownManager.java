@@ -14,15 +14,16 @@ import java.util.concurrent.TimeUnit;
 
 public class CooldownManager {
 
-    private final GeneralConfigManager cm = SingletonManager.getInstance().configManager.getGeneralConfigManager();
-    private final CooldownConfigManager ccm = SingletonManager.getInstance().configManager.getCooldownConfigManager();
+    private final ConfigManager cm = SingletonManager.getInstance().configManager;
+    private final GeneralConfigManager gcm = (GeneralConfigManager) cm.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final CooldownConfigManager ccm = (CooldownConfigManager) cm.getRegisteredConfigInstance(CooldownConfigManager.class);
 
     private final BlockingQueue<CooldownObject> rightClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> leftClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> shiftClickCooldowns = new LinkedBlockingQueue<>();
 
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
-        if (cm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
+        if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
             rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
             return;
         }
@@ -30,7 +31,7 @@ public class CooldownManager {
     }
 
     public void setLeftClickCooldown(Player player, long time, Class<?> fromClass) {
-        if (cm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
+        if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
             leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
             return;
         }
@@ -38,7 +39,7 @@ public class CooldownManager {
     }
 
     public void setShiftClickCooldown(Player player, long time, Class<?> caller) {
-        if (cm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
+        if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
             shiftClickCooldowns.add(new CooldownObject(player, caller, (time * 500) + System.currentTimeMillis()));
             return;
         }
@@ -130,7 +131,7 @@ public class CooldownManager {
     }
 
     public long getFullCooldown(int level, String name, String ability) {
-        return ccm.getStartingCooldown(name, ability) - cm.getGemCooldownBoost() * level;
+        return ccm.getStartingCooldown(name, ability) - gcm.getGemCooldownBoost() * level;
     }
 
     public void cancelCooldowns() {

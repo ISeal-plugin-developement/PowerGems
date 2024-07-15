@@ -2,6 +2,7 @@ package me.iseal.powergems.listeners.passivePowerListeners;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
+import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 public class DamageListener implements Listener {
 
     private final GemManager gm = SingletonManager.getInstance().gemManager;
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final ArrayList<String> noFall = new ArrayList<>(Arrays.asList("Air", "Lightning"));
 
     @EventHandler
@@ -29,7 +31,7 @@ public class DamageListener implements Listener {
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) 
             return;
         for (ItemStack i : gm.getPlayerGems(p)){
-            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(Main.getGemPowerKey(), PersistentDataType.STRING))){
+            if (noFall.contains(i.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING))){
                 event.setCancelled(true);
                 return;
             }

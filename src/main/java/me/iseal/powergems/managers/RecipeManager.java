@@ -2,9 +2,13 @@ package me.iseal.powergems.managers;
 
 import de.leonhard.storage.Yaml;
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.misc.ExceptionHandler;
+import me.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -19,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -26,20 +31,22 @@ public class RecipeManager implements Listener {
 
     private GemManager gemManager = null;
     private final Yaml recipes = new Yaml("recipes", Main.getPlugin().getDataFolder() + "\\config\\");
+    private final GeneralConfigManager gcm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final Logger l = Bukkit.getLogger();
 
     public void initiateRecipes() {
         gemManager = SingletonManager.getInstance().gemManager;
-        if (SingletonManager.getInstance().configManager.getGeneralConfigManager().isRandomizedColors()){
-            l.severe("[PowerGems] Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
+        if (gcm.isRandomizedColors()){
+            l.severe(gcm.getPluginPrefix()+"Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
             return;
         }
-        if (Main.config.getBoolean("canUpgradeGems")) {
+        if (gcm.canUpgradeGems()) {
             l.info("Creating upgrade recipes...");
             upgradeRecipe();
             l.info("Upgrade recipes created.");
         }
-        if (Main.config.getBoolean("canCraftGems")) {
+        if (gcm.canCraftGems()) {
             l.info("Creating crafting recipe");
             craftRecipe();
             l.info("Crafting recipe created.");
@@ -61,7 +68,7 @@ public class RecipeManager implements Listener {
         if (!i.hasItemMeta()) {
             return;
         }
-        if (!i.getItemMeta().getPersistentDataContainer().has(Main.getIsRandomGemKey(), PersistentDataType.BYTE)) {
+        if (!i.getItemMeta().getPersistentDataContainer().has(nkm.getKey("is_random_gem"), PersistentDataType.BYTE)) {
             return;
         }
         if (e.getCurrentItem() == null) {
@@ -70,10 +77,45 @@ public class RecipeManager implements Listener {
         if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
             return;
         }
-        if (Main.config.getBoolean("allowOnlyOneGem")) {
-            for (ItemStack is : e.getWhoClicked().getInventory().getContents()) {
-                if (gemManager.isGem(is)) {
-                    e.getWhoClicked().getInventory().remove(is);
+        HumanEntity plr = e.getWhoClicked();
+        if (gcm.allowOnlyOneGem() && SingletonManager.getInstance().utils.hasAtLeastXAmountOfGems(plr.getInventory(), 1, plr.getInventory().getItemInOffHand())) {
+            if (gcm.useNewAllowOnlyOneGemAlgorithm()){
+                 long oldestGemCreationTime = -1;
+                 int oldIndex = -1;
+                 int index = -1;
+                 for (ItemStack is : plr.getInventory().getContents()) {
+                     index++;
+                     if (!gemManager.isGem(is)){
+                         continue;
+                     }
+                     if (gemManager.getGemCreationTime(is) > oldestGemCreationTime) {
+                         continue;
+                     }
+                     //Gem is older
+                     oldIndex = index;
+                     oldestGemCreationTime = gemManager.getGemCreationTime(is);
+                 }
+
+                 //Also check offhand
+                ItemStack offhand = plr.getInventory().getItemInOffHand();
+                if (gemManager.isGem(offhand) && gemManager.getGemCreationTime(offhand) < oldestGemCreationTime) {
+                    index = -2;
+                }
+
+                if (index == -1) {
+                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!");
+                }
+                if (index == -2) {
+                    //its offhand
+                    plr.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+                } else {
+                    plr.getInventory().setItem(oldIndex, new ItemStack(Material.AIR));
+                }
+            } else {
+                for (ItemStack is : plr.getInventory().getContents()) {
+                    if (gemManager.isGem(is)) {
+                        plr.getInventory().remove(is);
+                    }
                 }
             }
         }
@@ -109,9 +151,7 @@ public class RecipeManager implements Listener {
             }
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
-            l.severe("Error while creating gem crafting recipe, check the configuration file.");
-            l.severe("Disabling plugin to prevent errors.");
-            l.severe(e.getMessage());
+            ExceptionHandler.dealWithException(e, Level.SEVERE, this.getClass(), "RECIPE_REGISTER_CRAFT");
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }
@@ -127,7 +167,7 @@ public class RecipeManager implements Listener {
                     newStack = oldStack.clone();
                     ItemMeta im = newStack.getItemMeta();
                     PersistentDataContainer pdc = im.getPersistentDataContainer();
-                    pdc.set(Main.getGemLevelKey(), PersistentDataType.INTEGER, level);
+                    pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, level);
                     im = gemManager.createLore(im);
                     newStack.setItemMeta(im);
                     // generate namespacedkey based on name+level

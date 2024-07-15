@@ -14,6 +14,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         Main.config = file;
         file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
         file.setDefault("allowOnlyOneGem", false);
+        file.setDefault("useNewAllowOnlyOneGemAlgorithm", true);
         file.setDefault("canDropGems", false);
         file.setDefault("giveGemOnFirstLogin", true);
         file.setDefault("canUpgradeGems", true);
@@ -67,5 +68,23 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public String getPluginPrefix() {
         return file.getString("pluginPrefix");
+    }
+    public boolean canUpgradeGems() {
+        return file.getBoolean("canUpgradeGems");
+    }
+    public boolean canCraftGems() {
+        return file.getBoolean("canCraftGems");
+    }
+    public boolean isExplosionDamageAllowed() {
+        return file.getBoolean("isExplosionDamageAllowed");
+    }
+    public boolean useNewAllowOnlyOneGemAlgorithm() {
+        return file.getBoolean("useNewAllowOnlyOneGemAlgorithm");
+    }
+    public boolean doKeepGemsOnDeath() {
+        return file.getBoolean("keepGemsOnDeath");
+    }
+    public boolean doGemDecayOnLevelOne() {
+        return file.getBoolean("doGemDecayOnLevelOne");
     }
 }

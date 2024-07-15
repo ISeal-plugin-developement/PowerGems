@@ -14,11 +14,11 @@ public abstract class Gem {
 
     protected Logger l = Bukkit.getLogger();
     protected Player plr;
-    protected Class<?> caller = null;
+    protected Class<?> caller = this.getClass();
     protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected GeneralConfigManager generalConfigManager = sm.configManager.getGeneralConfigManager();
+    protected GeneralConfigManager generalConfigManager = (GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     protected int level;
 
     public void call(Action action, Player plr, ItemStack item) {

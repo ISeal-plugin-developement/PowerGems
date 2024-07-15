@@ -2,6 +2,7 @@ package me.iseal.powergems.listeners;
 
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,11 +18,12 @@ import java.util.*;
 public class DeathEvent implements Listener {
 
     private Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
-    private final GeneralConfigManager generalConfigManager = SingletonManager.getInstance().configManager.getGeneralConfigManager();
+    private final GeneralConfigManager generalConfigManager = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        if (!Main.config.getBoolean("keepGemsOnDeath"))
+        if (!generalConfigManager.doKeepGemsOnDeath())
             return;
         final List<ItemStack> toKeep = new ArrayList<>();
 
@@ -29,7 +31,7 @@ public class DeathEvent implements Listener {
             if (item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
                 PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
-                if (dataContainer.has(Main.getIsGemKey(), PersistentDataType.BOOLEAN)) {
+                if (dataContainer.has(nkm.getKey("is_power_gem"), PersistentDataType.BOOLEAN)) {
                     toKeep.add(item);
                 }
             }
@@ -47,11 +49,11 @@ public class DeathEvent implements Listener {
             if (generalConfigManager.doGemDecay()) {
                 for (ItemStack item : toRestore) {
                     PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
-                    String power = pdc.get(Main.getGemPowerKey(), PersistentDataType.STRING);
-                    if (pdc.get(Main.getGemLevelKey(), PersistentDataType.INTEGER) > 1) {
+                    String power = pdc.get(nkm.getKey("gem_power"), PersistentDataType.STRING);
+                    if (pdc.get(nkm.getKey("gem_level"), PersistentDataType.INTEGER) > 1) {
                         e.getPlayer().getInventory().addItem(SingletonManager.getInstance().gemManager.createGem(power,
-                                pdc.get(Main.getGemLevelKey(), PersistentDataType.INTEGER) - 1));
-                    } else if (!Main.config.getBoolean("doDecayOnLevel1")) {
+                                pdc.get(nkm.getKey("gem_level"), PersistentDataType.INTEGER) - 1));
+                    } else if (!generalConfigManager.doGemDecayOnLevelOne()) {
                         e.getPlayer().getInventory().addItem(SingletonManager.getInstance().gemManager.createGem(power, 1));
                     }
                 }

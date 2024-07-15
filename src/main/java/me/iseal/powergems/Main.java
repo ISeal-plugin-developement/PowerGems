@@ -7,6 +7,7 @@ import me.iseal.powergems.listeners.*;
 import me.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import me.iseal.powergems.listeners.powerListeners.*;
 import me.iseal.powergems.managers.*;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
 import me.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 
@@ -26,12 +27,6 @@ public final class Main extends JavaPlugin {
     public static Yaml gemActive = null;
     public static Yaml config = null;
     private static SingletonManager sm = null;
-    private static NamespacedKey isGemKey = null;
-    private static NamespacedKey gemPowerKey = null;
-    private static NamespacedKey gemLevelKey = null;
-    private static NamespacedKey isGemProjectileKey = null;
-    private static NamespacedKey isRandomGemKey = null;
-    private static NamespacedKey isGemExplosionKey = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = Bukkit.getLogger();
 
@@ -41,17 +36,9 @@ public final class Main extends JavaPlugin {
         plugin = this;
         sm = SingletonManager.getInstance();
         sm.init();
-        cd = new Yaml("cooldowns", this.getDataFolder() + "\\config\\");
-        gemActive = new Yaml("gem_active", this.getDataFolder() + "\\config\\");
-        isGemKey = new NamespacedKey(this, "is_power_gem");
-        gemPowerKey = new NamespacedKey(this, "gem_power");
-        gemLevelKey = new NamespacedKey(this, "gem_level");
-        isGemProjectileKey = new NamespacedKey(this, "is_gem_projectile");
-        isRandomGemKey = new NamespacedKey(this, "is_random_gem");
-        isGemExplosionKey = new NamespacedKey(this, "is_gem_explosion");
         sm.initLater();
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
-        if (sm.configManager.getGeneralConfigManager().allowOnlyOneGem())
+        if (((GeneralConfigManager)sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).allowOnlyOneGem())
             new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         l.info("Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
@@ -84,7 +71,7 @@ public final class Main extends JavaPlugin {
         l.info("Registering tasks");
         new WaterGemPassive().runTaskTimer(this, 0, 15);
         l.info("Registered tasks");
-        if (sm.configManager.getGeneralConfigManager().isAllowBStatsMetrics()) {
+        if (((GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).isAllowBStatsMetrics()) {
             l.info("Registering bstats metrics");
             @SuppressWarnings("unused")
             Metrics metrics = new Metrics(plugin, 20723);
@@ -100,30 +87,6 @@ public final class Main extends JavaPlugin {
     // getters beyond this point
     public static JavaPlugin getPlugin() {
         return plugin;
-    }
-
-    public static NamespacedKey getIsGemKey() {
-        return isGemKey;
-    }
-
-    public static NamespacedKey getGemPowerKey() {
-        return gemPowerKey;
-    }
-
-    public static NamespacedKey getGemLevelKey() {
-        return gemLevelKey;
-    }
-
-    public static NamespacedKey getIsGemProjectileKey() {
-        return isGemProjectileKey;
-    }
-
-    public static NamespacedKey getIsRandomGemKey() {
-        return isRandomGemKey;
-    }
-
-    public static NamespacedKey getIsGemExplosionKey() {
-        return isGemExplosionKey;
     }
 
     public static UUID getAttributeUUID() {

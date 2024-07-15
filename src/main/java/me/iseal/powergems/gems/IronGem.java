@@ -1,8 +1,10 @@
 package me.iseal.powergems.gems;
 
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
+import me.iseal.powergems.misc.ExceptionHandler;
 import me.iseal.powergems.misc.Gem;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,9 +20,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
+import java.util.logging.Level;
+
 public class IronGem extends Gem {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
+    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification",
             8, AttributeModifier.Operation.ADD_NUMBER);
     private final AttributeModifier toughnessModifier = new AttributeModifier(Main.getAttributeUUID(),
@@ -42,8 +47,7 @@ public class IronGem extends Gem {
         try {
             knockbackInstance.addModifier(knockbackAttribute);
         } catch (IllegalArgumentException ex) {
-            l.warning("[PowerGems] " + plr.getDisplayName()
-                    + " used Iron Gem Shift while already having the modifiers, please report this to the developer");
+            ExceptionHandler.dealWithException(ex, Level.WARNING, this.getClass(), "ALREADY_HAS_IRON_MODIFIERS_RIGHT");
         }
         plr.setVelocity(new Vector(0, 0, 0));
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
@@ -67,7 +71,7 @@ public class IronGem extends Gem {
             sa.setDamage(level);
             sa.setVelocity(sa.getVelocity().multiply(level));
             sa.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-            sa.getPersistentDataContainer().set(Main.getIsGemProjectileKey(), PersistentDataType.BOOLEAN, true);
+            sa.getPersistentDataContainer().set(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN, true);
         }
         for (int i = 0; i < 5 + level; i++) {
             Arrow sa = plr.launchProjectile(Arrow.class);
@@ -86,8 +90,7 @@ public class IronGem extends Gem {
             armorAttribute.addModifier(armorModifier);
             toughnessAttribute.addModifier(toughnessModifier);
         } catch (IllegalArgumentException ex) {
-            l.warning("[PowerGems] " + plr.getDisplayName()
-                    + " used Iron Gem Shift while already having the modifiers, please report this to the developer");
+            ExceptionHandler.dealWithException(ex, Level.WARNING, this.getClass(), "ALREADY_HAS_IRON_MODIFIERS_SHIFT");
         }
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
