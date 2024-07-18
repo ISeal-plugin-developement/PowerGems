@@ -1,8 +1,8 @@
 package me.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
-import de.leonhard.storage.Yaml;
 import me.iseal.powergems.Main;
+import me.iseal.powergems.misc.AbstractConfigManager;
 
 public class CooldownConfigManager extends AbstractConfigManager {
 

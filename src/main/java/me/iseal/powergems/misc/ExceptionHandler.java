@@ -12,8 +12,7 @@ public class ExceptionHandler {
 
     private static ExceptionHandler instance;
     private final Logger log = Bukkit.getLogger();
-    private final GeneralConfigManager gcm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-
+    
     public static ExceptionHandler getInstance() {
         if (instance == null)
             instance = new ExceptionHandler();
@@ -21,20 +20,19 @@ public class ExceptionHandler {
     }
 
     public void dealWithException(Exception ex, Level logLevel, String errorMessage, Object... moreInfo){
-        log.log(logLevel, gcm.getPluginPrefix()+"Exception triggered by "+getCallingClassName());
-        log.log(logLevel, gcm.getPluginPrefix()+"The exception message is "+ex.getMessage());
-        log.log(logLevel, gcm.getPluginPrefix()+"The error message is "+errorMessage);
-        if (gcm.isDebugMode()) {
-            log.log(Level.INFO, gcm.getPluginPrefix()+"The stacktrace and all of its details known are as follows: ");
-            for (StackTraceElement stackTraceElement : ex.getStackTrace())
-                log.log(Level.INFO, gcm.getPluginPrefix()+stackTraceElement.toString());
-        }
-        log.log(logLevel, gcm.getPluginPrefix()+"More details (make sure to tell these to the developer): ");
+        log.log(logLevel, "[Powergems] "+"Exception triggered by "+getCallingClassName());
+        log.log(logLevel, "[Powergems] "+"The exception message is "+ex.getMessage());
+        log.log(logLevel, "[Powergems] "+"The error message is "+errorMessage);
+        log.log(Level.INFO, "[Powergems] "+"The stacktrace and all of its details known are as follows: ");
+        for (StackTraceElement stackTraceElement : ex.getStackTrace())
+            log.log(Level.INFO, "[Powergems] "+stackTraceElement.toString());
+
+        log.log(logLevel, "[Powergems] "+"More details (make sure to tell these to the developer): ");
         for (Object obj : moreInfo) {
-            log.log(logLevel, gcm.getPluginPrefix()+obj.toString());
+            log.log(logLevel, "[Powergems] "+obj.toString());
         }
         if (logLevel == Level.SEVERE) {
-            log.log(logLevel, gcm.getPluginPrefix()+"Shutting down plugin to prevent further errors");
+            log.log(logLevel, "[Powergems] "+"Shutting down plugin to prevent further errors");
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }

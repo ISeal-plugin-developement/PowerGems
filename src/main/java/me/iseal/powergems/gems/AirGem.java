@@ -69,7 +69,7 @@ public class AirGem extends Gem {
         AreaEffectCloud effect = (AreaEffectCloud) plr.getWorld().spawnEntity(location, EntityType.AREA_EFFECT_CLOUD);
         effect.setDuration(60);
         effect.setRadius(1.0f);
-        effect.setParticle(Particle.SMOKE_LARGE);
+        effect.setParticle(Particle.LARGE_SMOKE);
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));

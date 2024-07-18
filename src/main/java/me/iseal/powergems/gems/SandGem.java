@@ -47,7 +47,7 @@ public class SandGem extends Gem {
         }
         Player target = (Player) result.getHitEntity();
         target.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 60 + (level * 40), 1 + level));
-        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60 + (level * 40), 1 + level));
+        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60 + (level * 40), 1 + level));
     }
 
     @Override

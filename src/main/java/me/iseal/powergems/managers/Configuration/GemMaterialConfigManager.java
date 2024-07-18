@@ -2,25 +2,26 @@ package me.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.ConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
+import me.iseal.powergems.misc.AbstractConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Panda;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 
 public class GemMaterialConfigManager extends AbstractConfigManager {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
-    private final GeneralConfigManager gcm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private GeneralConfigManager gcm = null;
     private final ArrayList<Material> possibleMaterials = new ArrayList<>();
 
     @Override
     public void setUpConfig() {
-        file = new Config("gemMaterials", Main.getPlugin().getDataFolder() + "\\config\\");
+        gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+        file = new Config("gemMaterials", ConfigManager.getConfigFolderPath());
         file.setDefault("RandomGemMaterial", "EMERALD");
         gemManager.getAllGems().values().forEach(gem -> {
             file.setDefault(gemManager.getGemName(gem) + "Material", gem.getType().name());

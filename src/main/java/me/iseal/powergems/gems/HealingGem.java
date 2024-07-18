@@ -17,7 +17,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, level - 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, level - 1));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, level));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, level));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
     }
 }

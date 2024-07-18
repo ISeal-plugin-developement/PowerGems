@@ -6,7 +6,7 @@
 
     <groupId>me.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.3.4.0-DEV4</version>
+    <version>3.3.4.0-DEV5</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -126,8 +126,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
         </dependency>
     </dependencies>
 </project>

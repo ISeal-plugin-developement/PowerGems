@@ -38,7 +38,7 @@ public final class Main extends JavaPlugin {
         sm.init();
         sm.initLater();
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
-        if (((GeneralConfigManager)sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).allowOnlyOneGem())
+        if ((sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).allowOnlyOneGem())
             new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         l.info("Registering listeners");
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
@@ -71,7 +71,7 @@ public final class Main extends JavaPlugin {
         l.info("Registering tasks");
         new WaterGemPassive().runTaskTimer(this, 0, 15);
         l.info("Registered tasks");
-        if (((GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).isAllowBStatsMetrics()) {
+        if ((sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).isAllowBStatsMetrics()) {
             l.info("Registering bstats metrics");
             @SuppressWarnings("unused")
             Metrics metrics = new Metrics(plugin, 20723);

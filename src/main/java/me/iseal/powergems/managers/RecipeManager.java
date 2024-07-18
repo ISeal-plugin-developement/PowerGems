@@ -31,12 +31,14 @@ public class RecipeManager implements Listener {
 
     private GemManager gemManager = null;
     private final Yaml recipes = new Yaml("recipes", Main.getPlugin().getDataFolder() + "\\config\\");
-    private final GeneralConfigManager gcm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-    private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+    private GeneralConfigManager gcm = null;
+    private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
 
     public void initiateRecipes() {
         gemManager = SingletonManager.getInstance().gemManager;
+        gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+        nkm = SingletonManager.getInstance().namespacedKeyManager;
         if (gcm.isRandomizedColors()){
             l.severe(gcm.getPluginPrefix()+"Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
             return;

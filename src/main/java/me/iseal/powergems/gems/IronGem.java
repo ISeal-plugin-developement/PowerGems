@@ -26,8 +26,8 @@ public class IronGem extends Gem {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
-    private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(), "Iron Fortification",
-            8, AttributeModifier.Operation.ADD_NUMBER);
+    private final AttributeModifier armorModifier = new AttributeModifier(Main.getAttributeUUID(),
+            "Iron Fortification", 8, AttributeModifier.Operation.ADD_NUMBER);
     private final AttributeModifier toughnessModifier = new AttributeModifier(Main.getAttributeUUID(),
             "Iron Fortification", 4, AttributeModifier.Operation.ADD_NUMBER);
     private final AttributeModifier knockbackAttribute = new AttributeModifier(Main.getAttributeUUID(),
@@ -47,7 +47,7 @@ public class IronGem extends Gem {
         try {
             knockbackInstance.addModifier(knockbackAttribute);
         } catch (IllegalArgumentException ex) {
-            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_RIGHT");
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_RIGHT", plr.getName());
         }
         plr.setVelocity(new Vector(0, 0, 0));
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
@@ -90,7 +90,7 @@ public class IronGem extends Gem {
             armorAttribute.addModifier(armorModifier);
             toughnessAttribute.addModifier(toughnessModifier);
         } catch (IllegalArgumentException ex) {
-            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_SHIFT");
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_SHIFT", plr.getName());
         }
         Bukkit.getScheduler().runTaskLater(Main.getPlugin(), () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());

@@ -25,7 +25,7 @@ public class SandMoveListener implements Listener {
                     continue;
                 }
                 if (to.distance(l.getLocation()) < 1.5) {
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 2));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 2));
                 }
             }
         }

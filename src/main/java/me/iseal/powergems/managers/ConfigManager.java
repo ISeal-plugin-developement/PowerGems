@@ -1,11 +1,9 @@
 package me.iseal.powergems.managers;
 
 import me.iseal.powergems.Main;
-import me.iseal.powergems.managers.Configuration.*;
+import me.iseal.powergems.misc.AbstractConfigManager;
 import me.iseal.powergems.misc.ExceptionHandler;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.inventory.ItemStack;
+import me.iseal.powergems.misc.Utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ public class ConfigManager {
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
 
     public void setUpConfig() {
+        Utils.findAllClassesInPackage("me.iseal.powergems.managers.Configuration").forEach(this::addConfigClass);
         try {
             for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
                 Object instance = getRegisteredConfigInstance(currentClass);
@@ -32,16 +31,25 @@ public class ConfigManager {
     /*
     * Gets the instance of a registered config object
     *
-    * @return The instance, registering it if needed
+    * @return The instance, registering it if needed or null if it is not a possible config object
      */
-    public Object getRegisteredConfigInstance(Class<? extends AbstractConfigManager> clazz) {
+    public <T extends AbstractConfigManager> T getRegisteredConfigInstance(Class<T> clazz) {
+        if (!isPossibleConfigClass(clazz)) {
+            return null;
+        }
+        if (!registeredConfigurations.contains(clazz)){
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("EARLY_ASK_FOR_CONFIG_INSTANCE"), Level.WARNING, "EARLY_ASK_FOR_CONFIG_INSTANCE", clazz.getName());
+        }
         if (!registeredConfigInstances.containsKey(clazz)){
             registerConfigInstance(clazz);
         }
-        return registeredConfigInstances.get(clazz);
+        return clazz.cast(registeredConfigInstances.get(clazz));
     }
 
     private void registerConfigInstance(Class<? extends AbstractConfigManager> clazz) {
+        if (!isPossibleConfigClass(clazz)) {
+            return;
+        }
         try {
             if (!registeredConfigInstances.containsKey(clazz)) {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
@@ -68,9 +76,14 @@ public class ConfigManager {
         }
     }
 
-    public void addConfigClass(Class< ? extends AbstractConfigManager > clazz) {
-        if (!registeredConfigurations.contains(clazz))
-            registeredConfigurations.add(clazz);
+    private boolean isPossibleConfigClass(Class<?> clazz) {
+        return AbstractConfigManager.class.isAssignableFrom(clazz);
+    }
+
+    private void addConfigClass(Class<?> clazz) {
+        if (isPossibleConfigClass(clazz)) {
+            registeredConfigurations.add((Class<? extends AbstractConfigManager>) clazz);
+        }
     }
 
 }

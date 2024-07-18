@@ -48,7 +48,7 @@ public class IceGem extends Gem {
         }
         Player targetplr = (Player) result.getHitEntity();
         targetplr.setFreezeTicks(100 + (level * 2) * 20);
-        targetplr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100 + (level * 2) * 20, level - 1));
+        targetplr.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100 + (level * 2) * 20, level - 1));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class IceGem extends Gem {
         Location l = plr.getLocation();
         World w = plr.getWorld();
         for (int i = 0; i < level * 2; i++) {
-            w.spawnEntity(l, EntityType.SNOWMAN);
+            w.spawnEntity(l, EntityType.SNOW_GOLEM);
         }
         itl.addToList(plr);
 

@@ -2,13 +2,16 @@ package me.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
 import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.ConfigManager;
+import me.iseal.powergems.managers.SingletonManager;
+import me.iseal.powergems.misc.AbstractConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 
     public void setUpConfig() {
-        file = new Config("config", Main.getPlugin().getDataFolder().getPath());
+        file = new Config("config", ConfigManager.getConfigFolderPath());
         // WARNING: Using Main.file is deprecated and should be replaced with a getter in the respective class. I'm just too lazy to do it.
         Main.config = file;
         file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");

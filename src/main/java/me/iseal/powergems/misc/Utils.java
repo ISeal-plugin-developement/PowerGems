@@ -1,9 +1,6 @@
 package me.iseal.powergems.misc;
 
-import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import me.iseal.powergems.managers.Configuration.GemPowerConfigManager;
 import me.iseal.powergems.managers.SingletonManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,14 +9,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.GemManager;
+import org.reflections.Reflections;
 
-import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 
 public class Utils {
 
@@ -162,6 +157,11 @@ public class Utils {
         }
 
         return totalCount >= x;
+    }
+
+    public static Set<Class<?>> findAllClassesInPackage(String packageName) {
+        Reflections reflections = new Reflections(packageName);
+        return reflections.getSubTypesOf(Object.class);
     }
 
     public boolean hasAtLeastXAmountOfGems(Player player, int x) {

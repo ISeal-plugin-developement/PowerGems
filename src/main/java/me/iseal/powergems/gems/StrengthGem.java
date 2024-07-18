@@ -23,7 +23,7 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 300, 1));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 200, 2));
         new StrenghArena(plr).start();
     }
 }

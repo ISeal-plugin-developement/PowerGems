@@ -32,8 +32,9 @@ public class SingletonManager {
     public NamespacedKeyManager namespacedKeyManager;
 
     public void init() {
-        namespacedKeyManager = new NamespacedKeyManager();
         configManager = new ConfigManager();
+        configManager.setUpConfig();
+        namespacedKeyManager = new NamespacedKeyManager();
         updaterManager = new UpdaterManager();
         tempDataManager = new TempDataManager();
         sandMoveListen = new SandMoveListener();
@@ -49,7 +50,6 @@ public class SingletonManager {
     public void initLater() {
         gemManager.initLater();
         updaterManager.start();
-        configManager.setUpConfig();
         recipeManager.initiateRecipes();
     }
 }
