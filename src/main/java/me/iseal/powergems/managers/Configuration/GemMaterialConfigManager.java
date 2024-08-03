@@ -6,25 +6,35 @@ import me.iseal.powergems.managers.ConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.misc.AbstractConfigManager;
+import me.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.yaml.snakeyaml.internal.Logger;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class GemMaterialConfigManager extends AbstractConfigManager {
 
-    private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private GemManager gemManager = null;
     private GeneralConfigManager gcm = null;
     private final ArrayList<Material> possibleMaterials = new ArrayList<>();
 
     @Override
     public void setUpConfig() {
-        gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         file = new Config("gemMaterials", ConfigManager.getConfigFolderPath());
         file.setDefault("RandomGemMaterial", "EMERALD");
+    }
+    
+    //Initialize after other classes have been instantiated
+    public void lateInit() {
+        gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+        gemManager = SingletonManager.getInstance().gemManager;
+        System.out.println("Executing!!");
         gemManager.getAllGems().values().forEach(gem -> {
-            file.setDefault(gemManager.getGemName(gem) + "Material", gem.getType().name());
+            file.setDefault(gemManager.getGemName(gem)+"GemMaterial", gem.getType().toString());
+            System.out.println(gemManager.getGemName(gem)+"GemMaterial");
         });
     }
 
@@ -37,7 +47,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
                 continue;
             }
             if (gemManager.lookUpID(key) == -1) {
-                Bukkit.getLogger().severe(gcm+" Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
+                Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
                 continue;
             }
             if (!possibleMaterials.contains(Material.getMaterial(file.getString(key)))) {
@@ -68,7 +78,8 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
         try {
             return Material.valueOf(file.getString(name + "GemMaterial"));
         } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().severe(gcm.getPluginPrefix()+" Invalid material for gem " + name + ". Defaulting to EMERALD");
+            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for gem " + name + ". Defaulting to EMERALD");
+            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "INVALID_MATERIAL_IN_CONFIG", name, file.getString(name + "GemMaterial"));
             return Material.EMERALD;
         }
     }
@@ -77,7 +88,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
         try {
             return Material.valueOf(file.getString("RandomGemMaterial"));
         } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().severe(gcm.getPluginPrefix()+" Invalid material for random gem. Defaulting to EMERALD");
+            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for random gem. Defaulting to EMERALD");
             return Material.EMERALD;
         }
     }

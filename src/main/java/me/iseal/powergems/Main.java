@@ -13,6 +13,7 @@ import me.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,7 +34,10 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         l.info("Initializing plugin");
+        System.out.println(Material.EMERALD);
+        System.out.println(Material.valueOf(Material.EMERALD.toString()));
         plugin = this;
+        //Bukkit.getPluginManager().disablePlugin(this);
         sm = SingletonManager.getInstance();
         sm.init();
         sm.initLater();

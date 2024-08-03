@@ -159,9 +159,9 @@ public class Utils {
         return totalCount >= x;
     }
 
-    public static Set<Class<?>> findAllClassesInPackage(String packageName) {
+    public static Set<Class<? extends AbstractConfigManager>> findAllClassesInPackage(String packageName) {
         Reflections reflections = new Reflections(packageName);
-        return reflections.getSubTypesOf(Object.class);
+        return reflections.getSubTypesOf(AbstractConfigManager.class);
     }
 
     public boolean hasAtLeastXAmountOfGems(Player player, int x) {
