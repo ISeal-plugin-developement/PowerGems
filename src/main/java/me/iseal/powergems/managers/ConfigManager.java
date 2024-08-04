@@ -1,6 +1,5 @@
 package me.iseal.powergems.managers;
 
-import jdk.jshell.execution.Util;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.misc.AbstractConfigManager;
 import me.iseal.powergems.misc.ExceptionHandler;
@@ -65,7 +64,6 @@ public class ConfigManager {
             if (!registeredConfigInstances.containsKey(clazz)) {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
                 registeredConfigInstances.put(clazz, instance);
-                l.log(Level.INFO, "Registered config instance for " + clazz.getName());
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RESISTER_CONFIG_INSTANCE");

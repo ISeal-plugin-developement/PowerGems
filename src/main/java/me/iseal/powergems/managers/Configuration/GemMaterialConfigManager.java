@@ -1,7 +1,6 @@
 package me.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.ConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
@@ -10,7 +9,6 @@ import me.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.yaml.snakeyaml.internal.Logger;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -31,11 +29,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
     public void lateInit() {
         gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         gemManager = SingletonManager.getInstance().gemManager;
-        System.out.println("Executing!!");
-        gemManager.getAllGems().values().forEach(gem -> {
-            file.setDefault(gemManager.getGemName(gem)+"GemMaterial", gem.getType().toString());
-            System.out.println(gemManager.getGemName(gem)+"GemMaterial");
-        });
+        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getGemName(gem)+"GemMaterial", gem.getType().toString()));
     }
 
     @Override

@@ -3,7 +3,6 @@ package me.iseal.powergems.managers.Configuration;
 import de.leonhard.storage.Config;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.ConfigManager;
-import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.misc.AbstractConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +36,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("blockedLavaBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
         file.setDefault("debugMode", false);
+        file.setDefault("runUpdater", true);
     }
 
     public long getGemCooldownBoost() {
@@ -92,5 +92,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean isDebugMode() {
         return file.getBoolean("debugMode");
+    }
+    public boolean canRunUpdater() {
+        return file.getBoolean("runUpdater");
     }
 }
