@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class RecipeManager implements Listener {
 
@@ -128,9 +129,13 @@ public class RecipeManager implements Listener {
             NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
             ShapedRecipe sr = new ShapedRecipe(nk, SingletonManager.getInstance().gemManager.getRandomGemItem());
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
+
+            boolean changed = false;
+
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "ndn,dgd,ndn");
                 l.info("Shape not found for crafting (is the file malformed?), using default shape.");
+                changed = true;
             }
             if (!arr.containsKey("ingredients")) {
                 HashMap<String, String> defaultIngredients = new HashMap<>();
@@ -139,10 +144,13 @@ public class RecipeManager implements Listener {
                 defaultIngredients.put("d", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
                 l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
+                changed = true;
             }
 
-            // Save the changes to the recipes Yaml file
-            recipes.set("gem_craft_recipe", arr);
+            if (changed)
+                // Save the changes to the recipes Yaml file
+                recipes.set("gem_craft_recipe", arr);
+
             // Generate array with shape
             String[] shape = arr.get("shape").toString().split(",");
             sr.shape(shape[0], shape[1], shape[2]);
@@ -226,7 +234,7 @@ public class RecipeManager implements Listener {
         StringBuilder finalString = new StringBuilder();
         boolean lastWas = false;
         ArrayList<Character> characterList = (ArrayList<Character>) s.chars().mapToObj(c -> (char) c)
-                .toList();
+                .collect(Collectors.toList());
 
         for (Character character : characterList) {
             if (character.toString().equals("§")) {
