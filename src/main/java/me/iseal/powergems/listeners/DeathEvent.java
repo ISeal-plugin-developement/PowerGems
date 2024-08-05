@@ -1,6 +1,5 @@
 package me.iseal.powergems.listeners;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.managers.NamespacedKeyManager;
 import me.iseal.powergems.managers.SingletonManager;
@@ -18,7 +17,7 @@ import java.util.*;
 public class DeathEvent implements Listener {
 
     private Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
-    private final GeneralConfigManager generalConfigManager = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final GeneralConfigManager generalConfigManager = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
     @EventHandler

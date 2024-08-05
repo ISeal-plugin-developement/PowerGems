@@ -1,10 +1,8 @@
 package me.iseal.powergems.gems;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import me.iseal.powergems.Main;
+import me.iseal.powergems.misc.Gem;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Farmland;
@@ -13,9 +11,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import me.iseal.powergems.misc.Gem;
-import me.iseal.powergems.Main;
 
 public class WaterGem extends Gem {
 
@@ -59,15 +54,16 @@ public class WaterGem extends Gem {
     protected void shiftClick(Player plr) {
         // Get the player's position
         Location playerPos = plr.getLocation();
-        int halfRadius = 1 + level / 2;
+        int halfRadius = 3 + level / 2;
 
         // Calculate the start and end positions of the cube
         int startX = playerPos.getBlockX() - halfRadius;
-        int startY = playerPos.getBlockY() - halfRadius;
+        int startY = playerPos.getBlockY();
         int startZ = playerPos.getBlockZ() - halfRadius;
         int endX = playerPos.getBlockX() + halfRadius;
-        int endY = playerPos.getBlockY() + halfRadius;
+        int endY = playerPos.getBlockY() + halfRadius*2;
         int endZ = playerPos.getBlockZ() + halfRadius;
+        System.out.println("Start: " + startX + " " + startY + " " + startZ);
 
         // Iterate over the cube
         for (int x = startX; x <= endX; x++) {
@@ -79,13 +75,11 @@ public class WaterGem extends Gem {
                     if (!block.isEmpty())
                         continue;
                     block.setType(Material.WATER);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> {
-                        block.setType(Material.AIR);
-                    }, 400);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), () -> block.setType(Material.AIR), 400+level* 40L);
                 }
             }
         }
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500, 2));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500+level*100, 2));
     }
 
 }

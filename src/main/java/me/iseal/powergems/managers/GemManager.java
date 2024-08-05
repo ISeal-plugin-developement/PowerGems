@@ -1,12 +1,10 @@
 package me.iseal.powergems.managers;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
 import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -241,8 +239,7 @@ public class GemManager {
                     lore.add(ChatColor.GREEN + "Abilities");
                     lore.add(ChatColor.WHITE + "Right click: Saturation, Strength and Resistance (all lvl 2)");
                     lore.add(ChatColor.WHITE + "Shift click: An arena that keeps anyone from entering, useful to heal");
-                    lore.add(ChatColor.WHITE
-                            + "Left click: A shockwave that sends everyone near flying and damages them");
+                    lore.add(ChatColor.WHITE + "Left click: A shockwave that sends everyone near flying and damages them");
                     break;
                 case 2:
                     lore.add(ChatColor.GREEN + "Abilities");
@@ -305,6 +302,12 @@ public class GemManager {
                     lore.add(ChatColor.WHITE + "Shift click: Spawn a blaze to fight for you");
                     lore.add(ChatColor.WHITE + "Left click: 1 minute of Fire resistance");
                     break;
+                case 10:
+                    lore.add(ChatColor.GREEN + "Abilities");
+                    lore.add(ChatColor.WHITE + "Right click: Propel yourself forward in water, creating bubbles.");
+                    lore.add(ChatColor.WHITE + "Shift click: Create a temporary water cube around you, granting Dolphin's Grace.");
+                    lore.add(ChatColor.WHITE + "Left click: Moisturize farmland blocks around you.");
+                    lore.add(ChatColor.BLUE + "Passive: Power up yourself with water");
                 default:
                     l.warning("There was an error creating a gem, please inform the developer.");
                     l.warning("Gem number: " + gemNumber + " on lore creation");
@@ -353,6 +356,7 @@ public class GemManager {
             case 7 -> ChatColor.GOLD + "";
             case 8 -> ChatColor.AQUA + "";
             case 9 -> ChatColor.DARK_RED + "";
+            case 10 -> ChatColor.BLUE + "";
             default -> ChatColor.BLACK + "";
         };
     }

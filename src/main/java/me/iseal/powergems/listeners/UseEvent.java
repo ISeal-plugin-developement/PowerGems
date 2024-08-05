@@ -1,34 +1,27 @@
 package me.iseal.powergems.listeners;
 
-import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.managers.TempDataManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 public class UseEvent implements Listener {
 
     private final SingletonManager sm = SingletonManager.getInstance();
     private final TempDataManager tdm = sm.tempDataManager;
-    private final ActiveGemsConfigManager agcm = (ActiveGemsConfigManager) sm.configManager.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
+    private final ActiveGemsConfigManager agcm = sm.configManager.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
     private final GemManager gm = sm.gemManager;
 
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.PHYSICAL) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+        if (e.getAction().equals(Action.PHYSICAL)) {
             return;
         }
         Player player = e.getPlayer();

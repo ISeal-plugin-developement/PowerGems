@@ -2,9 +2,9 @@ package me.iseal.powergems;
 
 import de.leonhard.storage.Yaml;
 import me.iseal.powergems.commands.*;
-import me.iseal.powergems.gems.powerClasses.tasks.WaterGemPassive;
 import me.iseal.powergems.listeners.*;
 import me.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import me.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import me.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.managers.SingletonManager;
@@ -55,6 +55,7 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new WaterMoveListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
@@ -66,9 +67,6 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
         l.info("Registered commands");
-        l.info("Registering tasks");
-        new WaterGemPassive().runTaskTimer(this, 0, 15);
-        l.info("Registered tasks");
         if ((sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).isAllowBStatsMetrics()) {
             l.info("Registering bstats metrics");
             @SuppressWarnings("unused")

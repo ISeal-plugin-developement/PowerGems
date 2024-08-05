@@ -23,7 +23,7 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 300, 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 1));
     }
 
     @Override
@@ -33,8 +33,7 @@ public class StrengthGem extends Gem {
         Location playerLocation = plr.getLocation();
         List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
         for (Entity entity : nearbyEntities) {
-            if (entity instanceof Player && !((Player) entity).equals(plr)) {
-                Player nearbyPlayer = (Player) entity;
+            if (entity instanceof Player nearbyPlayer && ! ((Player) entity).equals(plr)) {
                 Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
                 nearbyPlayer.setVelocity(knockbackVector.multiply(power));
                 nearbyPlayer.damage(5);
@@ -45,7 +44,7 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 200, 2));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
         new StrenghArena(plr).start();
     }
 }

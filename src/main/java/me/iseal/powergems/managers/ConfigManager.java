@@ -60,6 +60,7 @@ public class ConfigManager {
         if (!isPossibleConfigClass(clazz)) {
             return;
         }
+        System.out.println("asking for instance of " + clazz.getName());
         try {
             if (!registeredConfigInstances.containsKey(clazz)) {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
@@ -82,6 +83,18 @@ public class ConfigManager {
                 init.invoke(instance);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
                 ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RESET_CONFIG", currentClass);
+            }
+        }
+    }
+
+    public void reloadConfig() {
+        for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
+            try {
+                Object instance = getRegisteredConfigInstance(currentClass);
+                Method init = currentClass.getMethod("reloadConfig");
+                init.invoke(instance);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RELOAD_CONFIG", currentClass);
             }
         }
     }
