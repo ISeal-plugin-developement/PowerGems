@@ -7,10 +7,10 @@ import me.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import me.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import me.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.managers.MetricsManager;
 import me.iseal.powergems.managers.SingletonManager;
 import me.iseal.powergems.tasks.AddCooldownToToolBar;
 import me.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -56,6 +56,7 @@ public final class Main extends JavaPlugin {
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
+        pluginManager.registerEvents(sm.metricsManager, this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
@@ -69,14 +70,15 @@ public final class Main extends JavaPlugin {
         l.info("Registered commands");
         if ((sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class)).isAllowBStatsMetrics()) {
             l.info("Registering bstats metrics");
-            @SuppressWarnings("unused")
-            Metrics metrics = new Metrics(plugin, 20723);
+            MetricsManager metricsManager = sm.metricsManager;
+            metricsManager.init();
         }
         //TODO: addon api
     }
 
     @Override
     public void onDisable() {
+        sm.metricsManager.exitAndSendInfo();
         getLogger().info("Shutting down!");
     }
 

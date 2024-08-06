@@ -3,6 +3,7 @@ package me.iseal.powergems.managers;
 import me.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
 import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import me.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -309,8 +311,7 @@ public class GemManager {
                     lore.add(ChatColor.WHITE + "Left click: Moisturize farmland blocks around you.");
                     lore.add(ChatColor.BLUE + "Passive: Power up yourself with water");
                 default:
-                    l.warning("There was an error creating a gem, please inform the developer.");
-                    l.warning("Gem number: " + gemNumber + " on lore creation");
+                    ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem number"), Level.WARNING, "ERROR_ON_LORE_CREATION", gemNumber);
                     break;
             }
         }

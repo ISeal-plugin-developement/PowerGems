@@ -90,6 +90,13 @@ public class Utils {
         return count >= x;
     }
 
+    /*
+        * Returns a list of all the gems in the player's inventory.
+        *
+        * @param plr The player to check for gems.
+        *
+        * @return A list of all the gems in the player's inventory.
+     */
     public ArrayList<ItemStack> getUserGems(Player plr) {
         ArrayList<ItemStack> gems = new ArrayList<>();
         if (!hasAtLeastXAmountOfGems(plr, 1))

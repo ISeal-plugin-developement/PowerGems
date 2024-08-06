@@ -32,6 +32,7 @@ public class SingletonManager {
     public FallingBlockHitListener fallingBlockHitListen;
     public TempDataManager tempDataManager;
     public NamespacedKeyManager namespacedKeyManager;
+    public MetricsManager metricsManager;
 
     public void init() {
         configManager = new ConfigManager();
@@ -47,6 +48,7 @@ public class SingletonManager {
         utils = new Utils();
         recipeManager = new RecipeManager();
         cooldownManager = new CooldownManager();
+        metricsManager = new MetricsManager();
     }
 
     public void initLater() {
