@@ -39,7 +39,7 @@ public class FireGem extends Gem {
     protected void leftClick(Player plr) {
         Location playerLocation = plr.getLocation();
         World world = plr.getWorld();
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, 5));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 5));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1));
         world.createExplosion(playerLocation, 4f, true, false);
         for (Entity entity : plr.getNearbyEntities(6, 6, 6)) {

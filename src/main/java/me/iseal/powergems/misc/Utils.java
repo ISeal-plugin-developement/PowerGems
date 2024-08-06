@@ -1,56 +1,26 @@
 package me.iseal.powergems.misc;
 
+import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.GemManager;
 import me.iseal.powergems.managers.SingletonManager;
+import me.iseal.powergems.tasks.SpawnColoredLineTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import me.iseal.powergems.managers.GemManager;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class Utils {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
-    public boolean isLeftClick(Action a) {
-        return a.equals(Action.LEFT_CLICK_BLOCK) || a.equals(Action.LEFT_CLICK_AIR);
-    }
-
-    public Material[] ItemStackToMaterial(ItemStack[] items) {
-        Material[] transformed = new Material[items.length];
-        int i = 0;
-        for (ItemStack item : items) {
-            if (item == null) {
-                transformed[i] = null;
-            } else {
-                transformed[i] = item.getType();
-            }
-            i++;
-        }
-        return transformed;
-    }
-
-    public boolean checkIfEqualMaterial(Material[] a1, Material[] a2) {
-        int i = 0;
-        for (Material mat : a1) {
-            if (mat == null) {
-                return false;
-            }
-            if (Objects.equals(mat.toString(), a2[i].toString())) {
-                return false;
-            }
-            i++;
-        }
-        return true;
-    }
 
     public ArrayList<Block> getSquareOutlineCoordinates(Player player, int radius) {
         // Get the player's current location.
@@ -159,12 +129,50 @@ public class Utils {
         return totalCount >= x;
     }
 
-    public static Set<Class<?>> findAllClassesInPackage(String packageName) {
+    public static Set<Class<? extends AbstractConfigManager>> findAllClassesInPackage(String packageName) {
         Reflections reflections = new Reflections(packageName);
-        return reflections.getSubTypesOf(Object.class);
+        return reflections.getSubTypesOf(AbstractConfigManager.class);
     }
 
     public boolean hasAtLeastXAmountOfGems(Player player, int x) {
         return hasAtLeastXAmountOfGems(player.getInventory(), x, player.getInventory().getItemInOffHand());
     }
+
+    public void spawnFancyParticlesInLine(Location start, Location target, int lineRed, int lineGreen, int lineBlue, int circleRed, int circleGreen, int circleBlue, double lineInterval, double circleInterval, double circleParticleInterval, double circleRadius, Player spawningPlayer, Consumer<Location> lineConsumer, Consumer<Location> circleConsumer) {
+        SpawnColoredLineTask task = new SpawnColoredLineTask();
+        task.start = start;
+        task.target = target;
+        task.lineRed = lineRed;
+        task.lineGreen = lineGreen;
+        task.lineBlue = lineBlue;
+        task.circleRed = circleRed;
+        task.circleGreen = circleGreen;
+        task.circleBlue = circleBlue;
+        task.lineInterval = lineInterval;
+        task.circleInterval = circleInterval;
+        task.circleParticleInterval = circleParticleInterval;
+        task.circleRadius = circleRadius;
+        task.lineConsumer = lineConsumer;
+        task.circleConsumer = circleConsumer;
+        task.spawnLines = true;
+        task.spawnCircles = true;
+        task.spawningPlayer = spawningPlayer;
+        task.init();
+        task.runTaskTimer(Main.getPlugin(), 0, 1);
+    }
+
+    public List<Block> generateSquare(Location center, int size) {
+        List<Block> blocks = new ArrayList<>();
+        int halfSize = size / 2;
+
+        for (int x = -halfSize; x <= halfSize; x++) {
+            for (int z = -halfSize; z <= halfSize; z++) {
+                Location loc = center.clone().add(x, 0, z);
+                blocks.add(loc.getBlock());
+            }
+        }
+
+        return blocks;
+    }
+
 }

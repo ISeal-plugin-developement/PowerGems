@@ -20,19 +20,21 @@ public class ExceptionHandler {
     }
 
     public void dealWithException(Exception ex, Level logLevel, String errorMessage, Object... moreInfo){
-        log.log(logLevel, "[Powergems] "+"Exception triggered by "+getCallingClassName());
-        log.log(logLevel, "[Powergems] "+"The exception message is "+ex.getMessage());
-        log.log(logLevel, "[Powergems] "+"The error message is "+errorMessage);
-        log.log(Level.INFO, "[Powergems] "+"The stacktrace and all of its details known are as follows: ");
+        log.log(logLevel, "[PowerGems] "+"Exception triggered by "+getCallingClassName());
+        log.log(logLevel, "[PowerGems] "+"The exception message is "+ex.getMessage());
+        log.log(logLevel, "[PowerGems] "+"The error message is "+errorMessage);
+        log.log(Level.INFO, "[PowerGems] "+"The stacktrace and all of its details known are as follows: ");
         for (StackTraceElement stackTraceElement : ex.getStackTrace())
-            log.log(Level.INFO, "[Powergems] "+stackTraceElement.toString());
+            log.log(logLevel, "[PowerGems] "+stackTraceElement.toString());
 
-        log.log(logLevel, "[Powergems] "+"More details (make sure to tell these to the developer): ");
+        log.log(logLevel, "[PowerGems] "+"More details (make sure to tell these to the developer): ");
+        int i = 1;
         for (Object obj : moreInfo) {
-            log.log(logLevel, "[Powergems] "+obj.toString());
+            log.log(logLevel, "[PowerGems] More info "+i+": "+obj.toString());
+            i++;
         }
         if (logLevel == Level.SEVERE) {
-            log.log(logLevel, "[Powergems] "+"Shutting down plugin to prevent further errors");
+            log.log(logLevel, "[PowerGems] "+"Shutting down plugin to prevent further errors");
             Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }

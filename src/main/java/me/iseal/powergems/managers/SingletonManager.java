@@ -4,6 +4,8 @@ import me.iseal.powergems.listeners.FallingBlockHitListener;
 import me.iseal.powergems.listeners.powerListeners.IceTargetListener;
 import me.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import me.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
+import me.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.misc.Utils;
 
 public class SingletonManager {
@@ -49,7 +51,9 @@ public class SingletonManager {
 
     public void initLater() {
         gemManager.initLater();
-        updaterManager.start();
+        configManager.getRegisteredConfigInstance(GemMaterialConfigManager.class).lateInit();
+        if (configManager.getRegisteredConfigInstance(GeneralConfigManager.class).canRunUpdater())
+            updaterManager.start();
         recipeManager.initiateRecipes();
     }
 }

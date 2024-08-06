@@ -4,7 +4,6 @@ import de.leonhard.storage.Yaml;
 import me.iseal.powergems.Main;
 import me.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import me.iseal.powergems.misc.ExceptionHandler;
-import me.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -130,9 +129,13 @@ public class RecipeManager implements Listener {
             NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
             ShapedRecipe sr = new ShapedRecipe(nk, SingletonManager.getInstance().gemManager.getRandomGemItem());
             HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap("gem_craft_recipe");
+
+            boolean changed = false;
+
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "ndn,dgd,ndn");
                 l.info("Shape not found for crafting (is the file malformed?), using default shape.");
+                changed = true;
             }
             if (!arr.containsKey("ingredients")) {
                 HashMap<String, String> defaultIngredients = new HashMap<>();
@@ -141,10 +144,14 @@ public class RecipeManager implements Listener {
                 defaultIngredients.put("d", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
                 l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
+                changed = true;
             }
 
-            // Save the changes to the recipes Yaml file
-            recipes.set("gem_craft_recipe", arr);
+            if (changed)
+                // Save the changes to the recipes Yaml file
+                recipes.set("gem_craft_recipe", arr);
+
+            // Generate array with shape
             String[] shape = arr.get("shape").toString().split(",");
             sr.shape(shape[0], shape[1], shape[2]);
             Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
@@ -154,7 +161,6 @@ public class RecipeManager implements Listener {
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "RECIPE_REGISTER_CRAFT");
-            Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
         }
     }
 
@@ -177,8 +183,15 @@ public class RecipeManager implements Listener {
                     NamespacedKey nk = new NamespacedKey(Main.getPlugin(), key);
                     ShapedRecipe sr = new ShapedRecipe(nk, newStack);
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
+
+                    if (arr == null) {
+                        throw new RuntimeException("Recipe map is null for key: " + key);
+                    }
+
+                    boolean changed = false;
                     if (!arr.containsKey("shape")) {
                         arr.put("shape", "nen,ege,nen");
+                        changed = true;
                         l.info("Shape not found for " + key + " (is the file malformed?), using default shape.");
                     }
                     if (!arr.containsKey("ingredients")) {
@@ -186,24 +199,25 @@ public class RecipeManager implements Listener {
                         defaultIngredients.put("n", Material.NETHERITE_INGOT.name());
                         defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
                         arr.put("ingredients", defaultIngredients);
-                        l.info("Ingredients not found for " + key
-                                + " (is the file malformed?), using default ingredients.");
+                        changed = true;
+                        l.info("Ingredients not found for " + key + " (is the file malformed?), using default ingredients.");
                     }
 
-                    // Save the changes to the recipes Yaml file
-                    recipes.set(key, arr);
+                    if (changed)
+                        // Save the changes to the recipes Yaml file
+                        recipes.set(key, arr);
+
                     String[] shape = arr.get("shape").toString().split(",");
-                    char[] shapeChars = shape[1].toCharArray();
-                    shapeChars[1] = 'g';
-                    shape[1] = String.valueOf(shapeChars);
                     sr.shape(shape[0], shape[1], shape[2]);
                     Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
+
                     for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-                        if (entry.getKey().equals("g")) {
-                            continue;
-                        }
                         sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
                     }
+
+                    if (!arr.get("shape").toString().contains("g"))
+                        throw new RuntimeException("No gem ingredient found for " + key + " (is the file malformed?)");
+
                     sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
                     Bukkit.getServer().addRecipe(sr);
                     oldStack = newStack;
@@ -211,11 +225,7 @@ public class RecipeManager implements Listener {
                 }
             }
         } catch (Exception e) {
-            l.severe("Error while creating gem upgrade recipes, check the configuration file.");
-            l.severe("Last key: " + key);
-            l.severe("Disabling plugin to prevent errors.");
-            l.severe(e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(Main.getPlugin());
+            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "RECIPE_REGISTER_UPGRADE", key);
         }
     }
 
@@ -226,8 +236,8 @@ public class RecipeManager implements Listener {
         ArrayList<Character> characterList = (ArrayList<Character>) s.chars().mapToObj(c -> (char) c)
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < characterList.size(); i++) {
-            if (characterList.get(i).toString().equals("§")) {
+        for (Character character : characterList) {
+            if (character.toString().equals("§")) {
                 lastWas = true;
                 continue;
             }
@@ -235,7 +245,7 @@ public class RecipeManager implements Listener {
                 lastWas = false;
                 continue;
             }
-            finalString.append(characterList.get(i));
+            finalString.append(character);
         }
         return finalString.toString().toLowerCase();
     }

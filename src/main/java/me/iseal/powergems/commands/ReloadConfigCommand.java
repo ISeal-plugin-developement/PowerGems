@@ -1,6 +1,6 @@
 package me.iseal.powergems.commands;
 
-import me.iseal.powergems.Main;
+import me.iseal.powergems.managers.SingletonManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,9 +16,7 @@ public class ReloadConfigCommand implements CommandExecutor {
             return true;
         }
         sender.sendMessage(ChatColor.GREEN + "Reloading config...");
-        Main.config.forceReload();
-        Main.gemActive.forceReload();
-        Main.cd.forceReload();
+        SingletonManager.getInstance().configManager.reloadConfig();
         sender.sendMessage(ChatColor.GREEN + "Config reloaded!");
         return false;
     }
