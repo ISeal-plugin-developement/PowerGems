@@ -60,7 +60,6 @@ public class ConfigManager {
         if (!isPossibleConfigClass(clazz)) {
             return;
         }
-        System.out.println("asking for instance of " + clazz.getName());
         try {
             if (!registeredConfigInstances.containsKey(clazz)) {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
