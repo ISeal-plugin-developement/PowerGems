@@ -71,7 +71,16 @@ public class SandGem extends Gem {
                 0.2, // Circle particle interval
                 1+level/2, // Circle radius
                 plr,
-                loc -> {}, // Empty consumer for line
+                loc -> {
+                    double radius = 1;
+                    List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
+                    for (Entity entity : nearbyEntities) {
+                        if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 1));
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
+                        }
+                    }
+                }, //line consumer
                 loc -> {
                     double radius = 1 + level / 2;
                     List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);

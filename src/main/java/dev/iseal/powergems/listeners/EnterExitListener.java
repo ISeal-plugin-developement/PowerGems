@@ -18,12 +18,12 @@ import java.util.UUID;
 
 public class EnterExitListener implements Listener {
 
-    private final Json playerJoined = new Json("playerData", PowerGems.getPlugin().getDataFolder().getPath());
+    private final Json playerJoined = new Json("playerData", PowerGems.getPlugin().getDataFolder().getPath()+"\\data\\");
     private final SingletonManager sm = SingletonManager.getInstance();
     private final IronGem ironGem = new IronGem();
     private final GemManager gm = sm.gemManager;
     private final TempDataManager tdm = sm.tempDataManager;
-    private final GeneralConfigManager cm = (GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final GeneralConfigManager cm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final long delay = cm.getDelayToUseGems() * 1000;
 
     @EventHandler

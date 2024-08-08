@@ -10,7 +10,9 @@ public class ExceptionHandler {
 
     private static ExceptionHandler instance;
     private final Logger log = Bukkit.getLogger();
-    
+    public boolean shuttingDown = false;
+    public String errorMessage = "An error occurred";
+
     public static ExceptionHandler getInstance() {
         if (instance == null)
             instance = new ExceptionHandler();
@@ -33,6 +35,8 @@ public class ExceptionHandler {
         }
         if (logLevel == Level.SEVERE) {
             log.log(logLevel, "[PowerGems] "+"Shutting down plugin to prevent further errors");
+            shuttingDown = true;
+            this.errorMessage = errorMessage;
             Bukkit.getPluginManager().disablePlugin(PowerGems.getPlugin());
         }
     }

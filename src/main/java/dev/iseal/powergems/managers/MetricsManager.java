@@ -1,10 +1,13 @@
 package dev.iseal.powergems.managers;
 
+import de.leonhard.storage.Json;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.GemUsageInfo;
 import dev.iseal.powergems.misc.Utils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.DrilldownPie;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,15 +26,28 @@ public class MetricsManager implements Listener {
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
     private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
+    private final Json metricsFile = new Json("metrics", Main.getPlugin().getDataFolder()+"\\data\\");
 
     public void init() {
         metrics = new Metrics(PowerGems.getPlugin(), 20723);
+        metrics = new Metrics(PowerGems.getPlugin(), 20723);
+        if (metricsFile.contains("gem_level_distribution")) {
+            metrics.addCustomChart(new DrilldownPie("gem_level_distribution", () -> {
+                return (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution");
+            }));
+            metricsFile.remove("gem_level_distribution");
+        }
+        if(metricsFile.contains("crashed")){
+            metrics.addCustomChart(new SimplePie("error_distribution", () -> {
+                return metricsFile.getString("error_message");
+            }));
+            metricsFile.remove("crashed");
+            metricsFile.remove("error_message");
+        }
     }
 
     public void exitAndSendInfo() {
         Bukkit.getServer().getOnlinePlayers().forEach(this::registerPlayerInfo);
-
-        metrics.addCustomChart(new DrilldownPie("gem_level_distribution", () -> {
             Map<String, Map<String, Integer>> map = new HashMap<>();
             ArrayList<String> gems = new ArrayList<>();
             Map<String, Integer> levels = new HashMap<>();
@@ -39,11 +55,9 @@ public class MetricsManager implements Listener {
                 gemUsageInfos.forEach(gemUsageInfo -> {
                     String gemName = gemUsageInfo.getName();
                     int level = gemUsageInfo.getLevel();
-
                     // only add the type once
-                    if (!gems.contains(gemName)) {
+                    if (!gems.contains(gemName))
                         gems.add(gemName);
-                    }
 
                     // prefer higher levels
                     if (levels.containsKey(gemName)) {
@@ -68,8 +82,14 @@ public class MetricsManager implements Listener {
                     map.get(gem).put(levels.get(gem).toString(), 1);
                 }
             });
-            return map;
-        }));
+
+            System.out.println("Saving gem level distrib. map: "+map);
+            metricsFile.set("gem_level_distribution", map);
+
+            if(ExceptionHandler.getInstance().shuttingDown) {
+                metricsFile.set("crashed", true);
+                metricsFile.set("error_message", ExceptionHandler.getInstance().errorMessage);
+            }
         
         metrics.shutdown();
     }
