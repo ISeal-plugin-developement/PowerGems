@@ -7,7 +7,7 @@ import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.MetricsManager;
+import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;

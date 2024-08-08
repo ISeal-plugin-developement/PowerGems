@@ -6,6 +6,7 @@ import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.misc.Utils;
 
 public class SingletonManager {
@@ -32,7 +33,7 @@ public class SingletonManager {
     public FallingBlockHitListener fallingBlockHitListen;
     public TempDataManager tempDataManager;
     public NamespacedKeyManager namespacedKeyManager;
-    public MetricsManager metricsManager;
+    public dev.iseal.powergems.managers.Metrics.MetricsManager metricsManager;
 
     public void init() {
         configManager = new ConfigManager();

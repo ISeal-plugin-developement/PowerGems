@@ -6,6 +6,7 @@ import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.misc.Utils;
 
 public class SingletonManager {

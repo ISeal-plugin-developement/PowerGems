@@ -6,7 +6,7 @@
 
     <groupId>me.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.4.1.0-DEV3</version>
+    <version>3.4.1.0-DEV4</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -14,7 +14,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prerelease>false</prerelease>
+        <prerelease>true</prerelease>
         <execute>true</execute>
     </properties>
 
@@ -92,6 +92,10 @@
             <id>jeff-media-public</id>
             <name>JEFF Media GbR Repository</name>
             <url>https://repo.jeff-media.com/public</url>
+        </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
     </repositories>
 

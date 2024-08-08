@@ -1,13 +1,15 @@
-package dev.iseal.powergems.managers;
+package dev.iseal.powergems.managers.Metrics;
 
+import com.google.gson.Gson;
 import de.leonhard.storage.Json;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.GemUsageInfo;
 import dev.iseal.powergems.misc.Utils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.DrilldownPie;
-import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,10 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class MetricsManager implements Listener {
 
@@ -26,18 +25,21 @@ public class MetricsManager implements Listener {
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
     private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
-    private final Json metricsFile = new Json("metrics", Main.getPlugin().getDataFolder()+"\\data\\");
+    private final Json metricsFile = new Json("metrics", PowerGems.getPlugin().getDataFolder()+"\\data\\");
 
     public void init() {
         metrics = new Metrics(PowerGems.getPlugin(), 20723);
         if (metricsFile.contains("gem_level_distribution")) {
-            metrics.addCustomChart(new DrilldownPie("gem_level_distribution", () -> (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution")));
+            Map<String, Map<String, Integer>> map = (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution");
+            Gson gson = new Gson();
+            ConnectionManager.getInstance().sendData("powergems/gemusage", gson.toJson(map));
             metricsFile.remove("gem_level_distribution");
         }
-        if(metricsFile.contains("crashed")){
-            metrics.addCustomChart(new SimplePie("error_distribution", () -> metricsFile.getString("error_message")));
-            metricsFile.remove("crashed");
-            metricsFile.remove("error_message");
+        if(metricsFile.contains("error_messages")){
+            List<String> errors = metricsFile.getStringList("error_messages");
+            Gson gson = new Gson();
+            ConnectionManager.getInstance().sendData("powergems/errorcodes", gson.toJson(errors));
+            metricsFile.remove("error_messages");
         }
     }
 
@@ -81,9 +83,8 @@ public class MetricsManager implements Listener {
             System.out.println("Saving gem level distrib. map: "+map);
             metricsFile.set("gem_level_distribution", map);
 
-            if(ExceptionHandler.getInstance().shuttingDown) {
-                metricsFile.set("crashed", true);
-                metricsFile.set("error_message", ExceptionHandler.getInstance().errorMessage);
+            if(ExceptionHandler.getInstance().hasErrors) {
+                metricsFile.set("error_messages", (List<String>) ExceptionHandler.getInstance().errorMessages);
             }
         
         metrics.shutdown();

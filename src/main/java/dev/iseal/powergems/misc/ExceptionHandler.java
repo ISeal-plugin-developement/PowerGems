@@ -3,6 +3,7 @@ package dev.iseal.powergems.misc;
 import dev.iseal.powergems.PowerGems;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,8 +11,8 @@ public class ExceptionHandler {
 
     private static ExceptionHandler instance;
     private final Logger log = Bukkit.getLogger();
-    public boolean shuttingDown = false;
-    public String errorMessage = "An error occurred";
+    public boolean hasErrors = false;
+    public ArrayList<String> errorMessages = new ArrayList<>();
 
     public static ExceptionHandler getInstance() {
         if (instance == null)
@@ -33,10 +34,10 @@ public class ExceptionHandler {
             log.log(logLevel, "[PowerGems] More info "+i+": "+obj.toString());
             i++;
         }
+        hasErrors = true;
+        this.errorMessages.add(errorMessage);
         if (logLevel == Level.SEVERE) {
             log.log(logLevel, "[PowerGems] "+"Shutting down plugin to prevent further errors");
-            shuttingDown = true;
-            this.errorMessage = errorMessage;
             Bukkit.getPluginManager().disablePlugin(PowerGems.getPlugin());
         }
     }
