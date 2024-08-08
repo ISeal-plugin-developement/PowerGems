@@ -32,16 +32,13 @@ public class MetricsManager implements Listener {
 
     public void init() {
         metrics = new Metrics(Main.getPlugin(), 20723);
+
         if (metricsFile.contains("gem_level_distribution")) {
-            metrics.addCustomChart(new DrilldownPie("gem_level_distribution", () -> {
-                return (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution");
-            }));
+            metrics.addCustomChart(new DrilldownPie("gem_level_distribution", () -> (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution")));
             metricsFile.remove("gem_level_distribution");
         }
         if(metricsFile.contains("crashed")){
-            metrics.addCustomChart(new SimplePie("error_distribution", () -> {
-                return metricsFile.getString("error_message");
-            }));
+            metrics.addCustomChart(new SimplePie("error_distribution", () -> metricsFile.getString("error_message")));
             metricsFile.remove("crashed");
             metricsFile.remove("error_message");
         }
@@ -91,7 +88,7 @@ public class MetricsManager implements Listener {
                 metricsFile.set("crashed", true);
                 metricsFile.set("error_message", ExceptionHandler.getInstance().errorMessage);
             }
-        
+
         metrics.shutdown();
 
     }
