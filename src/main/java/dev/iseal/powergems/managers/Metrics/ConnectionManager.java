@@ -1,14 +1,12 @@
 package dev.iseal.powergems.managers.Metrics;
 
-import com.google.gson.Gson;
 import dev.iseal.powergems.misc.ExceptionHandler;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConnectionManager {
@@ -23,7 +21,7 @@ public class ConnectionManager {
     }
 
     public void sendData(String endpoint, String payload) {
-        if (token.equals("-1"))
+        if (Objects.equals(token, "-1"))
             authenticate();
         initConnection(endpoint, "POST", payload);
     }
@@ -37,23 +35,7 @@ public class ConnectionManager {
     private String initConnection(String endpoint, String method, String payload) {
         try {
             // Creating a URL object
-            URL url = new URL("https://analythics.iseal.dev/api/v1/" + endpoint);
-
-            // Opening a connection
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // Allowing output
-            connection.setDoOutput(true);
-
-            // Setting the request method
-            connection.setRequestMethod(method);
-
-            // Adding token
-            connection.addRequestProperty("Authentication", token);
-
-            // Send request body
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-            out.write(payload);
+            HttpURLConnection connection = getHttpURLConnection(endpoint, method, payload);
 
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
@@ -69,10 +51,8 @@ public class ConnectionManager {
                 }
                 in.close();
 
-                System.out.println("API Response: " + response.toString());
                 return response.toString();
             } else {
-                System.out.println("API Call Failed. Response Code: " + responseCode);
                 throw new Exception("API_RESPONSE_INVALID");
             }
         } catch (Exception e) {
@@ -81,4 +61,36 @@ public class ConnectionManager {
         return null;
     }
 
+    private @NotNull HttpURLConnection getHttpURLConnection(String endpoint, String method, String payload) throws IOException {
+        URL url = new URL("https://analythics.iseal.dev/api/v1/" + endpoint);
+
+        // Opening a connection
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Setting the request method
+        connection.setRequestMethod(method);
+
+        if (!token.equals("-1"))
+            // Adding token
+            connection.setRequestProperty("Authorization", token);
+
+        if (method.equals("POST"))
+            // Setting the content type
+            connection.setRequestProperty("Content-Type", "application/json");
+
+        if (!payload.equals("")) {
+            // Allowing output
+            connection.setDoOutput(true);
+            // Send request body
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+            out.write(payload);
+            out.flush(); // Ensure all data is sent
+            out.close(); // Close the stream
+        }
+        return connection;
+    }
+
+    public void invalidateToken() {
+        token = "-1";
+    }
 }

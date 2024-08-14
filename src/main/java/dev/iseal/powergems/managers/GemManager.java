@@ -7,6 +7,7 @@ import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -46,6 +47,7 @@ public class GemManager {
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
+    public static final Integer MAX_GEM_LEVEL = 5;
     private final Logger l = Bukkit.getLogger();
 
     /**
@@ -505,6 +507,15 @@ public class GemManager {
         }
     }
 
+    public boolean areGemsEqual(ItemStack gem1, ItemStack gem2) {
+        if (!isGem(gem1) || !isGem(gem2)) {
+            return false;
+        }
+        boolean powerEqual = getGemName(gem1).equals(getGemName(gem2));
+        boolean levelEqual = getLevel(gem1) == getLevel(gem2);
+        return powerEqual && levelEqual;
+    }
+
     /*
     * Returns the gem creation time
     * 
@@ -520,5 +531,19 @@ public class GemManager {
             pdc.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
         }
         return pdc.get(gemCreationTimeKey, PersistentDataType.LONG);
+    }
+
+    public Particle runParticleCall(ItemStack item, Player plr) {
+        if (!isGem(item))
+            throw new IllegalArgumentException("Item is not a gem");
+        try {
+            Class<?> classObj = getGemClass(item);
+            Object instance = classObj.getDeclaredConstructor().newInstance();
+            Method init = classObj.getMethod("particle", Player.class);
+            return (Particle) init.invoke(instance, plr);
+        } catch (Exception e) {
+            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "ERROR_ON_GEM_PARTICLE_CALL", plr, item);
+        }
+        return null;
     }
 }

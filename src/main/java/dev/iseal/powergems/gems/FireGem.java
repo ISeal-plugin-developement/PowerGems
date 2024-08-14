@@ -41,8 +41,8 @@ public class FireGem extends Gem {
         World world = plr.getWorld();
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 5));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1));
-        world.createExplosion(playerLocation, 4f, true, false);
-        for (Entity entity : plr.getNearbyEntities(6, 6, 6)) {
+        world.createExplosion(playerLocation, level + 1f, true, false);
+        for (Entity entity : plr.getNearbyEntities(level+3, level+3, level+3)) {
             if (entity instanceof LivingEntity) {
                 ((LivingEntity) entity).damage(5 * (level / 2), plr);
                 entity.setFireTicks(100);

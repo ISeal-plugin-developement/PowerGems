@@ -37,12 +37,14 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         file.setDefault("delayToUseGemsOnJoin", 30);
         file.setDefault("gemCreationAttempts", 10);
-        file.setDefault("allowBStatsMetrics", true);
+        file.setDefault("allowMetrics", true);
         file.setDefault("blockedReplacingBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
         file.setDefault("debugMode", false);
         file.setDefault("runUpdater", true);
-
+        file.setDefault("maxGemLevel", 5);
+        file.setDefault("allowCosmeticParticleEffects", true);
+        file.setDefault("cosmeticParticleEffectInterval", 5L);
     }
 
     public long getGemCooldownBoost() {
@@ -69,8 +71,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
     public boolean doGemDescriptions() {
         return file.getBoolean("gemsHaveDescriptions");
     }
-    public boolean isAllowBStatsMetrics() {
-        return file.getBoolean("allowBStatsMetrics");
+    public boolean isAllowMetrics() {
+        return file.getBoolean("allowMetrics");
     }
     public boolean doGemDecay() {
         return file.getBoolean("doGemDecay");
@@ -111,5 +113,20 @@ public class GeneralConfigManager extends AbstractConfigManager {
             }
         }
         return false;
+    }
+    public int getMaxGemLevel() {
+        return file.getInt("maxGemLevel");
+    }
+    public long cosmeticParticleEffectInterval() {
+        return file.getLong("cosmeticParticleEffectInterval");
+    }
+    public boolean allowCosmeticParticleEffects() {
+        return file.getBoolean("allowCosmeticParticleEffects");
+    }
+    public boolean doGemPowerTampering() {
+        return file.getBoolean("preventGemPowerTampering");
+    }
+    public boolean canDropGems() {
+        return file.getBoolean("canDropGems");
     }
 }

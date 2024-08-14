@@ -9,7 +9,6 @@ import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.GemUsageInfo;
 import dev.iseal.powergems.misc.Utils;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.DrilldownPie;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,18 +28,6 @@ public class MetricsManager implements Listener {
 
     public void init() {
         metrics = new Metrics(PowerGems.getPlugin(), 20723);
-        if (metricsFile.contains("gem_level_distribution")) {
-            Map<String, Map<String, Integer>> map = (Map<String, Map<String, Integer>>) metricsFile.getMap("gem_level_distribution");
-            Gson gson = new Gson();
-            ConnectionManager.getInstance().sendData("powergems/gemusage", gson.toJson(map));
-            metricsFile.remove("gem_level_distribution");
-        }
-        if(metricsFile.contains("error_messages")){
-            List<String> errors = metricsFile.getStringList("error_messages");
-            Gson gson = new Gson();
-            ConnectionManager.getInstance().sendData("powergems/errorcodes", gson.toJson(errors));
-            metricsFile.remove("error_messages");
-        }
     }
 
     public void exitAndSendInfo() {
@@ -80,12 +67,17 @@ public class MetricsManager implements Listener {
                 }
             });
 
-            System.out.println("Saving gem level distrib. map: "+map);
-            metricsFile.set("gem_level_distribution", map);
+        if (!map.isEmpty()) {
+            Gson gson = new Gson();
+            ConnectionManager.getInstance().sendData("powergems/gemlevelusage", gson.toJson(map));
+        }
 
-            if(ExceptionHandler.getInstance().hasErrors) {
-                metricsFile.set("error_messages", (List<String>) ExceptionHandler.getInstance().errorMessages);
-            }
+        if(ExceptionHandler.getInstance().hasErrors){
+            List<String> errors = ExceptionHandler.getInstance().errorMessages;
+            Gson gson = new Gson();
+            ConnectionManager.getInstance().sendData("powergems/errorcodes", gson.toJson(errors));
+            metricsFile.remove("error_messages");
+        }
         
         metrics.shutdown();
     }

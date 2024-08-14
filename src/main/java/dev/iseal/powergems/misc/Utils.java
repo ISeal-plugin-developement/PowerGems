@@ -182,4 +182,11 @@ public class Utils {
         return blocks;
     }
 
+    public Location getRandomLocationCloseToPlayer(Player player) {
+        Location playerLocation = player.getLocation();
+        double x = playerLocation.getX() +  Math.random() + 0.25D;
+        double z = playerLocation.getZ() + Math.random() + 0.25D;
+        return new Location(playerLocation.getWorld(), x, playerLocation.getY(), z);
+    }
+
 }

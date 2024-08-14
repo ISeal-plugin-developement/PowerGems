@@ -12,9 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class RecipeManager implements Listener {
 
@@ -33,6 +30,7 @@ public class RecipeManager implements Listener {
     private GeneralConfigManager gcm = null;
     private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
+    private final ArrayList<Recipe> upgradeRecipes = new ArrayList<>();
 
     public void initiateRecipes() {
         gemManager = SingletonManager.getInstance().gemManager;
@@ -44,7 +42,7 @@ public class RecipeManager implements Listener {
         }
         if (gcm.canUpgradeGems()) {
             l.info("Creating upgrade recipes...");
-            upgradeRecipe();
+            validateUpgradeRecipes();
             l.info("Upgrade recipes created.");
         }
         if (gcm.canCraftGems()) {
@@ -55,21 +53,93 @@ public class RecipeManager implements Listener {
     }
 
     @EventHandler
-    public void onItemPickup(InventoryClickEvent e) {
+    public void onGemCraftingAttempt(InventoryClickEvent e) {
         if (e.getInventory().getType() != InventoryType.WORKBENCH) {
             return;
         }
-        if (!e.getInventory().contains(Material.NETHERITE_BLOCK)) {
-            return;
+
+        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCursor() != null && gemManager.isGem(e.getCursor())) {
+            CraftingInventory ci = (CraftingInventory) e.getInventory();
+            ItemStack[] matrix = ci.getMatrix().clone();
+            for (int j = 0; j < 9; j++) {
+                if (matrix[j] != null) {
+                    matrix[j].setAmount(matrix[j].getAmount() - 1);
+                    if (matrix[j].getAmount() <= 0) {
+                        matrix[j] = null;
+                    }
+                }
+            }
+            ci.setMatrix(matrix);
         }
-        ItemStack i = e.getInventory().getItem(0);
-        if (i == null) {
-            return;
+
+        tryRandomGemCrafting(e);
+        tryUpgradeCrafting(e);
+    }
+
+    private void tryUpgradeCrafting(InventoryClickEvent e) {
+            CraftingInventory ci = (CraftingInventory) e.getInventory();
+            ItemStack[] matrix = ci.getMatrix().clone();
+            ItemStack gem = null;
+            for (ItemStack is : matrix) {
+                if (gemManager.isGem(is) && gemManager.getLevel(is) < gcm.getMaxGemLevel()) {
+                    gem = new ItemStack(is.clone());
+                    break;
+                }
+            }
+            if (gem == null) {
+                return;
+            }
+            int currentLevel = gemManager.getLevel(gem);
+            for (int level = currentLevel; level < gcm.getMaxGemLevel(); level++) {
+                if (isMatrixCorrect(matrix, gem, level)) {
+                    ItemMeta im = gem.getItemMeta();
+                    PersistentDataContainer pdc = im.getPersistentDataContainer();
+                    pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, level + 1);
+                    im = gemManager.createLore(im);
+                    gem.setItemMeta(im);
+                    ci.setResult(gem);
+                    return;
+                }
+            }
+    }
+
+    private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
+        String key = gemManager.getGemName(gem).toLowerCase() + "_" + (level + 1) + "_upgrade";
+        ItemStack[] wantedMatrix = new ItemStack[9];
+        HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
+        String[] shape = arr.get("shape").toString().split(",");
+        Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
+
+        // Populate wantedMatrix
+        int i = 0;
+        int gemIndex = -1;
+        for (String s : shape) {
+            for (char c : s.toCharArray()) {
+                if (c == 'g') {
+                    wantedMatrix[i] = gem;
+                    gemIndex = i;
+                } else {
+                    wantedMatrix[i] = new ItemStack(Material.getMaterial(ingredients.get(String.valueOf(c))));
+                }
+                i++;
+            }
         }
-        if (!i.hasItemMeta()) {
-            return;
+
+        for (int j = 0; j < 9; j++) {
+            if (j == gemIndex) {
+                if (!gemManager.areGemsEqual(matrix[j], wantedMatrix[j])) {
+                    return false;
+                }
+            } else if (wantedMatrix[j] == null || matrix[j] == null || !wantedMatrix[j].isSimilar(matrix[j])) {
+                return false;
+            }
         }
-        if (!i.getItemMeta().getPersistentDataContainer().has(nkm.getKey("is_random_gem"), PersistentDataType.BYTE)) {
+        return true;
+    }
+
+    private void tryRandomGemCrafting(InventoryClickEvent e) {
+        CraftingInventory ci = (CraftingInventory) e.getInventory();
+        if (ci.getResult() == null) {
             return;
         }
         if (e.getCurrentItem() == null) {
@@ -81,23 +151,23 @@ public class RecipeManager implements Listener {
         HumanEntity plr = e.getWhoClicked();
         if (gcm.allowOnlyOneGem() && SingletonManager.getInstance().utils.hasAtLeastXAmountOfGems(plr.getInventory(), 1, plr.getInventory().getItemInOffHand())) {
             if (gcm.useNewAllowOnlyOneGemAlgorithm()){
-                 long oldestGemCreationTime = -1;
-                 int oldIndex = -1;
-                 int index = -1;
-                 for (ItemStack is : plr.getInventory().getContents()) {
-                     index++;
-                     if (!gemManager.isGem(is)){
-                         continue;
-                     }
-                     if (gemManager.getGemCreationTime(is) > oldestGemCreationTime) {
-                         continue;
-                     }
-                     //Gem is older
-                     oldIndex = index;
-                     oldestGemCreationTime = gemManager.getGemCreationTime(is);
-                 }
+                long oldestGemCreationTime = -1;
+                int oldIndex = -1;
+                int index = -1;
+                for (ItemStack is : plr.getInventory().getContents()) {
+                    index++;
+                    if (!gemManager.isGem(is)){
+                        continue;
+                    }
+                    if (gemManager.getGemCreationTime(is) > oldestGemCreationTime) {
+                        continue;
+                    }
+                    //Gem is older
+                    oldIndex = index;
+                    oldestGemCreationTime = gemManager.getGemCreationTime(is);
+                }
 
-                 //Also check offhand
+                //Also check offhand
                 ItemStack offhand = plr.getInventory().getItemInOffHand();
                 if (gemManager.isGem(offhand) && gemManager.getGemCreationTime(offhand) < oldestGemCreationTime) {
                     index = -2;
@@ -164,7 +234,7 @@ public class RecipeManager implements Listener {
         }
     }
 
-    private void upgradeRecipe() {
+    private void validateUpgradeRecipes() {
         String key = "";
         try {
             ItemStack oldStack;
@@ -179,14 +249,10 @@ public class RecipeManager implements Listener {
                     im = gemManager.createLore(im);
                     newStack.setItemMeta(im);
                     // generate namespacedkey based on name+level
-                    key = generateName(im.getDisplayName()) + "_" + level + "_upgrade";
+                    key = gemManager.getGemName(newStack).toLowerCase()  + "_" + level + "_upgrade";
                     NamespacedKey nk = new NamespacedKey(PowerGems.getPlugin(), key);
                     ShapedRecipe sr = new ShapedRecipe(nk, newStack);
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
-
-                    if (arr == null) {
-                        throw new RuntimeException("Recipe map is null for key: " + key);
-                    }
 
                     boolean changed = false;
                     if (!arr.containsKey("shape")) {
@@ -219,7 +285,9 @@ public class RecipeManager implements Listener {
                         throw new RuntimeException("No gem ingredient found for " + key + " (is the file malformed?)");
 
                     sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
+                    // Register the recipe to test the validity
                     Bukkit.getServer().addRecipe(sr);
+                    Bukkit.getServer().removeRecipe(nk);
                     oldStack = newStack;
                     key = "";
                 }
@@ -227,26 +295,5 @@ public class RecipeManager implements Listener {
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "RECIPE_REGISTER_UPGRADE", key);
         }
-    }
-
-    private static String generateName(String s) {
-        s = s.replace(" ", "_");
-        StringBuilder finalString = new StringBuilder();
-        boolean lastWas = false;
-        ArrayList<Character> characterList = (ArrayList<Character>) s.chars().mapToObj(c -> (char) c)
-                .collect(Collectors.toList());
-
-        for (Character character : characterList) {
-            if (character.toString().equals("§")) {
-                lastWas = true;
-                continue;
-            }
-            if (lastWas) {
-                lastWas = false;
-                continue;
-            }
-            finalString.append(character);
-        }
-        return finalString.toString().toLowerCase();
     }
 }
