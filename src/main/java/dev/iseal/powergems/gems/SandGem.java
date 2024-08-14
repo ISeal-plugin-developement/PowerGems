@@ -3,7 +3,7 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.*;
 import org.bukkit.block.Block;

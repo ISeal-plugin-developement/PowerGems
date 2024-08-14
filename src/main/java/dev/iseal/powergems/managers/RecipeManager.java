@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,6 +60,7 @@ public class RecipeManager implements Listener {
         }
 
         if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCursor() != null && gemManager.isGem(e.getCursor())) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("wtf is happening"), Level.WARNING, "bro im going insane");
             CraftingInventory ci = (CraftingInventory) e.getInventory();
             ItemStack[] matrix = ci.getMatrix().clone();
             for (int j = 0; j < 9; j++) {
@@ -77,7 +79,10 @@ public class RecipeManager implements Listener {
     }
 
     private void tryUpgradeCrafting(InventoryClickEvent e) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
             CraftingInventory ci = (CraftingInventory) e.getInventory();
+            if (!Objects.equals(ci.getResult(), null))
+                return;
             ItemStack[] matrix = ci.getMatrix().clone();
             ItemStack gem = null;
             for (ItemStack is : matrix) {
@@ -90,21 +95,19 @@ public class RecipeManager implements Listener {
                 return;
             }
             int currentLevel = gemManager.getLevel(gem);
-            for (int level = currentLevel; level < gcm.getMaxGemLevel(); level++) {
-                if (isMatrixCorrect(matrix, gem, level)) {
-                    ItemMeta im = gem.getItemMeta();
-                    PersistentDataContainer pdc = im.getPersistentDataContainer();
-                    pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, level + 1);
-                    im = gemManager.createLore(im);
-                    gem.setItemMeta(im);
-                    ci.setResult(gem);
-                    return;
-                }
+            if (isMatrixCorrect(matrix, gem, currentLevel + 1)) {
+                ItemMeta im = gem.getItemMeta();
+                PersistentDataContainer pdc = im.getPersistentDataContainer();
+                pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, currentLevel + 1);
+                im = gemManager.createLore(im);
+                gem.setItemMeta(im);
+                ci.setResult(gem);
             }
+        }, 1);
     }
 
     private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
-        String key = gemManager.getGemName(gem).toLowerCase() + "_" + (level + 1) + "_upgrade";
+        String key = gemManager.getGemName(gem).toLowerCase() + "_" + level + "_upgrade";
         ItemStack[] wantedMatrix = new ItemStack[9];
         HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
         String[] shape = arr.get("shape").toString().split(",");
@@ -130,7 +133,7 @@ public class RecipeManager implements Listener {
                 if (!gemManager.areGemsEqual(matrix[j], wantedMatrix[j])) {
                     return false;
                 }
-            } else if (wantedMatrix[j] == null || matrix[j] == null || !wantedMatrix[j].isSimilar(matrix[j])) {
+            } else if (wantedMatrix[j] == null || matrix[j] == null || !wantedMatrix[j].equals(matrix[j])) {
                 return false;
             }
         }

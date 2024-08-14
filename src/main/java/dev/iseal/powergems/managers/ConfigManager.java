@@ -1,7 +1,7 @@
 package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.misc.AbstractConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;

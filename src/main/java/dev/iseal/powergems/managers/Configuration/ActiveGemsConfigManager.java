@@ -2,7 +2,7 @@ package dev.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.misc.AbstractConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 
 public class ActiveGemsConfigManager extends AbstractConfigManager {
 

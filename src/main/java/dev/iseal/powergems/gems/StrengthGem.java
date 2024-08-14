@@ -1,7 +1,7 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.gems.powerClasses.StrenghArena;
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

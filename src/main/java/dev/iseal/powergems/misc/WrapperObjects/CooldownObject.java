@@ -1,4 +1,4 @@
-package dev.iseal.powergems.misc;
+package dev.iseal.powergems.misc.WrapperObjects;
 
 import org.bukkit.entity.Player;
 

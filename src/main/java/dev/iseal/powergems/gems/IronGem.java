@@ -4,8 +4,8 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.ExceptionHandler;
-import dev.iseal.powergems.misc.Gem;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
@@ -72,6 +72,7 @@ public class IronGem extends Gem {
             sa.setVelocity(sa.getVelocity().multiply(level));
             sa.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
             sa.getPersistentDataContainer().set(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN, true);
+            sa.getPersistentDataContainer().set(nkm.getKey("gem_owner"), PersistentDataType.STRING, "Iron");
         }
         for (int i = 0; i < 5 + level; i++) {
             Arrow sa = plr.launchProjectile(Arrow.class);

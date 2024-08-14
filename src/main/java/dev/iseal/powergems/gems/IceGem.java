@@ -3,7 +3,7 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.listeners.powerListeners.IceTargetListener;
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;

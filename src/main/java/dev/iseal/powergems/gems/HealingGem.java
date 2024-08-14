@@ -1,6 +1,6 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;

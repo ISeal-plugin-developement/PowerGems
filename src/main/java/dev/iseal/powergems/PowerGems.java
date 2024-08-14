@@ -6,7 +6,10 @@ import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
@@ -45,7 +48,10 @@ public class PowerGems extends JavaPlugin {
         plugin = this;
         sm = SingletonManager.getInstance();
         sm.init();
+        if (!getDataFolder().exists())
+            l.warning("Generating configuration, this WILL spam the console.");
         sm.initLater();
+        firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
         if (gcm.allowOnlyOneGem())
@@ -99,6 +105,23 @@ public class PowerGems extends JavaPlugin {
     // getters beyond this point
     public static JavaPlugin getPlugin() {
         return plugin;
+    }
+
+    private void firstSetup() {
+        if (getDataFolder().exists()) {
+            return;
+        }
+        getDataFolder().mkdir();
+        GemMaterialConfigManager gemMaterialConfigManager = sm.configManager.getRegisteredConfigInstance(GemMaterialConfigManager.class);
+        CooldownConfigManager cooldownConfigManager = sm.configManager.getRegisteredConfigInstance(CooldownConfigManager.class);
+        GemManager gemManager = sm.gemManager;
+        gemManager.getAllGems().forEach((index, gem) -> {
+            gemMaterialConfigManager.getGemMaterial(gem);
+            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Right");
+            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Left");
+            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Shift");
+        });
+        l.warning("Finished generating configuration");
     }
 
     public static UUID getAttributeUUID() {

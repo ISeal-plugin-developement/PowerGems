@@ -8,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Objects;
+
 public class IronProjectileLandListener implements Listener {
 
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
@@ -17,7 +19,7 @@ public class IronProjectileLandListener implements Listener {
         if (e.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getEntity();
             if (arrow.getPersistentDataContainer() != null) {
-                if (arrow.getPersistentDataContainer().has(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN)) {
+                if (arrow.getPersistentDataContainer().has(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN) && Objects.equals(arrow.getPersistentDataContainer().get(nkm.getKey("gem_owner"), PersistentDataType.STRING), "Iron")) {
                     arrow.remove();
                 }
             }

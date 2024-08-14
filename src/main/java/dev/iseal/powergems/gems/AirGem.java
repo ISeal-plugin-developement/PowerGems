@@ -1,17 +1,20 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.listeners.powerListeners.AirListeners;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.UUIDTagType;
 import org.bukkit.*;
-import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+
+import java.util.UUID;
 
 public class AirGem extends Gem {
 
@@ -23,41 +26,39 @@ public class AirGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        int distance = 5 * (level / 2); // Maximum distance between the players
         double force = 1.5 + level; // Strength of the pull
-        RayTraceResult result = plr.getWorld().rayTrace(plr.getEyeLocation(), plr.getEyeLocation().getDirection(),
-                distance, FluidCollisionMode.ALWAYS, true, 1,
-                entity -> !entity.equals(plr) && entity instanceof Player);
-        if (result == null) {
-            plr.sendMessage(ChatColor.DARK_RED + "You need to aim at a player to do that");
-            return;
-        }
-        Player targetplr = (Player) result.getHitEntity();
-        if (targetplr == null) {
-            plr.sendMessage(ChatColor.DARK_RED + "You need to aim at a player to do that");
-            return;
-        }
         Location playerLocation = plr.getLocation();
-        Location targetLocation = targetplr.getLocation();
-        Vector direction = playerLocation.subtract(targetLocation).toVector().normalize();
-        targetplr.setVelocity(targetplr.getVelocity().add(direction.multiply(force)));
+        Arrow arrow = plr.launchProjectile(Arrow.class, playerLocation.getDirection().multiply(force));
+        PersistentDataContainer container = arrow.getPersistentDataContainer();
+        UUID randomID = UUID.randomUUID();
+        container.set(new NamespacedKey(PowerGems.getPlugin(), "is_gem_projectile"), PersistentDataType.BOOLEAN, true);
+        container.set(new NamespacedKey(PowerGems.getPlugin(), "gem_owner"), PersistentDataType.STRING, "Air");
+        container.set(new NamespacedKey(PowerGems.getPlugin(), "leash_entity"), new UUIDTagType(), randomID);
+        arrow.setInvulnerable(true);
+        arrow.setSilent(true);
+        Silverfish leash = (Silverfish) plr.getWorld().spawnEntity(playerLocation, EntityType.SILVERFISH);
+        leash.setAI(false);
+        leash.setInvulnerable(true);
+        leash.setSilent(true);
+        leash.setInvisible(true);
+        leash.setLeashHolder(plr);
+        AirListeners.getInstance().addLeashEntity(randomID, leash);
     }
 
     @Override
     protected void leftClick(Player plr) {
         Location playerLocation = plr.getLocation();
-        double radius = 5.0 * (level / 2); // Radius of effect
-        double power = 2.5 + (level / 2); // Strength of the burst
+        double radius = 5.0 * (level / 2D); // Radius of effect
+        double power = 2.5 + level; // Strength of the burst
 
-        plr.getWorld().getEntities().stream()
-                .filter(entity -> entity.getLocation().distance(playerLocation) <= radius)
+        plr.getWorld().getNearbyEntities(playerLocation, radius, radius, radius)
+                .stream()
+                .filter(entity -> entity instanceof Player && entity.getUniqueId() != plr.getUniqueId())
                 .forEach(entity -> {
-                    if (entity != plr) {
-                        entity.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
-                        if (entity instanceof LivingEntity) {
-                            ((LivingEntity) entity).damage(power);
-                        }
-                    }
+                    Player player = (Player) entity;
+                    player.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
+                    player.damage(power, plr);
+                    player.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                 });
     }
 

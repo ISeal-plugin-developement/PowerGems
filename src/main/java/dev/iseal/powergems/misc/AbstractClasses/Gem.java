@@ -1,4 +1,4 @@
-package dev.iseal.powergems.misc;
+package dev.iseal.powergems.misc.AbstractClasses;
 
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;

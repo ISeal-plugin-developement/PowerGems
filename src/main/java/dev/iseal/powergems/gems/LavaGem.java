@@ -3,7 +3,7 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.powerListeners.LavaTargetListener;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.Gem;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

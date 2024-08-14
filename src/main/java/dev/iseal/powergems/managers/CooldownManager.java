@@ -2,7 +2,7 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.CooldownObject;
+import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

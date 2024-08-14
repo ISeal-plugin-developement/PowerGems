@@ -4,7 +4,7 @@ import de.leonhard.storage.Config;
 import dev.iseal.powergems.managers.ConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

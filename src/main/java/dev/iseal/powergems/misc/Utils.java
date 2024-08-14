@@ -3,6 +3,7 @@ package dev.iseal.powergems.misc;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.tasks.SpawnColoredLineTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
