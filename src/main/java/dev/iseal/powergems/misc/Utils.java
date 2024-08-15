@@ -185,9 +185,11 @@ public class Utils {
 
     public Location getRandomLocationCloseToPlayer(Player player) {
         Location playerLocation = player.getLocation();
-        double x = playerLocation.getX() +  Math.random() + 0.25D;
-        double z = playerLocation.getZ() + Math.random() + 0.25D;
-        return new Location(playerLocation.getWorld(), x, playerLocation.getY(), z);
+        // Get a random locaion in a 3x3x2 area around the player, with the player at its center
+        double x = playerLocation.getX() + Math.random() * 1.5 - 0.75;
+        double y = playerLocation.getY() + Math.random() * 2 - 1;
+        double z = playerLocation.getZ() + Math.random() * 1.5 - 0.75;
+        return new Location(player.getWorld(), x, y, z);
     }
 
 }

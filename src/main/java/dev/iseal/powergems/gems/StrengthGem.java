@@ -3,6 +3,7 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.gems.powerClasses.StrenghArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -49,7 +50,7 @@ public class StrengthGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
+    public Particle particle(Player plr){
         return Particle.DAMAGE_INDICATOR;
     }
 }

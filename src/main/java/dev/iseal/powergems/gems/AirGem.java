@@ -75,9 +75,9 @@ public class AirGem extends Gem {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));
     }
-    
+
     @Override
-    public void Particle particle(Player plr){
+    public Particle particle(Player plr) {
         return Particle.CLOUD;
     }
 }

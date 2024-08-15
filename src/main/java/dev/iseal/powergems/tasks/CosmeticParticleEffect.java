@@ -18,9 +18,12 @@ public class CosmeticParticleEffect extends BukkitRunnable {
         Bukkit.getOnlinePlayers().forEach(player -> {
             utils.getUserGems(player).forEach(gem -> {
                 Particle particle = gemManager.runParticleCall(gem, player);
+                int level = gemManager.getLevel(gem);
                 if (particle == null) return;
-                Location loc = utils.getRandomLocationCloseToPlayer(player);
-                player.getWorld().spawnParticle(particle, loc, 1);
+                for (int i = 0; i < level; i++) {
+                    Location loc = utils.getRandomLocationCloseToPlayer(player);
+                    player.getWorld().spawnParticle(particle, loc, 1, 0.001, 0.001, 0.001, 0.001);
+                }
             });
         });
     }

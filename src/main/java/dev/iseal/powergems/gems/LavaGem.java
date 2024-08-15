@@ -7,6 +7,7 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -73,7 +74,7 @@ public class LavaGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
-        return Particle.FLAME;
+    public Particle particle(Player plr){
+        return Particle.DRIP_LAVA;
     }
 }

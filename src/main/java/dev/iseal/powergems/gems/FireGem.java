@@ -67,7 +67,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
-        return Particle.ANGRY_VILLAGER;
+    public Particle particle(Player plr) {
+        return org.bukkit.Particle.VILLAGER_ANGRY;
     }
 }

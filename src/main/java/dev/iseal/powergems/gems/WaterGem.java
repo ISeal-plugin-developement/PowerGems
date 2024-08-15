@@ -83,7 +83,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
-        return Particle.DRIPPING_WATER;
+    public Particle particle(Player plr){
+        return Particle.DRIP_WATER;
     }
 }

@@ -117,7 +117,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
+    public Particle particle(Player plr){
         return Particle.CRIT;
     }
 }

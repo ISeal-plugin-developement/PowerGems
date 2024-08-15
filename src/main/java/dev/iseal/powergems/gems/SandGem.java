@@ -135,7 +135,7 @@ public class SandGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
-        return Particle.FIREWORK;
+    public Particle particle(Player plr){
+        return Particle.FIREWORKS_SPARK;
     }
 }

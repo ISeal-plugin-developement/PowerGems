@@ -1,6 +1,7 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +33,7 @@ public class HealingGem extends Gem {
     }
 
     @Override
-    public void Particle particle(Player plr){
-        return Particle.HEART;
+    public Particle particle(Player plr){
+        return org.bukkit.Particle.HEART;
     }
 }
