@@ -65,4 +65,9 @@ public class FireGem extends Gem {
             world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
         }
     }
+
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.ANGRY_VILLAGER;
+    }
 }

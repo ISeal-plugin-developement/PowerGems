@@ -133,4 +133,9 @@ public class SandGem extends Gem {
             sm.sandMoveListen.removeFromList(plr.getUniqueId());
         }, 50L*level);
     }
+
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.FIREWORK;
+    }
 }

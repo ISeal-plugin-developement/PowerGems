@@ -71,4 +71,9 @@ public class LavaGem extends Gem {
             }
         }, 2400L);
     }
+
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.FLAME;
+    }
 }

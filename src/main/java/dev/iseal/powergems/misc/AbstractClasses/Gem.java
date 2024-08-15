@@ -64,4 +64,6 @@ public abstract class Gem {
     protected abstract void leftClick(Player plr);
 
     protected abstract void shiftClick(Player plr);
+    
+    public abstract Particle particle(Player plr);
 }

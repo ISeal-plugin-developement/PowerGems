@@ -30,4 +30,9 @@ public class HealingGem extends Gem {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, level));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
     }
+
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.HEART;
+    }
 }

@@ -116,4 +116,8 @@ public class IronGem extends Gem {
         knockbackInstance.removeModifier(knockbackAttribute);
     }
 
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.CRIT;
+    }
 }

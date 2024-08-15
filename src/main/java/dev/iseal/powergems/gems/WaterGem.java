@@ -82,4 +82,8 @@ public class WaterGem extends Gem {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500+level*100, 2));
     }
 
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.DRIPPING_WATER;
+    }
 }

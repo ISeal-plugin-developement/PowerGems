@@ -58,4 +58,8 @@ public class LightningGem extends Gem {
         }
     }
 
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.ENCHANTED_HIT;
+    }
 }

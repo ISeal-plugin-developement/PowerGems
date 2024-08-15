@@ -47,4 +47,9 @@ public class StrengthGem extends Gem {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
         new StrenghArena(plr).start();
     }
+
+    @Override
+    public void Particle particle(Player plr){
+        return Particle.DAMAGE_INDICATOR;
+    }
 }
