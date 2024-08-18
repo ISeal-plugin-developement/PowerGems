@@ -98,7 +98,8 @@ public class PowerGems extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        sm.metricsManager.exitAndSendInfo();
+        if (sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class).isAllowMetrics())
+            sm.metricsManager.exitAndSendInfo();
         getLogger().info("Shutting down!");
     }
 

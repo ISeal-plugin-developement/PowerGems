@@ -11,6 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -22,6 +24,18 @@ public class Utils {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
+    public Location getXBlocksInFrontOfPlayer(Location startLocation, Vector dir, int x) {
+        RayTraceResult result = startLocation.getWorld().rayTraceBlocks(startLocation, dir, x);
+        Location targetLocation;
+
+        // If a target block is found, use its location; otherwise, use the last block in the raycast
+        if (result != null && result.getHitBlock() != null) {
+            targetLocation = result.getHitBlock().getLocation();
+        } else {
+            targetLocation = startLocation.add(startLocation.getDirection().multiply(x));
+        }
+        return targetLocation;
+    }
 
     public ArrayList<Block> getSquareOutlineCoordinates(Player player, int radius) {
         // Get the player's current location.
@@ -146,10 +160,10 @@ public class Utils {
         return hasAtLeastXAmountOfGems(player.getInventory(), x, player.getInventory().getItemInOffHand());
     }
 
-    public void spawnFancyParticlesInLine(Location start, Location target, int lineRed, int lineGreen, int lineBlue, int circleRed, int circleGreen, int circleBlue, double lineInterval, double circleInterval, double circleParticleInterval, double circleRadius, Player spawningPlayer, Consumer<Location> lineConsumer, Consumer<Location> circleConsumer) {
+    public void spawnFancyParticlesInLine(Location start, Location target, int lineRed, int lineGreen, int lineBlue, int circleRed, int circleGreen, int circleBlue, double lineInterval, double circleInterval, double circleParticleInterval, double circleRadius, Consumer<Location> lineConsumer, Consumer<Location> circleConsumer, int repeatAmount) {
         SpawnColoredLineTask task = new SpawnColoredLineTask();
-        task.start = start;
-        task.target = target;
+        task.start = start.clone();
+        task.target = target.clone();
         task.lineRed = lineRed;
         task.lineGreen = lineGreen;
         task.lineBlue = lineBlue;
@@ -164,9 +178,44 @@ public class Utils {
         task.circleConsumer = circleConsumer;
         task.spawnLines = true;
         task.spawnCircles = true;
-        task.spawningPlayer = spawningPlayer;
+        task.repeatAmount = repeatAmount;
         task.init();
         task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
+    }
+
+    public void spawnLineParticles(Location start, Location target, int red, int green, int blue, double interval, Consumer<Location> consumer, int repeatAmount) {
+        SpawnColoredLineTask task = new SpawnColoredLineTask();
+        task.start = start.clone();
+        task.target = target.clone();
+        task.lineRed = red;
+        task.lineGreen = green;
+        task.lineBlue = blue;
+        task.lineInterval = interval;
+        task.lineConsumer = consumer;
+        task.spawnLines = true;
+        task.spawnCircles = false;
+        task.repeatAmount = repeatAmount;
+        task.init();
+        task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
+    }
+
+    /*
+        * Returns the direction vector of the player.
+        * @param rotX The rotation on the x-axis (the yaw).
+        * @param rotY The rotation on the y-axis (the pitch).
+        *
+        * @return The direction vector of the player.
+     */
+    public Vector getDirection(double rotX, double rotY) {
+        Vector vector = new Vector();
+
+        vector.setY(-Math.sin(Math.toRadians(rotY)));
+        double xz = Math.cos(Math.toRadians(rotY));
+
+        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+
+        return vector;
     }
 
     public List<Block> generateSquare(Location center, int size) {

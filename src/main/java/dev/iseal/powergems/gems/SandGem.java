@@ -14,7 +14,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.RayTraceResult;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,45 +31,48 @@ public class SandGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        RayTraceResult result = plr.getWorld().rayTrace(plr.getEyeLocation(), plr.getEyeLocation().getDirection(), 200D,
-                FluidCollisionMode.ALWAYS, true, 1, entity -> !entity.equals(plr) && entity instanceof Player);
-        if (result == null || result.getHitEntity() == null) {
-            plr.sendMessage(ChatColor.DARK_RED + "You need to aim at a player to do that");
-            return;
-        }
-        Player target = (Player) result.getHitEntity();
-        if (target == null) {
-            plr.sendMessage(ChatColor.DARK_RED + "You must be looking at a player to do that");
-            return;
-        }
-        target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 80 + (level * 40), 1 + level));
-        target.setFoodLevel(Math.max(0, target.getFoodLevel() - 5 + (level * 2)));
+        // Perform a raycast to find the target block
+        Location eyeLocation = plr.getEyeLocation().clone();
+        Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
+
+        utils.spawnLineParticles(
+                eyeLocation,
+                targetLocation,
+                255,
+                204,
+                0,
+                0.2D,
+                (location) -> {
+                    double radius = 1;
+                    List<Entity> nearbyEntities = (List<Entity>) location.getWorld().getNearbyEntities(location, radius, radius, radius);
+                    for (Entity entity : nearbyEntities) {
+                        if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
+                            if (targetPlr.getFoodLevel() > 6)
+                                targetPlr.setFoodLevel(6);
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 1));
+                        }
+                    }
+                },
+                3
+        );
     }
 
     @Override
     protected void leftClick(Player plr) {
         // Perform a raycast to find the target block
-        RayTraceResult result = plr.getWorld().rayTraceBlocks(plr.getEyeLocation(), plr.getEyeLocation().getDirection(), 100);
-        Location targetLocation;
-
-        // If a target block is found, use its location; otherwise, use the last block in the raycast
-        if (result != null && result.getHitBlock() != null) {
-            targetLocation = result.getHitBlock().getLocation();
-        } else {
-            targetLocation = plr.getEyeLocation().add(plr.getEyeLocation().getDirection().multiply(100));
-        }
+        Location eyeLocation = plr.getEyeLocation().clone();
+        Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
 
         // Call the utils.drawFancyLine method
         utils.spawnFancyParticlesInLine(
-                plr.getEyeLocation(),
+                eyeLocation,
                 targetLocation,
                 255, 204, 0, // Semi dark yellow for line
                 204, 153, 0, // Darker yellow for circles
-                0.4, // Line interval
-                5-level/2, // Circle interval
+                0.2, // Line interval
+                5-level/2D, // Circle interval
                 0.2, // Circle particle interval
-                1+level/2, // Circle radius
-                plr,
+                1+level/2D, // Circle radius
                 loc -> {
                     double radius = 1;
                     List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
@@ -82,7 +84,7 @@ public class SandGem extends Gem {
                     }
                 }, //line consumer
                 loc -> {
-                    double radius = 1 + level / 2;
+                    double radius = 1 + level / 2D;
                     List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
@@ -90,7 +92,8 @@ public class SandGem extends Gem {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 1));
                         }
                     }
-                }
+                },
+                3
         );
     }
 

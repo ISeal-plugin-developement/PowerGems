@@ -62,7 +62,7 @@ public class ConnectionManager {
     }
 
     private @NotNull HttpURLConnection getHttpURLConnection(String endpoint, String method, String payload) throws IOException {
-        URL url = new URL("https://analythics.iseal.dev/api/v1/" + endpoint);
+        URL url = new URL("https://analytics.iseal.dev/api/v1/" + endpoint);
 
         // Opening a connection
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

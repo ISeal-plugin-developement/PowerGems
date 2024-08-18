@@ -31,7 +31,7 @@ public class IceGem extends Gem {
         FallingBlock fb = l.getWorld().spawnFallingBlock(l, Material.ICE.createBlockData());
         fb.setHurtEntities(true);
         fb.setDamagePerBlock(level);
-        fb.setVelocity(l.getDirection());
+        fb.setVelocity(plr.getLocation().getDirection());
         fb.getVelocity().multiply((level * 5) + 1);
         fbhl.addEntityUUID(fb.getUniqueId());
     }

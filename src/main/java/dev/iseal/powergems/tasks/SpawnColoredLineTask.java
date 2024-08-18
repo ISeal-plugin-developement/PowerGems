@@ -3,44 +3,49 @@ package dev.iseal.powergems.tasks;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class SpawnColoredLineTask extends BukkitRunnable {
 
-    public Player spawningPlayer;
-    public int lineRed;
-    public int lineGreen;
-    public int lineBlue;
-    public int circleRed;
-    public int circleGreen;
-    public int circleBlue;
-    public Location start;
-    public Location target;
-    public Consumer<Location> lineConsumer;
-    public Consumer<Location> circleConsumer;
+    public int lineRed = 255;
+    public int lineGreen = 255;
+    public int lineBlue = 255;
+    public int circleRed = 255;
+    public int circleGreen = 255;
+    public int circleBlue = 255;
+    public Location start = null;
+    public Location target = null;
+    public Consumer<Location> lineConsumer = loc -> {};
+    public Consumer<Location> circleConsumer = loc -> {};
 
-    public double lineInterval;
-    public double circleInterval;
-    public double circleParticleInterval;
-    public double circleRadius;
-    public boolean spawnCircles;
-    public boolean spawnLines;
+    public double lineInterval = 0.1;
+    public double circleInterval = 1.0;
+    public double circleParticleInterval = 0.1;
+    public double circleRadius = 1.0;
+    public boolean spawnCircles = false;
+    public boolean spawnLines = false;
+    public boolean persistent = false;
 
-    private Location currentLineLocation;
-    private Location currentCircleLocation;
+    public int repeatAmount = 1;
 
-    private double lineDistance;
-    private Vector lineDirection;
-    private double circleDistance;
-    private Vector circleDirection;
+    private Location currentLineLocation = null;
+    private Location currentCircleLocation = null;
+    private ArrayList<Location> lineLocations = new ArrayList<>();
+    private ArrayList<Location> circleLocations = new ArrayList<>();
+
+    private double lineDistance = 0;
+    private Vector lineDirection = new Vector(0, 0, 0);
+    private double circleDistance = 0;
+    private Vector circleDirection = new Vector(0, 0, 0);
 
     private double lineRun = 0;
     private double circleRun = 0;
 
+    private int counter = 0;
 
     public void init() {
         if (spawnLines) {
@@ -60,28 +65,51 @@ public class SpawnColoredLineTask extends BukkitRunnable {
     public void run() {
         boolean doneLine = false;
         boolean doneCircle = false;
-        if (spawnLines && lineRun <= lineDistance) {
-            lineRun += lineInterval;
-            currentLineLocation = start.clone().add(lineDirection.clone().multiply(lineRun));
-            spawnLine();
-        } else {
-            doneLine = true;
-        }
-        if (spawnCircles && lineRun - circleRun >= circleInterval) {
-            circleRun = lineRun;
-            currentCircleLocation = start.clone().add(circleDirection.clone().multiply(circleRun));
-            spawnCircle();
-        } else {
-            doneCircle = true;
-        }
-        if (doneLine && doneCircle) {
-            cancel();
+        for (int i = 0; i < repeatAmount; i++) {
+            if (spawnLines && lineRun <= lineDistance) {
+                lineRun += lineInterval;
+                currentLineLocation = start.clone().add(lineDirection.clone().multiply(lineRun));
+                if (counter % 2 == 0)
+                    lineLocations.add(currentLineLocation.clone());
+                spawnLine();
+            } else {
+                doneLine = true;
+            }
+            if (spawnCircles && lineRun - circleRun >= circleInterval) {
+                circleRun = lineRun;
+                currentCircleLocation = start.clone().add(circleDirection.clone().multiply(circleRun));
+                circleLocations.add(currentCircleLocation.clone());
+                spawnCircle();
+            } else {
+                doneCircle = true;
+            }
+            counter++;
+            if (persistent && counter % 20 == 0) {
+                counter = 0;
+                Location oldLineLocation = currentLineLocation.clone();
+                Location oldCircleLocation = currentCircleLocation.clone();
+                lineLocations.forEach((loc) -> {
+                    currentLineLocation = loc;
+                    spawnLine();
+                    lineConsumer.accept(loc);
+                });
+                circleLocations.forEach((loc) -> {
+                    currentCircleLocation = loc;
+                    spawnCircle();
+                    circleConsumer.accept(loc);
+                });
+                currentLineLocation = oldLineLocation;
+                currentCircleLocation = oldCircleLocation;
+            }
+            if (doneLine && doneCircle) {
+                cancel();
+            }
         }
     }
     
     private void spawnLine() {
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(lineRed, lineGreen, lineBlue), 1);
-        spawningPlayer.spawnParticle(
+        currentLineLocation.getWorld().spawnParticle(
                 Particle.REDSTONE,
                 currentLineLocation,
                 5,
@@ -97,7 +125,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 double z = circleRadius * Math.cos(phi);
                 Location particleLocation = currentCircleLocation.clone().add(x, y, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(circleRed, circleGreen, circleBlue), 1);
-                spawningPlayer.spawnParticle(
+                currentCircleLocation.getWorld().spawnParticle(
                         Particle.REDSTONE,
                         particleLocation,
                         5,

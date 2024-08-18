@@ -32,40 +32,16 @@ public class MetricsManager implements Listener {
 
     public void exitAndSendInfo() {
         Bukkit.getServer().getOnlinePlayers().forEach(this::registerPlayerInfo);
-            Map<String, Map<String, Integer>> map = new HashMap<>();
-            ArrayList<String> gems = new ArrayList<>();
-            Map<String, Integer> levels = new HashMap<>();
-            gemLevelDistributionData.forEach((uuid, gemUsageInfos) -> {
-                gemUsageInfos.forEach(gemUsageInfo -> {
-                    String gemName = gemUsageInfo.getName();
-                    int level = gemUsageInfo.getLevel();
-                    // only add the type once
-                    if (!gems.contains(gemName))
-                        gems.add(gemName);
-
-                    // prefer higher levels
-                    if (levels.containsKey(gemName)) {
-                        if (levels.get(gemName) < level) {
-                            levels.put(gemName, level);
-                        }
-                    } else {
-                        levels.put(gemName, level);
-                    }
-                });
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+        gemLevelDistributionData.forEach((uuid, gemUsageInfos) -> {
+            gemUsageInfos.forEach(gemUsageInfo -> {
+                String gemName = gemUsageInfo.getName();
+                int level = gemUsageInfo.getLevel();
+                Map<String, Integer> levelMap = map.getOrDefault(gemName, new HashMap<>());
+                levelMap.put(String.valueOf(level), levelMap.getOrDefault(String.valueOf(level), 0) + 1);
+                map.put(gemName, levelMap);
             });
-
-            gems.forEach(gem -> {
-                if (map.containsKey(gem)) {
-                    if (map.get(gem).containsKey(levels.get(gem).toString())) {
-                        map.get(gem).put(levels.get(gem).toString(), map.get(gem).get(levels.get(gem).toString()) + 1);
-                    } else {
-                        map.get(gem).put(levels.get(gem).toString(), 1);
-                    }
-                } else {
-                    map.put(gem, new HashMap<>());
-                    map.get(gem).put(levels.get(gem).toString(), 1);
-                }
-            });
+        });
 
         if (!map.isEmpty()) {
             Gson gson = new Gson();
