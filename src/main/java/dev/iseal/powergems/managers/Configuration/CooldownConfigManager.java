@@ -1,14 +1,16 @@
 package dev.iseal.powergems.managers.Configuration;
 
-import de.leonhard.storage.Config;
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 
 public class CooldownConfigManager extends AbstractConfigManager {
 
+    public CooldownConfigManager() {
+        super("cooldowns");
+    }
+
     @Override
     public void setUpConfig() {
-        file = new Config("cooldowns", PowerGems.getPlugin().getDataFolder() + "\\config\\");
+
     }
 
     public int getStartingCooldown(String name, String ability) {

@@ -8,14 +8,15 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 
-    UUID id = UUID.randomUUID();
+    public GeneralConfigManager() {
+        super(null);
+        file = new Config("config", PowerGems.getPlugin().getDataFolder()+"");
+    }
 
     public void setUpConfig() {
-        file = new Config("config", PowerGems.getPlugin().getDataFolder()+"");
         // WARNING: Using PowerGems.file is deprecated and should be replaced with a getter in the respective class. I'm just too lazy to do it.
         PowerGems.config = file;
         file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
@@ -26,7 +27,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("canUpgradeGems", true);
         file.setDefault("canCraftGems", true);
         file.setDefault("keepGemsOnDeath", true);
-        file.setDefault("gemsHaveDescriptions", false);
+        file.setDefault("gemsHaveDescriptions", true);
         file.setDefault("explosionDamageAllowed", true);
         file.setDefault("preventGemPowerTampering", true);
         file.setDefault("doGemDecay", true);
@@ -62,14 +63,14 @@ public class GeneralConfigManager extends AbstractConfigManager {
     public boolean isRandomizedColors() {
         return file.getBoolean("randomizedColors");
     }
+    public boolean doGemDescriptions() {
+        return file.getBoolean("gemsHaveDescriptions");
+    }
     public boolean allowOnlyOneGem() {
         return file.getBoolean("allowOnlyOneGem");
     }
     public int getGemCreationAttempts() {
         return file.getInt("gemCreationAttempts");
-    }
-    public boolean doGemDescriptions() {
-        return file.getBoolean("gemsHaveDescriptions");
     }
     public boolean isAllowMetrics() {
         return file.getBoolean("allowMetrics");

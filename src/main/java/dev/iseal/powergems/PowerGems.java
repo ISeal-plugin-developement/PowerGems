@@ -16,12 +16,9 @@ import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import dev.iseal.powergems.tasks.CosmeticParticleEffect;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
-import java.io.File;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -32,15 +29,6 @@ public class PowerGems extends JavaPlugin {
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = Bukkit.getLogger();
-
-    protected PowerGems(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
-    {
-        super(loader, description, dataFolder, file);
-    }
-
-    public PowerGems() {
-        super();
-    }
 
     @Override
     public void onEnable() {

@@ -1,7 +1,5 @@
 package dev.iseal.powergems.managers.Configuration;
 
-import de.leonhard.storage.Config;
-import dev.iseal.powergems.managers.ConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
@@ -19,9 +17,12 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
     private GeneralConfigManager gcm = null;
     private final ArrayList<Material> possibleMaterials = new ArrayList<>();
 
+    public GemMaterialConfigManager() {
+        super("gemMaterials");
+    }
+
     @Override
     public void setUpConfig() {
-        file = new Config("gemMaterials", ConfigManager.getConfigFolderPath());
         file.setDefault("RandomGemMaterial", "EMERALD");
     }
     
