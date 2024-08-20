@@ -3,13 +3,11 @@ package dev.iseal.powergems.managers.Configuration;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class GemMaterialConfigManager extends AbstractConfigManager {
 
@@ -74,7 +72,6 @@ public class GemMaterialConfigManager extends AbstractConfigManager {
             return Material.valueOf(file.getString(name + "GemMaterial"));
         } catch (IllegalArgumentException e) {
             Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for gem " + name + ". Defaulting to EMERALD");
-            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "INVALID_MATERIAL_IN_CONFIG", name, file.getString(name + "GemMaterial"));
             return Material.EMERALD;
         }
     }

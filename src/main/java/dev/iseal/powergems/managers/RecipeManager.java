@@ -37,10 +37,6 @@ public class RecipeManager implements Listener {
         gemManager = SingletonManager.getInstance().gemManager;
         gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         nkm = SingletonManager.getInstance().namespacedKeyManager;
-        if (gcm.isRandomizedColors()){
-            l.severe(gcm.getPluginPrefix()+"Randomized colors are enabled, recipes will not work. Either turn off randomized colors or disable recipes in the config.");
-            return;
-        }
         if (gcm.canUpgradeGems()) {
             l.info("Creating upgrade recipes...");
             validateUpgradeRecipes();
@@ -60,7 +56,6 @@ public class RecipeManager implements Listener {
         }
 
         if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCursor() != null && gemManager.isGem(e.getCursor())) {
-            ExceptionHandler.getInstance().dealWithException(new RuntimeException("wtf is happening"), Level.WARNING, "bro im going insane");
             CraftingInventory ci = (CraftingInventory) e.getInventory();
             ItemStack[] matrix = ci.getMatrix().clone();
             for (int j = 0; j < 9; j++) {
