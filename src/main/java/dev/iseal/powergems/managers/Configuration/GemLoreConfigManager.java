@@ -17,7 +17,7 @@ public class GemLoreConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
-        for (int i = 1; i < GemManager.TOTAL_GEM_AMOUNT+1; i++) {
+        for (int i = 1; i < GemManager.TOTAL_GEM_AMOUNT; i++) {
             createDefaultLore(i);
         }
     }
