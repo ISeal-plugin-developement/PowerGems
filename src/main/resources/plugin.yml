@@ -1,6 +1,6 @@
 name: PowerGems
 version: '${project.version}'
-main: me.iseal.powergems.Main
+main: dev.iseal.powergems.PowerGems
 api-version: '1.19'
 author: ISeal
 commands:
@@ -19,6 +19,7 @@ commands:
   reloadconfig:
     description: Command to reload the config files
     usage: /reloadconfig
+    aliases: [rc]
     permission: powergems.reloadconfig
   debug:
     description: Debug command
