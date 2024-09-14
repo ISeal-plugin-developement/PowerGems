@@ -67,9 +67,4 @@ public class IceGem extends Gem {
             }
         }, 1200);
     }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.SNOWFLAKE;
-    }
 }

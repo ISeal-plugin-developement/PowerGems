@@ -57,9 +57,4 @@ public class LightningGem extends Gem {
             }
         }
     }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.CRIT_MAGIC;
-    }
 }

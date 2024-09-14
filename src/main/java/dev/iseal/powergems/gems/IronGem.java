@@ -115,9 +115,4 @@ public class IronGem extends Gem {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         knockbackInstance.removeModifier(knockbackAttribute);
     }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.CRIT;
-    }
 }

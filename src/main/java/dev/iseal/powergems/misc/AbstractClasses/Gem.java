@@ -1,6 +1,6 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
@@ -20,7 +20,7 @@ public abstract class Gem {
     protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected GeneralConfigManager generalConfigManager = (GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     protected int level;
 
     public void call(Action action, Player plr, ItemStack item) {
@@ -50,14 +50,12 @@ public abstract class Gem {
     }
 
     protected boolean checkIfCooldown(String action, Player plr) {
-        if (action.equals("left")) {
-            return cm.isLeftClickOnCooldown(plr, caller);
-        } else if (action.equals("right")) {
-            return cm.isRightClickOnCooldown(plr, caller);
-        } else if (action.equals("shift")) {
-            return cm.isShiftClickOnCooldown(plr, caller);
-        }
-        return false;
+        return switch (action) {
+            case "left" -> cm.isLeftClickOnCooldown(plr, caller);
+            case "right" -> cm.isRightClickOnCooldown(plr, caller);
+            case "shift" -> cm.isShiftClickOnCooldown(plr, caller);
+            default -> false;
+        };
     }
 
     protected abstract void rightClick(Player plr);
@@ -66,5 +64,7 @@ public abstract class Gem {
 
     protected abstract void shiftClick(Player plr);
     
-    public abstract Particle particle(Player plr);
+    public Particle particle() {
+        return gpcm.getParticle(level);
+    }
 }

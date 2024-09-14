@@ -1,7 +1,6 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -30,10 +29,5 @@ public class HealingGem extends Gem {
     protected void shiftClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, level));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return org.bukkit.Particle.HEART;
     }
 }

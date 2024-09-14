@@ -21,7 +21,7 @@ public class ConfigManager {
     private final Logger l = Bukkit.getLogger();
 
     public void setUpConfig() {
-        Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration").forEach(this::addConfigClass);
+        Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
         Class<? extends AbstractConfigManager> currentToDebug = null;
         try {
             for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
@@ -48,7 +48,7 @@ public class ConfigManager {
         if (!registeredConfigurations.contains(clazz)){
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("EARLY_ASK_FOR_CONFIG_INSTANCE"), Level.WARNING, "EARLY_ASK_FOR_CONFIG_INSTANCE", clazz.getName());
             // oh, god (attempt desperate fix(really f-ing bad code))
-            Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration").forEach(this::addConfigClass);
+            Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
         }
         if (!registeredConfigInstances.containsKey(clazz)){
             registerConfigInstance(clazz);
