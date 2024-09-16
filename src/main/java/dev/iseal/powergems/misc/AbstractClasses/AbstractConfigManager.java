@@ -23,4 +23,6 @@ public abstract class AbstractConfigManager {
         setUpConfig();
     }
 
+    public abstract void lateInit();
+
 }

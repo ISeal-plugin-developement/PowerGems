@@ -52,8 +52,6 @@ public class GemManager {
     private final Logger l = Bukkit.getLogger();
     private static HashMap<String, Integer> gemIdLookup = new HashMap<>();
 
-    public static final int TOTAL_GEM_AMOUNT = 10;
-
     /**
      * Initializes the gem manager with necessary keys and configurations.
      */
@@ -315,7 +313,7 @@ public class GemManager {
      */
     public HashMap<Integer, ItemStack> getAllGems() {
         HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
-        for (int i = 1; i <= TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 1; i <= SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             allGems.put(i, generateItemStack(i, 1));
         }
         return allGems;

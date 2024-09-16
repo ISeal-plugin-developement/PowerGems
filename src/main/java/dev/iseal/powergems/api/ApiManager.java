@@ -15,9 +15,6 @@ public class ApiManager {
 
     public boolean registerGemClass(Class<? extends Gem> gemClass) {
         boolean success = grm.addGemClass(gemClass);
-        if (success) {
-            success = grm.registerGemInstance(gemClass);
-        }
         if (!success)
             Bukkit.getLogger().info("Failed to register gem class " + gemClass.getName());
         return success;

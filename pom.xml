@@ -44,11 +44,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.jeff_media.updatechecker</pattern>
-                                    <shadedPattern>me.iseal.powergems.misc.updatechecker</shadedPattern>
+                                    <shadedPattern>dev.iseal.powergems.misc.updatechecker</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.iseal.powergems.misc.bstats</shadedPattern>
+                                    <shadedPattern>dev.iseal.powergems.misc.bstats</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>

@@ -10,10 +10,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,8 +24,7 @@ public class GemReflectionManager {
         return instance;
     }
 
-    private final ArrayList<Class< ? extends Gem>> registeredGems = new ArrayList<>(10);
-    private final HashMap<Class<? extends Gem>, Object> registeredGemInstances = new HashMap<>(10);
+    private final HashMap<Class< ? extends Gem>, Gem> registeredGems = new HashMap<>(10);
     private final Logger l = Bukkit.getLogger();
     private final SingletonManager sm = SingletonManager.getInstance();
     private final GemManager gm = sm.gemManager;
@@ -36,36 +32,7 @@ public class GemReflectionManager {
 
     public void registerGems() {
         Utils.findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
-                .forEach(gem -> {
-                    addGemClass(gem);
-                    registerGemInstance((Class<? extends Gem>) gem);
-                });
-    }
-
-    public boolean registerGemInstance(Class<? extends Gem> clazz) {
-        if (!isPossibleGemClass(clazz)) {
-            l.log(Level.WARNING, "Class {0} is not a possible gem class.", clazz.getName());
-            return false;
-        }
-        try {
-            if (!registeredGemInstances.containsKey(clazz)) {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
-                registeredGemInstances.put(clazz, instance);
-                return true;
-            }
-        } catch (NoSuchMethodException ex) {
-            l.log(Level.SEVERE, "No default constructor found for class {0}.", clazz.getName());
-            ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "REGISTER_GEM_INSTANCE");
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-            l.log(Level.SEVERE, "Error instantiating class {0}.", clazz.getName());
-            if (ex instanceof InvocationTargetException) {
-                l.info(((InvocationTargetException) ex).getTargetException().getMessage());
-                Arrays.stream(((InvocationTargetException) ex).getTargetException().getStackTrace())
-                        .forEach(stackTraceElement -> l.info(stackTraceElement.toString()));
-            } else
-                ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "REGISTER_GEM_INSTANCE");
-        }
-        return false;
+                .forEach(this::addGemClass);
     }
 
     private boolean isPossibleGemClass(Class<?> clazz) {
@@ -78,7 +45,14 @@ public class GemReflectionManager {
 
     public boolean addGemClass(Class<?> clazz) {
         if (isPossibleGemClass(clazz)) {
-            registeredGems.add((Class<? extends Gem>) clazz);
+            try {
+                Gem instance = (Gem) clazz.getDeclaredConstructor().newInstance();
+                registeredGems.put((Class<? extends Gem>) clazz, instance);
+                SingletonManager.TOTAL_GEM_AMOUNT++;
+            } catch (Exception e) {
+                ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "ADD_GEM_CLASS", clazz.getName());
+                return false;
+            }
             return true;
         } else
             return false;
@@ -87,15 +61,15 @@ public class GemReflectionManager {
     public Class<? extends Gem> getGemClass(ItemStack gem) {
         if (!gm.isGem(gem))
             return null;
-        String gem_power = gem.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING);
-        return registeredGems.stream()
+        String gem_power = gem.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)+"Gem";
+        return registeredGems.keySet().stream()
                 .filter(clazz -> clazz.getSimpleName().equals(gem_power))
                 .findFirst()
                 .orElse(null);
     }
 
     public ArrayList<Class<? extends Gem>> getAllGemsClasses() {
-        return new ArrayList<>(registeredGems);
+        return new ArrayList<>(registeredGems.keySet());
     }
 
     public boolean runCall(ItemStack item, Action action, Player plr) {
@@ -104,14 +78,10 @@ public class GemReflectionManager {
         Class<? extends Gem> gemClass = getGemClass(item);
         if (gemClass == null)
             return false;
-        Object gemInstance = registeredGemInstances.get(gemClass);
-        try {
-            Method call = gemClass.getMethod("call", Action.class, Player.class, ItemStack.class);
-            call.invoke(gemInstance, action, plr, item);
-            return true;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RUN_CALL", gemClass);
-        }
+        if (!registeredGems.containsKey(gemClass))
+            return false;
+        Gem gemInstance = registeredGems.get(gemClass);
+        gemInstance.call(action, plr, item);
         return false;
     }
 
@@ -119,15 +89,15 @@ public class GemReflectionManager {
         if (!gm.isGem(item))
             return null;
         Class<? extends Gem> gemClass = getGemClass(item);
-        if (gemClass == null)
+        if (gemClass == null) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
             return null;
-        Object gemInstance = registeredGemInstances.get(gemClass);
-        try {
-            Method call = gemClass.getMethod("particle", Player.class);
-            return (Particle) call.invoke(gemInstance, plr);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "RUN_PARTICLE_CALL", gemClass);
         }
-        return null;
+        if (!registeredGems.containsKey(gemClass)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem has not been registered"), Level.WARNING, "GEM_NOT_REGISTERED", item);
+            return null;
+        }
+        Gem gemInstance = registeredGems.get(gemClass);
+        return gemInstance.particle();
     }
 }

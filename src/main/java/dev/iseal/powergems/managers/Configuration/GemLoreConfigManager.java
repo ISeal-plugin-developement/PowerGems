@@ -1,6 +1,7 @@
 package dev.iseal.powergems.managers.Configuration;
 
 import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.ChatColor;
@@ -16,7 +17,7 @@ public class GemLoreConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
-        for (int i = 1; i < GemManager.TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 1; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             createDefaultLore(i);
         }
     }

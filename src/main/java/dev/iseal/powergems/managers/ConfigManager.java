@@ -98,6 +98,18 @@ public class ConfigManager {
         }
     }
 
+    public void lateInit() {
+        for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
+            try {
+                Object instance = getRegisteredConfigInstance(currentClass);
+                Method init = currentClass.getMethod("lateInit");
+                init.invoke(instance);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                ExceptionHandler.getInstance().dealWithException(ex, Level.SEVERE, "LATE_INIT", currentClass);
+            }
+        }
+    }
+
     private boolean isPossibleConfigClass(Class<?> clazz) {
         return AbstractConfigManager.class.isAssignableFrom(clazz);
     }
