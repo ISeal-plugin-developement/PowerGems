@@ -12,4 +12,9 @@ public class GemPowerConfigManager extends AbstractConfigManager {
     public void setUpConfig() {
 
     }
+
+    @Override
+    public void lateInit() {
+
+    }
 }

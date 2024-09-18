@@ -15,6 +15,10 @@ import java.util.List;
 
 public class StrengthGem extends Gem {
 
+    public StrengthGem() {
+        super("Strength");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

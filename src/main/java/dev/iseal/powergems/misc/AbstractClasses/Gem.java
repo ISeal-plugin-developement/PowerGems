@@ -22,6 +22,12 @@ public abstract class Gem {
     protected CooldownManager cm = sm.cooldownManager;
     protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     protected int level;
+    protected Particle particle;
+    protected String name;
+
+    public Gem(String name) {
+        this.name = name;
+    }
 
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
@@ -65,6 +71,13 @@ public abstract class Gem {
     protected abstract void shiftClick(Player plr);
     
     public Particle particle() {
-        return gpcm.getParticle(level);
+        if (particle == null) {
+            particle = gpcm.getParticle(GemManager.lookUpID(name));
+        }
+        return particle;
+    }
+
+    public String getName() {
+        return name;
     }
 }

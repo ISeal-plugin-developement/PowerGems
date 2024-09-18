@@ -13,6 +13,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class LightningGem extends Gem {
 
+    public LightningGem() {
+        super("Lightning");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

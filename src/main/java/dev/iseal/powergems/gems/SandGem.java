@@ -23,6 +23,10 @@ import java.util.List;
 
 public class SandGem extends Gem {
 
+    public SandGem() {
+        super("Sand");
+    }
+
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 

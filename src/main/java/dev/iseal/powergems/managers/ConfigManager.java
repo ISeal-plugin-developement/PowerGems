@@ -3,6 +3,7 @@ package dev.iseal.powergems.managers;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConfigManager {
+public class ConfigManager implements Dumpable {
 
     private final ArrayList<Class< ? extends AbstractConfigManager>> registeredConfigurations = new ArrayList<>(5);
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
@@ -120,4 +121,11 @@ public class ConfigManager {
         }
     }
 
+    @Override
+    public HashMap<String, Object> dump() {
+        HashMap<String, Object> dump = new HashMap<>();
+        dump.put("registeredConfigurations", registeredConfigurations);
+        dump.put("registeredConfigInstances", registeredConfigInstances);
+        return dump;
+    }
 }

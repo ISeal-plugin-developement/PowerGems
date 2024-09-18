@@ -2,16 +2,18 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class CooldownManager {
+public class CooldownManager implements Dumpable {
 
     private final ConfigManager cm = SingletonManager.getInstance().configManager;
     private final GeneralConfigManager gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
@@ -136,5 +138,14 @@ public class CooldownManager {
     public void cancelCooldowns() {
         rightClickCooldowns.clear();
         leftClickCooldowns.clear();
+    }
+
+    @Override
+    public HashMap<String, Object> dump() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("rightClickCooldowns", rightClickCooldowns);
+        map.put("leftClickCooldowns", leftClickCooldowns);
+        map.put("shiftClickCooldowns", shiftClickCooldowns);
+        return map;
     }
 }

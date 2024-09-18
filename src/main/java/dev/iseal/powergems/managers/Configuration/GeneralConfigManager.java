@@ -48,6 +48,11 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("cosmeticParticleEffectInterval", 5L);
     }
 
+    @Override
+    public void lateInit() {
+
+    }
+
     public long getGemCooldownBoost() {
         return file.getLong("cooldownBoostPerLevelInSeconds");
     }

@@ -14,6 +14,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class WaterGem extends Gem {
 
+    public WaterGem() {
+        super("Water");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

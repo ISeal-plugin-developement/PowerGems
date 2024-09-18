@@ -21,6 +21,10 @@ public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
 
+    public AirGem() {
+        super("Air");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

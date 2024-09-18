@@ -13,6 +13,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class FireGem extends Gem {
 
+    public FireGem() {
+        super("Fire");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

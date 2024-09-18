@@ -19,6 +19,10 @@ import java.util.ArrayList;
 
 public class LavaGem extends Gem {
 
+    public LavaGem() {
+        super("Lava");
+    }
+
     private final LavaTargetListener ltl = new LavaTargetListener();
     private final Utils u = SingletonManager.getInstance().utils;
 

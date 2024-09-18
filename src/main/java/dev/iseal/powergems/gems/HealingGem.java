@@ -9,6 +9,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HealingGem extends Gem {
 
+    public HealingGem() {
+        super("Healing");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();

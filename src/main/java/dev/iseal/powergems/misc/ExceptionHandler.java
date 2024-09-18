@@ -1,9 +1,16 @@
 package dev.iseal.powergems.misc;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,9 +41,12 @@ public class ExceptionHandler {
             log.log(logLevel, "[PowerGems] More info "+i+": "+obj.toString());
             i++;
         }
-        hasErrors = true;
-        this.errorMessages.add(errorMessage);
+
+        dumpAllClasses(logLevel);
+
         if (logLevel == Level.SEVERE) {
+            hasErrors = true;
+            this.errorMessages.add(errorMessage);
             log.log(logLevel, "[PowerGems] "+"Shutting down plugin to prevent further errors");
             Bukkit.getPluginManager().disablePlugin(PowerGems.getPlugin());
         }
@@ -51,5 +61,50 @@ public class ExceptionHandler {
             }
         }
         return null;
+    }
+
+    public void dumpAllClasses(Level logLevel) {
+        Set<Class<?>> dumpableClasses = Utils.findAllClassesInPackage("dev.iseal.powergems", Dumpable.class);
+
+        dumpableClasses.forEach(clazz -> {
+            if (clazz.equals(Dumpable.class)) return;
+            // check if class is singleton
+            if (clazz.getDeclaredMethods().length == 0) return;
+            AtomicBoolean done = new AtomicBoolean(false);
+
+            Arrays.stream(clazz.getDeclaredMethods()).filter(method -> method.getName().equals("getInstance")).findFirst().ifPresent(getInstance -> {
+                try {
+                    Object instance = getInstance.invoke(null);
+                    Method dump = clazz.getDeclaredMethod("dump");
+                    log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
+                }
+                done.set(true);
+            });
+            if (done.get()) return;
+            // Check if SingletonManager contains reference to class (I should really change this to use .getInstance() method)
+            Arrays.stream(SingletonManager.class.getDeclaredFields()).filter(field -> field.getType().equals(clazz)).findFirst().ifPresent(field -> {
+                try {
+                    Object instance = field.get(SingletonManager.getInstance());
+                    Method dump = clazz.getDeclaredMethod("dump");
+                    log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
+                }
+                done.set(true);
+            });
+            if (done.get()) return;
+            // Last resort, create new instance and dump. 99% of the time this will fail, someone screwed up Dumpable implementation real bad
+            try {
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                Method dump = clazz.getDeclaredMethod("dump");
+                log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException | IllegalArgumentException e1) {
+                log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
+                done.set(true);
+            }
+            if (done.get()) return;
+        });
     }
 }

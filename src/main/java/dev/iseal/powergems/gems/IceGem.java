@@ -16,6 +16,10 @@ import org.bukkit.util.RayTraceResult;
 
 public class IceGem extends Gem {
 
+    public IceGem() {
+        super("Ice");
+    }
+
     private final IceTargetListener itl = sm.iceTargetListen;
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 

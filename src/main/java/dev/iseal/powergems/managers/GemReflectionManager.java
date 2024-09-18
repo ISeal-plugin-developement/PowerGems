@@ -2,6 +2,7 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GemReflectionManager {
+public class GemReflectionManager implements Dumpable {
 
     private static GemReflectionManager instance;
     public static GemReflectionManager getInstance() {
@@ -49,6 +50,7 @@ public class GemReflectionManager {
                 Gem instance = (Gem) clazz.getDeclaredConstructor().newInstance();
                 registeredGems.put((Class<? extends Gem>) clazz, instance);
                 SingletonManager.TOTAL_GEM_AMOUNT++;
+                gm.addGem(instance);
             } catch (Exception e) {
                 ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "ADD_GEM_CLASS", clazz.getName());
                 return false;
@@ -73,21 +75,29 @@ public class GemReflectionManager {
     }
 
     public boolean runCall(ItemStack item, Action action, Player plr) {
-        if (!gm.isGem(item))
-            ExceptionHandler.getInstance().dealWithException(new RuntimeException("NOT_A_GEM"), Level.WARNING, "The item passed in is not a gem", item);
+        if (!gm.isGem(item)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
+            return false;
+        }
         Class<? extends Gem> gemClass = getGemClass(item);
-        if (gemClass == null)
+        if (gemClass == null) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
             return false;
-        if (!registeredGems.containsKey(gemClass))
+        }
+        if (!registeredGems.containsKey(gemClass)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem has not been registered"), Level.WARNING, "GEM_NOT_REGISTERED", item);
             return false;
+        }
         Gem gemInstance = registeredGems.get(gemClass);
         gemInstance.call(action, plr, item);
-        return false;
+        return true;
     }
 
     public Particle runParticleCall(ItemStack item, Player plr) {
-        if (!gm.isGem(item))
+        if (!gm.isGem(item)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
             return null;
+        }
         Class<? extends Gem> gemClass = getGemClass(item);
         if (gemClass == null) {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
@@ -99,5 +109,15 @@ public class GemReflectionManager {
         }
         Gem gemInstance = registeredGems.get(gemClass);
         return gemInstance.particle();
+    }
+
+    @Override
+    public HashMap<String, Object> dump() {
+        HashMap<String, Object> dump = new HashMap<>();
+        dump.put("registeredGems", registeredGems);
+        dump.put("sm", sm);
+        dump.put("gm", gm);
+        dump.put("nkm", nkm);
+        return dump;
     }
 }

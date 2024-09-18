@@ -1,11 +1,14 @@
 package dev.iseal.powergems.managers.Configuration;
 
+import com.google.common.base.Enums;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
+import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Particle;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class GemParticleConfigManager extends AbstractConfigManager {
 
@@ -17,6 +20,11 @@ public class GemParticleConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
+
+    }
+
+    @Override
+    public void lateInit() {
         for (int i = 1; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             createDefaultParticleSettings(i);
         }
@@ -24,6 +32,7 @@ public class GemParticleConfigManager extends AbstractConfigManager {
 
     private void createDefaultParticleSettings(int i) {
         if (file.contains("Gem" + GemManager.lookUpName(i) + "Particle")) return;
+        if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_PARTICLE_SETTINGS");
         Particle setParticle = switch (i) {
             case 1 -> Particle.DAMAGE_INDICATOR;
             case 2 -> Particle.HEART;
@@ -42,7 +51,12 @@ public class GemParticleConfigManager extends AbstractConfigManager {
 
     public Particle getParticle(int gemID) {
         if (CACHE.containsKey(gemID)) return CACHE.get(gemID);
-        CACHE.put(gemID, Particle.valueOf(file.getString("Gem" + GemManager.lookUpName(gemID) + "Particle")));
+        CACHE.put(gemID,Enums.getIfPresent(Particle.class, file.getString("Gem" + GemManager.lookUpName(gemID) + "Particle"))
+                        .or(() -> {
+                            ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid particle type: " + file.getString("Gem" + GemManager.lookUpName(gemID) + "Particle")), Level.WARNING, "GET_PARTICLE", CACHE.toString());
+                            return Particle.DAMAGE_INDICATOR;
+                        })
+        );
         return CACHE.get(gemID);
     }
 
