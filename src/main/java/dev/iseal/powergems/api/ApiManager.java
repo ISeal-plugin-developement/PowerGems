@@ -7,6 +7,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ApiManager {
 
+    private static ApiManager instance = null;
+    public static ApiManager getInstance() {
+        if (instance == null)
+            instance = new ApiManager();
+        return instance;
+    }
+
     private final GemReflectionManager grm = GemReflectionManager.getInstance();
 
     public void registerAddonPlugin(JavaPlugin plugin) {
