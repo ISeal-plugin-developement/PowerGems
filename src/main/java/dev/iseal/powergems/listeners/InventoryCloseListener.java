@@ -17,12 +17,15 @@ import java.util.Random;
 
 public class InventoryCloseListener implements Listener {
 
-    private final ItemStack randomGem = SingletonManager.getInstance().gemManager.getRandomGemItem();
+    private ItemStack randomGem = null;
     private final GemManager gm = SingletonManager.getInstance().gemManager;
     private final Random rand = new Random();
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
+        if (randomGem == null) {
+            randomGem = gm.getRandomGemItem();
+        }
         if (!(e.getInventory().getHolder() instanceof Player plr)) {
             return;
         }

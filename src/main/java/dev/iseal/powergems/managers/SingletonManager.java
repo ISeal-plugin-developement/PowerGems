@@ -59,4 +59,8 @@ public class SingletonManager {
             updaterManager.start();
         recipeManager.initiateRecipes();
     }
+
+    public void initAfterAddonLoad() {
+
+    }
 }

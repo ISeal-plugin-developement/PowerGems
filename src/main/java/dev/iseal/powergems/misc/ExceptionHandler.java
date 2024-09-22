@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -65,7 +66,7 @@ public class ExceptionHandler {
 
     public void dumpAllClasses(Level logLevel) {
         Set<Class<?>> dumpableClasses = Utils.findAllClassesInPackage("dev.iseal.powergems", Dumpable.class);
-
+        HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
             if (clazz.equals(Dumpable.class)) return;
             // check if class is singleton
@@ -76,7 +77,7 @@ public class ExceptionHandler {
                 try {
                     Object instance = getInstance.invoke(null);
                     Method dump = clazz.getDeclaredMethod("dump");
-                    log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+                    dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
                 }
@@ -88,7 +89,7 @@ public class ExceptionHandler {
                 try {
                     Object instance = field.get(SingletonManager.getInstance());
                     Method dump = clazz.getDeclaredMethod("dump");
-                    log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+                    dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
                 }
@@ -99,12 +100,17 @@ public class ExceptionHandler {
             try {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
                 Method dump = clazz.getDeclaredMethod("dump");
-                log.log(logLevel, "[BossAPI] Class "+ clazz.getSimpleName() + " dump: " + dump.invoke(instance).toString());
+                dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
+                done.set(true);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException | IllegalArgumentException e1) {
                 log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
-                done.set(true);
             }
             if (done.get()) return;
+        });
+        dumpMap.forEach((className, dumpMapTemp) -> {
+            dumpMapTemp.forEach((toDump, dumpValue) -> {
+                log.log(logLevel, "[PowerGems] Dump from: "+className+" -> "+toDump+": "+dumpValue.toString());
+            });
         });
     }
 }

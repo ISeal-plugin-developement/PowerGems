@@ -3,7 +3,7 @@ package dev.iseal.powergems.managers.Configuration;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class GemLoreConfigManager extends AbstractConfigManager {
 
     @Override
     public void lateInit() {
-        for (int i = 1; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             createDefaultLore(GemManager.lookUpName(i));
         }
     }
@@ -99,10 +99,10 @@ public class GemLoreConfigManager extends AbstractConfigManager {
                 lore.add(ChatColor.BLUE + "Passive: Power up yourself with water");
             break;
             default:
-                ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem name"), Level.WARNING, "ERROR_ON_LORE_CREATION", gemName);
+                Bukkit.getLogger().log(Level.WARNING, "Unrecognized gem name: " + gemName+", if this looks like a gem from an addon you probably have to configure the lore yourself.");
             break;
         }
-        file.setDefault("Gem" + gemName + "Lore", lore);
+        file.set("Gem" + gemName + "Lore", lore);
     }
 
     public ArrayList<String> getLore(int gemNumber) {

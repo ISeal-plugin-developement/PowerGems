@@ -3,13 +3,15 @@ package dev.iseal.powergems.managers.Configuration;
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class GeneralConfigManager extends AbstractConfigManager {
+public class GeneralConfigManager extends AbstractConfigManager implements Dumpable {
 
     public GeneralConfigManager() {
         super(null);
@@ -134,5 +136,12 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean canDropGems() {
         return file.getBoolean("canDropGems");
+    }
+
+    @Override
+    public HashMap<String, Object> dump() {
+        HashMap<String, Object> map = new HashMap<>();
+        file.keySet().forEach(key -> map.put(key, file.get(key)));
+        return map;
     }
 }

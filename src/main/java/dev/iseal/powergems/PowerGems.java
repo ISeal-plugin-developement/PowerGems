@@ -38,7 +38,6 @@ public class PowerGems extends JavaPlugin {
         sm.init();
         if (!getDataFolder().exists())
             l.warning("Generating configuration, this WILL spam the console.");
-        sm.initLater();
         firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
@@ -64,6 +63,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
+        pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(sm.metricsManager, this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
@@ -81,7 +81,6 @@ public class PowerGems extends JavaPlugin {
             MetricsManager metricsManager = sm.metricsManager;
             metricsManager.init();
         }
-        //TODO: addon api
     }
 
     @Override

@@ -25,7 +25,7 @@ public class GemParticleConfigManager extends AbstractConfigManager {
 
     @Override
     public void lateInit() {
-        for (int i = 1; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             createDefaultParticleSettings(i);
         }
     }
@@ -44,7 +44,7 @@ public class GemParticleConfigManager extends AbstractConfigManager {
             case 8 -> Particle.SNOWFLAKE;
             case 9 -> Particle.DRIP_LAVA;
             case 10 -> Particle.DRIP_WATER;
-            default -> null;
+            default -> Particle.VILLAGER_ANGRY;
         };
         file.set("Gem" + GemManager.lookUpName(i) + "Particle", setParticle.name());
     }

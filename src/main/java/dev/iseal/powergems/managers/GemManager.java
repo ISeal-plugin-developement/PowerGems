@@ -1,9 +1,6 @@
 package dev.iseal.powergems.managers;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
@@ -45,6 +42,7 @@ public class GemManager implements Dumpable {
     private GemMaterialConfigManager gmcm = null;
     private GemReflectionManager grm = null;
     private GemLoreConfigManager glcm = null;
+    private GemColorConfigManager gccm = null;
     private Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
@@ -68,11 +66,14 @@ public class GemManager implements Dumpable {
         gemPowerKey = nkm.getKey("gem_power");
         gemLevelKey = nkm.getKey("gem_level");
         gemCreationTimeKey = nkm.getKey("gem_creation_time");
-        possibleColors = removeElement(ChatColor.values(), ChatColor.MAGIC);
+        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach((o -> {
+            if (o instanceof ChatColor) possibleColors.add((ChatColor) o);
+        }));
         gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
         agcm = cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
         gmcm = cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
         glcm = cm.getRegisteredConfigInstance(GemLoreConfigManager.class);
+        gccm = cm.getRegisteredConfigInstance(GemColorConfigManager.class);
     }
 
     /**
@@ -82,8 +83,8 @@ public class GemManager implements Dumpable {
      * @param elementToRemove The element to remove from the array.
      * @return A new ArrayList of ChatColor with the specified element removed.
      */
-    private ArrayList<ChatColor> removeElement(ChatColor[] originalArray, ChatColor elementToRemove) {
-        ArrayList<ChatColor> list = new ArrayList<>(Arrays.asList(originalArray));
+    private ArrayList<Object> removeElement(Object[] originalArray, Object elementToRemove) {
+        ArrayList<Object> list = new ArrayList<>(Arrays.asList(originalArray));
         list.removeIf(color -> color.equals(elementToRemove));
         return list;
     }
@@ -255,19 +256,7 @@ public class GemManager implements Dumpable {
         if (gcm.isRandomizedColors()) {
             return possibleColors.get(rand.nextInt(possibleColors.size())).toString();
         }
-        return switch (gemName) {
-            case "Strenght" -> ChatColor.DARK_GREEN + "";
-            case "Healing" -> ChatColor.LIGHT_PURPLE + "";
-            case "Air" -> ChatColor.WHITE + "";
-            case "Fire" -> ChatColor.RED + "";
-            case "Iron" -> ChatColor.GRAY + "";
-            case "Lightning" -> ChatColor.YELLOW + "";
-            case "Sand" -> ChatColor.GOLD + "";
-            case "Ice" -> ChatColor.AQUA + "";
-            case "Lava" -> ChatColor.DARK_RED + "";
-            case "Water" -> ChatColor.BLUE + "";
-            default -> ChatColor.BLACK + "";
-        };
+        return gccm.getGemColor(gemName).toString();
     }
 
     /**
@@ -301,7 +290,7 @@ public class GemManager implements Dumpable {
      */
     public HashMap<Integer, ItemStack> getAllGems() {
         HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
-        for (int i = 1; i <= SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 0; i <= SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             allGems.put(i, generateItemStack(i, 1));
         }
         return allGems;
