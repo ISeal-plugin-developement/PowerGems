@@ -68,44 +68,55 @@ public class ExceptionHandler {
         Set<Class<?>> dumpableClasses = Utils.findAllClassesInPackage("dev.iseal.powergems", Dumpable.class);
         HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
-            if (clazz.equals(Dumpable.class)) return;
-            // check if class is singleton
-            if (clazz.getDeclaredMethods().length == 0) return;
-            AtomicBoolean done = new AtomicBoolean(false);
-
-            Arrays.stream(clazz.getDeclaredMethods()).filter(method -> method.getName().equals("getInstance")).findFirst().ifPresent(getInstance -> {
-                try {
-                    Object instance = getInstance.invoke(null);
-                    Method dump = clazz.getDeclaredMethod("dump");
-                    dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
-                }
-                done.set(true);
-            });
-            if (done.get()) return;
-            // Check if SingletonManager contains reference to class (I should really change this to use .getInstance() method)
-            Arrays.stream(SingletonManager.class.getDeclaredFields()).filter(field -> field.getType().equals(clazz)).findFirst().ifPresent(field -> {
-                try {
-                    Object instance = field.get(SingletonManager.getInstance());
-                    Method dump = clazz.getDeclaredMethod("dump");
-                    dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
-                }
-                done.set(true);
-            });
-            if (done.get()) return;
-            // Last resort, create new instance and dump. 99% of the time this will fail, someone screwed up Dumpable implementation real bad
             try {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
-                Method dump = clazz.getDeclaredMethod("dump");
-                dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
-                done.set(true);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException | IllegalArgumentException e1) {
-                log.log(Level.SEVERE, "[BossAPI] "+"Error while trying to dump class "+clazz.getSimpleName());
+                if (clazz.equals(Dumpable.class)) return;
+                // check if class is singleton
+                if (clazz.getDeclaredMethods().length == 0) return;
+                AtomicBoolean done = new AtomicBoolean(false);
+
+                Arrays.stream(clazz.getDeclaredMethods()).filter(method -> method.getName().equals("getInstance")).findFirst().ifPresent(getInstance -> {
+                    try {
+                        Object instance = getInstance.invoke(null);
+                        Method dump = clazz.getDeclaredMethod("dump");
+                        dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                    }
+                    done.set(true);
+                });
+                if (done.get()) return;
+                // Check if SingletonManager contains reference to class (I should really change this to use .getInstance() method)
+                Arrays.stream(SingletonManager.class.getDeclaredFields()).filter(field -> field.getType().equals(clazz)).findFirst().ifPresent(field -> {
+                    try {
+                        Object instance = field.get(SingletonManager.getInstance());
+                        Method dump = clazz.getDeclaredMethod("dump");
+                        dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                    }
+                    done.set(true);
+                });
+                if (done.get()) return;
+                // Last resort, create new instance and dump. 99% of the time this will fail, someone screwed up Dumpable implementation real bad
+                try {
+                    Object instance = clazz.getDeclaredConstructor().newInstance();
+                    Method dump = clazz.getDeclaredMethod("dump");
+                    dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
+                    done.set(true);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException | SecurityException | IllegalArgumentException e1) {
+                    log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                }
+                if (done.get()) return;
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
             }
-            if (done.get()) return;
         });
         dumpMap.forEach((className, dumpMapTemp) -> {
             dumpMapTemp.forEach((toDump, dumpValue) -> {
