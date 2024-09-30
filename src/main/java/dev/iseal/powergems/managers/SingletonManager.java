@@ -4,13 +4,13 @@ import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.listeners.powerListeners.IceTargetListener;
 import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.misc.Utils;
 
 public class SingletonManager {
 
+    public static int TOTAL_GEM_AMOUNT = 0;
     private static SingletonManager instance;
 
     public static SingletonManager getInstance() {
@@ -54,9 +54,13 @@ public class SingletonManager {
 
     public void initLater() {
         gemManager.initLater();
-        configManager.getRegisteredConfigInstance(GemMaterialConfigManager.class).lateInit();
+        configManager.lateInit();
         if (configManager.getRegisteredConfigInstance(GeneralConfigManager.class).canRunUpdater())
             updaterManager.start();
         recipeManager.initiateRecipes();
+    }
+
+    public void initAfterAddonLoad() {
+
     }
 }

@@ -3,7 +3,6 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.gems.powerClasses.StrenghArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -15,6 +14,10 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 public class StrengthGem extends Gem {
+
+    public StrengthGem() {
+        super("Strength");
+    }
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -47,10 +50,5 @@ public class StrengthGem extends Gem {
     protected void shiftClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
         new StrenghArena(plr).start();
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.DAMAGE_INDICATOR;
     }
 }

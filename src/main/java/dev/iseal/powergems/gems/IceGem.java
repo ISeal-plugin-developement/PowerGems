@@ -16,6 +16,10 @@ import org.bukkit.util.RayTraceResult;
 
 public class IceGem extends Gem {
 
+    public IceGem() {
+        super("Ice");
+    }
+
     private final IceTargetListener itl = sm.iceTargetListen;
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 
@@ -66,10 +70,5 @@ public class IceGem extends Gem {
                 itl.removeFromList(plr);
             }
         }, 1200);
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.SNOWFLAKE;
     }
 }

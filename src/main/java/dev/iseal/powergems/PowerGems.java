@@ -1,11 +1,13 @@
 package dev.iseal.powergems;
 
+import com.sk89q.worldguard.WorldGuard;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
@@ -26,6 +28,7 @@ public class PowerGems extends JavaPlugin {
 
     private static JavaPlugin plugin = null;
     public static Yaml config = null;
+    public static boolean isWorldGuardEnabled = false;
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = Bukkit.getLogger();
@@ -38,7 +41,6 @@ public class PowerGems extends JavaPlugin {
         sm.init();
         if (!getDataFolder().exists())
             l.warning("Generating configuration, this WILL spam the console.");
-        sm.initLater();
         firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
@@ -64,6 +66,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
+        pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(sm.metricsManager, this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
@@ -75,13 +78,14 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
+        if (isWorldGuardEnabled())
+            WorldGuardAddonManager.getInstance().init();
         l.info("Registered commands");
         if (gcm.isAllowMetrics()) {
             l.info("Registering bstats metrics");
             MetricsManager metricsManager = sm.metricsManager;
             metricsManager.init();
         }
-        //TODO: addon api
     }
 
     @Override
@@ -117,4 +121,13 @@ public class PowerGems extends JavaPlugin {
         return attributeUUID;
     }
 
+    public boolean isWorldGuardEnabled() {
+        try {
+            WorldGuard.getInstance();
+            isWorldGuardEnabled = true;
+        } catch (NoClassDefFoundError e) {
+            isWorldGuardEnabled = false;
+        }
+        return isWorldGuardEnabled;
+    }
 }

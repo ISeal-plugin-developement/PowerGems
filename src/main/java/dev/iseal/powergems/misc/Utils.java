@@ -3,7 +3,6 @@ package dev.iseal.powergems.misc;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.tasks.SpawnColoredLineTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -151,9 +150,9 @@ public class Utils {
         return totalCount >= x;
     }
 
-    public static Set<Class<? extends AbstractConfigManager>> findAllClassesInPackage(String packageName) {
+    public static Set<Class<?>> findAllClassesInPackage(String packageName, Class<?> clazz) {
         Reflections reflections = new Reflections(packageName);
-        return reflections.getSubTypesOf(AbstractConfigManager.class);
+        return (Set<Class<?>>) reflections.getSubTypesOf(clazz);
     }
 
     public boolean hasAtLeastXAmountOfGems(Player player, int x) {

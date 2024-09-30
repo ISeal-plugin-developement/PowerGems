@@ -14,6 +14,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class WaterGem extends Gem {
 
+    public WaterGem() {
+        super("Water");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
@@ -80,10 +84,5 @@ public class WaterGem extends Gem {
             }
         }
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500+level*100, 2));
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.DRIP_WATER;
     }
 }

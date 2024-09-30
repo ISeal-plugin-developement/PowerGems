@@ -24,6 +24,10 @@ import java.util.logging.Level;
 
 public class IronGem extends Gem {
 
+    public IronGem() {
+        super("Iron");
+    }
+
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final AttributeModifier armorModifier = new AttributeModifier(PowerGems.getAttributeUUID(),
@@ -114,10 +118,5 @@ public class IronGem extends Gem {
     public void removeRightModifiers(Player plr) {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         knockbackInstance.removeModifier(knockbackAttribute);
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.CRIT;
     }
 }

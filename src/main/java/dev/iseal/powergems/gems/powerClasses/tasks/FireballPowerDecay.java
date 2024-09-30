@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 public class FireballPowerDecay extends BukkitRunnable {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
-    private final GeneralConfigManager gdm = (GeneralConfigManager) SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final GeneralConfigManager gdm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     public Player plr = null;
     public int currentPower = 0;
@@ -45,13 +45,9 @@ public class FireballPowerDecay extends BukkitRunnable {
         }
         StringBuilder toSay = new StringBuilder(ChatColor.GREEN + "");
         int nOfBars = currentPower / 10;
-        for (int i = 0; i < nOfBars; i++) {
-            toSay.append("| ");
-        }
+        toSay.append("| ".repeat(Math.max(0, nOfBars)));
         toSay.append(ChatColor.GRAY);
-        for (int i = 0; i < 10 - nOfBars; i++) {
-            toSay.append("| ");
-        }
+        toSay.append("| ".repeat(Math.max(0, 10 - nOfBars)));
         plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(toSay.toString()));
     }
 

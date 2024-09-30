@@ -13,6 +13,10 @@ import org.bukkit.potion.PotionEffectType;
 
 public class FireGem extends Gem {
 
+    public FireGem() {
+        super("Fire");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
@@ -64,10 +68,5 @@ public class FireGem extends Gem {
         for (int i = 0; i < 10; i++) {
             world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
         }
-    }
-
-    @Override
-    public Particle particle(Player plr) {
-        return org.bukkit.Particle.VILLAGER_ANGRY;
     }
 }

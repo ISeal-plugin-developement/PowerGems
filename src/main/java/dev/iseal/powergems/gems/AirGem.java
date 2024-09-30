@@ -21,6 +21,10 @@ public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
 
+    public AirGem() {
+        super("Air");
+    }
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
@@ -85,10 +89,5 @@ public class AirGem extends Gem {
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));
-    }
-
-    @Override
-    public Particle particle(Player plr) {
-        return Particle.CLOUD;
     }
 }

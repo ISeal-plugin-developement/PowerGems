@@ -1,10 +1,9 @@
 package dev.iseal.powergems.managers;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -16,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +30,7 @@ import java.util.logging.Logger;
  * The class provides methods to create gems, check if an item is a gem, get a
  * random gem, and more.
  */
-public class GemManager {
+public class GemManager implements Dumpable {
 
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
@@ -42,7 +40,9 @@ public class GemManager {
     private GeneralConfigManager gcm = null;
     private ActiveGemsConfigManager agcm = null;
     private GemMaterialConfigManager gmcm = null;
+    private GemReflectionManager grm = null;
     private GemLoreConfigManager glcm = null;
+    private GemColorConfigManager gccm = null;
     private Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
@@ -50,36 +50,41 @@ public class GemManager {
     private NamespacedKey gemCreationTimeKey = null;
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = Bukkit.getLogger();
-
-    public static final int TOTAL_GEM_AMOUNT = 10;
+    private static final ArrayList<String> gemIdLookup = new ArrayList<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
      */
     public void initLater() {
         sm = SingletonManager.getInstance();
+        // register default gems
+        grm = GemReflectionManager.getInstance();
+        grm.registerGems();
         cm = sm.configManager;
         nkm = sm.namespacedKeyManager;
         isGemKey = nkm.getKey("is_power_gem");
         gemPowerKey = nkm.getKey("gem_power");
         gemLevelKey = nkm.getKey("gem_level");
         gemCreationTimeKey = nkm.getKey("gem_creation_time");
-        possibleColors = removeElement(ChatColor.values(), ChatColor.MAGIC);
+        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach((o -> {
+            if (o instanceof ChatColor) possibleColors.add((ChatColor) o);
+        }));
         gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
         agcm = cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
         gmcm = cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
         glcm = cm.getRegisteredConfigInstance(GemLoreConfigManager.class);
+        gccm = cm.getRegisteredConfigInstance(GemColorConfigManager.class);
     }
 
     /**
-     * Removes a specific element from an array of ChatColor.
+     * Removes a specific element from an array of ChatColors.
      * 
-     * @param originalArray   The original array of ChatColor.
+     * @param originalArray   The original array of ChatColors.
      * @param elementToRemove The element to remove from the array.
      * @return A new ArrayList of ChatColor with the specified element removed.
      */
-    private ArrayList<ChatColor> removeElement(ChatColor[] originalArray, ChatColor elementToRemove) {
-        ArrayList<ChatColor> list = new ArrayList<>(Arrays.asList(originalArray));
+    private ArrayList<Object> removeElement(Object[] originalArray, Object elementToRemove) {
+        ArrayList<Object> list = new ArrayList<>(Arrays.asList(originalArray));
         list.removeIf(color -> color.equals(elementToRemove));
         return list;
     }
@@ -90,20 +95,11 @@ public class GemManager {
      * @param gemName The name of the gem.
      * @return The ID of the gem, or -1 if the gem name is not recognized.
      */
-    public int lookUpID(String gemName) {
-        return switch (gemName) {
-            case "Strength" -> 1;
-            case "Healing" -> 2;
-            case "Air" -> 3;
-            case "Fire" -> 4;
-            case "Iron" -> 5;
-            case "Lightning" -> 6;
-            case "Sand" -> 7;
-            case "Ice" -> 8;
-            case "Lava" -> 9;
-            case "Water" -> 10;
-            default -> -1;
-        };
+    public static int lookUpID(String gemName) {
+        if (gemIdLookup.contains(gemName)) {
+            return gemIdLookup.indexOf(gemName);
+        }
+        return -1;
     }
 
     /**
@@ -112,20 +108,11 @@ public class GemManager {
      * @param gemID The ID of the gem.
      * @return The name of the gem, or "Error" if the gem ID is not recognized.
      */
-    public String lookUpName(int gemID) {
-        return switch (gemID) {
-            case 1 -> "Strength";
-            case 2 -> "Healing";
-            case 3 -> "Air";
-            case 4 -> "Fire";
-            case 5 -> "Iron";
-            case 6 -> "Lightning";
-            case 7 -> "Sand";
-            case 8 -> "Ice";
-            case 9 -> "Lava";
-            case 10 -> "Water";
-            default -> "Error";
-        };
+    public static String lookUpName(int gemID) {
+        if (gemID >= 0 && gemID < gemIdLookup.size()) {
+            return gemIdLookup.get(gemID);
+        }
+        return "Error";
     }
 
     /**
@@ -224,25 +211,26 @@ public class GemManager {
         if (!gcm.doGemDescriptions()) {
             return meta;
         }
-        ArrayList<String> lore = new ArrayList<>();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         if (!pdc.has(gemLevelKey, PersistentDataType.INTEGER)) {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);
         }
         int gemLevel = pdc.get(gemLevelKey, PersistentDataType.INTEGER);
-        lore = glcm.getLore(gemNumber);
-        ArrayList<String> finalLore = lore;
-        lore
-            .stream()
-            .filter(line -> line.contains("%level%"))
-            .forEach(line -> finalLore.set(finalLore.indexOf(line), line.replace("%level%", gemLevel + "")));
+        ArrayList<String> lore = new ArrayList<>();
+        meta.setLore(lore);
+        lore.addAll(glcm.getLore(gemNumber));
+        // add level as first line of lore
+        lore.forEach(line -> {
+            if (line.contains("%level%"))
+                lore.set(lore.indexOf(line), line.replace("%level%", gemLevel + ""));
+        });
         meta.setLore(lore);
         return meta;
     }
 
     /**
      * Creates a lore for the gem.
-     * 
+     *
      * @param meta The ItemMeta of the gem.
      * @return The ItemMeta with the created lore.
      */
@@ -261,26 +249,14 @@ public class GemManager {
      * the possible colors.
      * Otherwise, a specific color is assigned based on the gem number.
      * 
-     * @param gemNumber The number representing the gem.
+     * @param gemName the name of the gem, as specified in gemLookupMap.
      * @return A string representing the color code.
      */
-    private String getColor(int gemNumber) {
+    private String getColor(String gemName) {
         if (gcm.isRandomizedColors()) {
             return possibleColors.get(rand.nextInt(possibleColors.size())).toString();
         }
-        return switch (gemNumber) {
-            case 1 -> ChatColor.DARK_GREEN + "";
-            case 2 -> ChatColor.LIGHT_PURPLE + "";
-            case 3 -> ChatColor.WHITE + "";
-            case 4 -> ChatColor.RED + "";
-            case 5 -> ChatColor.GRAY + "";
-            case 6 -> ChatColor.YELLOW + "";
-            case 7 -> ChatColor.GOLD + "";
-            case 8 -> ChatColor.AQUA + "";
-            case 9 -> ChatColor.DARK_RED + "";
-            case 10 -> ChatColor.BLUE + "";
-            default -> ChatColor.BLACK + "";
-        };
+        return gccm.getGemColor(gemName).toString();
     }
 
     /**
@@ -293,7 +269,7 @@ public class GemManager {
     private ItemStack generateItemStack(int gemNumber, int gemLevel) {
         ItemStack gemItem = new ItemStack(gmcm.getGemMaterial(lookUpName(gemNumber)));
         ItemMeta reGemMeta = gemItem.getItemMeta();
-        reGemMeta.setDisplayName(getColor(gemNumber) + lookUpName(gemNumber) + " Gem");
+        reGemMeta.setDisplayName(getColor(lookUpName(gemNumber)) + lookUpName(gemNumber) + " Gem");
         PersistentDataContainer reDataContainer = reGemMeta.getPersistentDataContainer();
         reDataContainer.set(isGemKey, PersistentDataType.BOOLEAN, true);
         reDataContainer.set(gemPowerKey, PersistentDataType.STRING, lookUpName(gemNumber));
@@ -314,7 +290,7 @@ public class GemManager {
      */
     public HashMap<Integer, ItemStack> getAllGems() {
         HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
-        for (int i = 1; i <= TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 0; i <= SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             allGems.put(i, generateItemStack(i, 1));
         }
         return allGems;
@@ -381,8 +357,7 @@ public class GemManager {
         if (!isGem(item))
             return null;
         try {
-            return Class.forName("dev.iseal.powergems.gems."
-                    + item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING)+ "Gem");
+            return grm.getGemClass(item);
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "ERROR_ON_GEM_CLASS_GET", item);
             return null;
@@ -413,17 +388,9 @@ public class GemManager {
      * @throws IllegalArgumentException If the item is not a gem.
      */
     public void runCall(ItemStack item, Action action, Player plr) {
-        if (!isGem(item))
-            throw new IllegalArgumentException("Item is not a gem");
-        try {
-            Class<?> classObj = getGemClass(item);
-            Object instance = classObj.getDeclaredConstructor().newInstance();
-            Method init = classObj.getMethod("call", Action.class, Player.class, ItemStack.class);
-            init.invoke(instance, action, plr, item);
-        } catch (Exception e) {
-            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "ERROR_ON_GEM_CALL", action, plr, item);
-            throw new IllegalArgumentException("Error on gem call");
-        }
+        if (!grm.runCall(item, action, plr))
+            ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("NOT_A_GEM"), Level.WARNING,
+                    "The item passed in is not a gem", item);
     }
 
     public boolean areGemsEqual(ItemStack gem1, ItemStack gem2) {
@@ -453,16 +420,37 @@ public class GemManager {
     }
 
     public Particle runParticleCall(ItemStack item, Player plr) {
-        if (!isGem(item))
-            throw new IllegalArgumentException("Item is not a gem");
-        try {
-            Class<?> classObj = getGemClass(item);
-            Object instance = classObj.getDeclaredConstructor().newInstance();
-            Method init = classObj.getMethod("particle", Player.class);
-            return (Particle) init.invoke(instance, plr);
-        } catch (Exception e) {
-            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "ERROR_ON_GEM_PARTICLE_CALL", plr, item);
+        return grm.runParticleCall(item, plr);
+    }
+
+    public void addGem(Gem gem) {
+        String name = gem.getName();
+        if (gemIdLookup.contains(name)) {
+            l.warning(gcm.getPluginPrefix()+"Gem with name " + name + " already exists, skipping.");
+            return;
         }
-        return null;
+        gemIdLookup.add(gem.getName());
+    }
+
+    @Override
+    public HashMap<String, Object> dump() {
+        HashMap<String, Object> dump = new HashMap<>();
+        dump.put("randomGem", randomGem);
+        dump.put("sm", sm);
+        dump.put("cm", cm);
+        dump.put("nkm", nkm);
+        dump.put("gcm", gcm);
+        dump.put("agcm", agcm);
+        dump.put("gmcm", gmcm);
+        dump.put("grm", grm);
+        dump.put("glcm", glcm);
+        dump.put("rand", rand);
+        dump.put("isGemKey", isGemKey);
+        dump.put("gemPowerKey", gemPowerKey);
+        dump.put("gemLevelKey", gemLevelKey);
+        dump.put("gemCreationTimeKey", gemCreationTimeKey);
+        dump.put("possibleColors", possibleColors);
+        dump.put("gemIdLookup", gemIdLookup);
+        return dump;
     }
 }

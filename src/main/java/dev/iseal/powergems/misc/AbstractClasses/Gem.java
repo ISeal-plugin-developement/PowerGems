@@ -1,10 +1,13 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -20,14 +23,24 @@ public abstract class Gem {
     protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected GeneralConfigManager generalConfigManager = (GeneralConfigManager) sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     protected int level;
+    protected Particle particle;
+    protected String name;
+
+    public Gem(String name) {
+        this.name = name;
+    }
 
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
             return;
         level = gm.getLevel(item);
         this.plr = plr;
+        if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
+            plr.sendMessage(ChatColor.DARK_RED+"You are not allowed to use gems in this region.");
+            return;
+        }
         if (plr.isSneaking()) {
             if (checkIfCooldown("shift", plr)) {
                 return;
@@ -50,14 +63,12 @@ public abstract class Gem {
     }
 
     protected boolean checkIfCooldown(String action, Player plr) {
-        if (action.equals("left")) {
-            return cm.isLeftClickOnCooldown(plr, caller);
-        } else if (action.equals("right")) {
-            return cm.isRightClickOnCooldown(plr, caller);
-        } else if (action.equals("shift")) {
-            return cm.isShiftClickOnCooldown(plr, caller);
-        }
-        return false;
+        return switch (action) {
+            case "left" -> cm.isLeftClickOnCooldown(plr, caller);
+            case "right" -> cm.isRightClickOnCooldown(plr, caller);
+            case "shift" -> cm.isShiftClickOnCooldown(plr, caller);
+            default -> false;
+        };
     }
 
     protected abstract void rightClick(Player plr);
@@ -66,5 +77,14 @@ public abstract class Gem {
 
     protected abstract void shiftClick(Player plr);
     
-    public abstract Particle particle(Player plr);
+    public Particle particle() {
+        if (particle == null) {
+            particle = gpcm.getParticle(GemManager.lookUpID(name));
+        }
+        return particle;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

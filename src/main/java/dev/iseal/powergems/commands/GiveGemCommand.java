@@ -1,5 +1,6 @@
 package dev.iseal.powergems.commands;
 
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,12 +18,6 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
 
     private final SingletonManager sm = SingletonManager.getInstance();
     private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
-
-    {
-        sm.gemManager.getAllGems().forEach(((integer, itemStack) -> {
-            possibleTabCompletions.add(sm.gemManager.lookUpName(integer));
-        }));
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
@@ -84,6 +79,11 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
+        if (possibleTabCompletions.isEmpty()) {
+            for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+                possibleTabCompletions.add(GemManager.lookUpName(i));
+            }
+        }
         ArrayList<String> toReturn = new ArrayList<>();
         if (args.length == 1) {
             for (String str : possibleTabCompletions) {

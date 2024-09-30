@@ -13,6 +13,11 @@ public class ActiveGemsConfigManager extends AbstractConfigManager {
 
     }
 
+    @Override
+    public void lateInit() {
+
+    }
+
     public boolean isGemActive(String name) {
         return file.getOrSetDefault(name + "GemActive", true);
     }

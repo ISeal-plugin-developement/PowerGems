@@ -7,7 +7,6 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,6 +18,10 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class LavaGem extends Gem {
+
+    public LavaGem() {
+        super("Lava");
+    }
 
     private final LavaTargetListener ltl = new LavaTargetListener();
     private final Utils u = SingletonManager.getInstance().utils;
@@ -71,10 +74,5 @@ public class LavaGem extends Gem {
                 ltl.removeFromList(plr);
             }
         }, 2400L);
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.DRIP_LAVA;
     }
 }

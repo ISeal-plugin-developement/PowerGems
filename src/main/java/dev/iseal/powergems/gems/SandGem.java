@@ -5,7 +5,10 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -19,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SandGem extends Gem {
+
+    public SandGem() {
+        super("Sand");
+    }
 
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
@@ -135,10 +142,5 @@ public class SandGem extends Gem {
         Bukkit.getScheduler().runTaskLater(PowerGems.getPlugin(), () -> {
             sm.sandMoveListen.removeFromList(plr.getUniqueId());
         }, 50L*level);
-    }
-
-    @Override
-    public Particle particle(Player plr){
-        return Particle.FIREWORKS_SPARK;
     }
 }

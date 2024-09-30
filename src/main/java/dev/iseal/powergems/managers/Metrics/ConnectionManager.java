@@ -1,6 +1,7 @@
 package dev.iseal.powergems.managers.Metrics;
 
 import dev.iseal.powergems.misc.ExceptionHandler;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -40,6 +41,8 @@ public class ConnectionManager {
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
 
+            Bukkit.getLogger().info("Connected!");
+
             // Processing the response
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -53,7 +56,7 @@ public class ConnectionManager {
 
                 return response.toString();
             } else {
-                throw new Exception("API_RESPONSE_INVALID");
+                ExceptionHandler.getInstance().dealWithException(new IOException("The API returned a non-200 result. Check any updates on the discord if it is down"), Level.WARNING, "API_ERROR_CODE_"+responseCode);
             }
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "API_CONN_FAILED");
@@ -64,8 +67,13 @@ public class ConnectionManager {
     private @NotNull HttpURLConnection getHttpURLConnection(String endpoint, String method, String payload) throws IOException {
         URL url = new URL("https://analytics.iseal.dev/api/v1/" + endpoint);
 
+        Bukkit.getLogger().info("Connecting to API, this could take a few seconds if your internet is slow!");
+
         // Opening a connection
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Setting the timeout - 3 seconds so if server goes down again it doesn't take too long
+        connection.setConnectTimeout(3000);
 
         // Setting the request method
         connection.setRequestMethod(method);
