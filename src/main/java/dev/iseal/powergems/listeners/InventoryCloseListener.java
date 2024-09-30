@@ -47,7 +47,10 @@ public class InventoryCloseListener implements Listener {
             pi.setItem(intAt, null);
         }
         if (PowerGems.config.getBoolean("allowOnlyOneGem")) {
-            pi.addItem(gm.createGem());
+            if (pi.firstEmpty() == -1)
+                plr.getWorld().dropItem(plr.getLocation(), gm.createGem());
+            else
+                pi.addItem(gm.createGem());
         } else {
             World plrWorld = plr.getWorld();
             Location plrPos = plr.getLocation();

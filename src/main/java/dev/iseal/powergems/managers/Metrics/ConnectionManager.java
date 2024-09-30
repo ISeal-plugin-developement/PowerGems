@@ -56,7 +56,7 @@ public class ConnectionManager {
 
                 return response.toString();
             } else {
-                throw new Exception("API_RESPONSE_INVALID");
+                ExceptionHandler.getInstance().dealWithException(new IOException("The API returned a non-200 result. Check any updates on the discord if it is down"), Level.WARNING, "API_ERROR_CODE_"+responseCode);
             }
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "API_CONN_FAILED");

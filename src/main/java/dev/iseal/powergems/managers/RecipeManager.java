@@ -152,6 +152,7 @@ public class RecipeManager implements Listener {
                 long oldestGemCreationTime = -1;
                 int oldIndex = -1;
                 int index = -1;
+                int gemsFound = 0;
                 for (ItemStack is : plr.getInventory().getContents()) {
                     index++;
                     if (!gemManager.isGem(is)){
@@ -162,6 +163,7 @@ public class RecipeManager implements Listener {
                     }
                     //Gem is older
                     oldIndex = index;
+                    gemsFound++;
                     oldestGemCreationTime = gemManager.getGemCreationTime(is);
                 }
 
@@ -169,6 +171,12 @@ public class RecipeManager implements Listener {
                 ItemStack offhand = plr.getInventory().getItemInOffHand();
                 if (gemManager.isGem(offhand) && gemManager.getGemCreationTime(offhand) < oldestGemCreationTime) {
                     index = -2;
+                    gemsFound++;
+                }
+
+                if (gemsFound > 2) {
+                    // how do i deal with this
+                    //TODO: implement a way to allow only 1 actual gem. hard to trigger unless server changed config recently.
                 }
 
                 if (index == -1) {
