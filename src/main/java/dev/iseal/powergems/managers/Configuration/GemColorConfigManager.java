@@ -26,7 +26,7 @@ public class GemColorConfigManager extends AbstractConfigManager implements Dump
     }
 
     public ChatColor getGemColor(String gemName) {
-        return ChatColor.valueOf(file.getOrSetDefault("Gem" + gemName + "Color", ChatColor.GREEN.name()));
+        return ChatColor.valueOf(file.getOrSetDefault(gemName+"GemColor", ChatColor.GREEN.name()));
     }
 
 

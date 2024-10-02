@@ -29,6 +29,7 @@ public class WorldGuardAddonManager {
     public StateFlag GEMS_ENABLED_FLAG = null;
 
     public void init() {
+        Bukkit.getServer().getLogger().info("[PowerGems] Attempting to register WorldGuard flag");
         FlagRegistry registry = worldGuard.getFlagRegistry();
         try {
             // create flag
