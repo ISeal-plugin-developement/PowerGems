@@ -2,7 +2,7 @@ name: PowerGems
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
 api-version: '1.19'
-author: ISeal, LunarcatOwO
+author: ISeal
 load: STARTUP
 softdepend: [WorldGuard]
 commands:
