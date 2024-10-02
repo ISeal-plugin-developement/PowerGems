@@ -1,8 +1,8 @@
-name: PowerGems
+name: PowerGems-LunarsPatch
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
 api-version: '1.19'
-author: ISeal
+author: ISeal, LUnarcatOwO
 load: STARTUP
 softdepend: [WorldGuard]
 commands:
