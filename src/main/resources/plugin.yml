@@ -1,4 +1,4 @@
-name: PowerGems-LunarsPatch
+name: PowerGems
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
 api-version: '1.19'
