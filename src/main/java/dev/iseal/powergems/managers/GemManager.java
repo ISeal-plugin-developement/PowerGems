@@ -290,7 +290,7 @@ public class GemManager implements Dumpable {
      */
     public HashMap<Integer, ItemStack> getAllGems() {
         HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
-        for (int i = 0; i <= SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+        for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             allGems.put(i, generateItemStack(i, 1));
         }
         return allGems;

@@ -10,8 +10,11 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import dev.iseal.powergems.misc.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 public class WorldGuardAddonManager {
     private static WorldGuardAddonManager instance = null;
@@ -26,6 +29,7 @@ public class WorldGuardAddonManager {
     public StateFlag GEMS_ENABLED_FLAG = null;
 
     public void init() {
+        Bukkit.getServer().getLogger().info("[PowerGems] Attempting to register WorldGuard flag");
         FlagRegistry registry = worldGuard.getFlagRegistry();
         try {
             // create flag
@@ -43,11 +47,13 @@ public class WorldGuardAddonManager {
                 // I guess just logging will do
                 Bukkit.getLogger().severe("[PowerGems] Attempting to register the flag has yielded bad results, do you have a conflicting plugin?");
             }
+        } catch (IllegalStateException ex) {
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "FLAG_REGISTERING_FAILED", registry, System.currentTimeMillis());
         }
     }
 
     public boolean isGemUsageAllowedInRegion(Player p) {
-        RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(p);
         RegionQuery query = regionContainer.createQuery();
         return query.testState(BukkitAdapter.adapt(p.getLocation()), localPlayer, GEMS_ENABLED_FLAG);

@@ -48,6 +48,7 @@ public class GeneralConfigManager extends AbstractConfigManager implements Dumpa
         file.setDefault("maxGemLevel", 5);
         file.setDefault("allowCosmeticParticleEffects", true);
         file.setDefault("cosmeticParticleEffectInterval", 5L);
+        file.setDefault("isWorldGuardSupportEnabled", true);
     }
 
     @Override
@@ -136,6 +137,9 @@ public class GeneralConfigManager extends AbstractConfigManager implements Dumpa
     }
     public boolean canDropGems() {
         return file.getBoolean("canDropGems");
+    }
+    public boolean isWorldGuardEnabled() {
+        return file.getBoolean("isWorldGuardSupportEnabled");
     }
 
     @Override
