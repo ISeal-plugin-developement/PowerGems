@@ -21,6 +21,7 @@ public class ExceptionHandler {
     private final Logger log = Bukkit.getLogger();
     public boolean hasErrors = false;
     public ArrayList<String> errorMessages = new ArrayList<>();
+    private ArrayList<String> currentLog = new ArrayList<>();
 
     public static ExceptionHandler getInstance() {
         if (instance == null)
@@ -29,26 +30,28 @@ public class ExceptionHandler {
     }
 
     public void dealWithException(Exception ex, Level logLevel, String errorMessage, Object... moreInfo){
-        log.log(logLevel, "[PowerGems] "+"Exception triggered by "+getCallingClassName());
-        log.log(logLevel, "[PowerGems] "+"The exception message is "+ex.getMessage());
-        log.log(logLevel, "[PowerGems] "+"The error message is "+errorMessage);
-        log.log(Level.INFO, "[PowerGems] "+"The stacktrace and all of its details known are as follows: ");
+        currentLog = new ArrayList<>();
+        currentLog.add( "[PowerGems] "+"Exception triggered by "+getCallingClassName());
+        currentLog.add( "[PowerGems] "+"The exception message is "+ex.getMessage());
+        currentLog.add( "[PowerGems] "+"The error message is "+errorMessage);
+        currentLog.add("[PowerGems] "+"The stacktrace and all of its details known are as follows: ");
         for (StackTraceElement stackTraceElement : ex.getStackTrace())
-            log.log(logLevel, "[PowerGems] "+stackTraceElement.toString());
+            currentLog.add( "[PowerGems] "+stackTraceElement.toString());
 
-        log.log(logLevel, "[PowerGems] "+"More details (make sure to tell these to the developer): ");
+        currentLog.add( "[PowerGems] "+"More details (make sure to tell these to the developer): ");
         int i = 1;
         for (Object obj : moreInfo) {
-            log.log(logLevel, "[PowerGems] More info "+i+": "+obj.toString());
+            currentLog.add( "[PowerGems] More info "+i+": "+obj.toString());
             i++;
         }
 
         dumpAllClasses(logLevel);
 
+        currentLog.forEach((str) -> log.log(logLevel, str));
+
+        SingletonManager.getInstance().metricsManager.sendError(errorMessage);
         if (logLevel == Level.SEVERE) {
-            hasErrors = true;
-            this.errorMessages.add(errorMessage);
-            log.log(logLevel, "[PowerGems] "+"Shutting down plugin to prevent further errors");
+            log.log(Level.SEVERE, "[PowerGems] "+"Shutting down plugin to prevent further errors");
             Bukkit.getPluginManager().disablePlugin(PowerGems.getPlugin());
         }
     }
@@ -80,9 +83,9 @@ public class ExceptionHandler {
                         Method dump = clazz.getDeclaredMethod("dump");
                         dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
                     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                        currentLog.add("[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
                     } catch (Exception e) {
-                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                        currentLog.add("[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
                     }
                     done.set(true);
                 });
@@ -94,9 +97,9 @@ public class ExceptionHandler {
                         Method dump = clazz.getDeclaredMethod("dump");
                         dumpMap.put(clazz.getSimpleName(), (HashMap<String, Object>) dump.invoke(instance));
                     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                        currentLog.add("[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
                     } catch (Exception e) {
-                        log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                        currentLog.add("[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
                     }
                     done.set(true);
                 });
@@ -109,18 +112,18 @@ public class ExceptionHandler {
                     done.set(true);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                          NoSuchMethodException | SecurityException | IllegalArgumentException e1) {
-                    log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
+                    currentLog.add("[PowerGems] " + "Error while trying to instantiate and dump class " + clazz.getSimpleName());
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                    currentLog.add("[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
                 }
                 if (done.get()) return;
             } catch (Exception e) {
-                log.log(Level.SEVERE, "[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
+                currentLog.add("[PowerGems] " + "Error while trying to dump class " + clazz.getSimpleName());
             }
         });
         dumpMap.forEach((className, dumpMapTemp) -> {
             dumpMapTemp.forEach((toDump, dumpValue) -> {
-                log.log(logLevel, "[PowerGems] Dump from: "+className+" -> "+toDump+": "+dumpValue.toString());
+                currentLog.add( "[PowerGems] Dump from: "+className+" -> "+toDump+": "+dumpValue.toString());
             });
         });
     }

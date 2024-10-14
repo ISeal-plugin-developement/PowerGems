@@ -86,6 +86,7 @@ public class PowerGems extends JavaPlugin {
             MetricsManager metricsManager = sm.metricsManager;
             metricsManager.init();
         }
+        l.info("Plugin initialized");
     }
 
     @Override

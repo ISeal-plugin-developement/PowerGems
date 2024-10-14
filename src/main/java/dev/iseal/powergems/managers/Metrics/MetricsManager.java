@@ -1,11 +1,9 @@
 package dev.iseal.powergems.managers.Metrics;
 
 import com.google.gson.Gson;
-import de.leonhard.storage.Json;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.WrapperObjects.GemUsageInfo;
 import org.bstats.bukkit.Metrics;
@@ -16,7 +14,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class MetricsManager implements Listener {
 
@@ -24,7 +25,6 @@ public class MetricsManager implements Listener {
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
     private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
-    private final Json metricsFile = new Json("metrics", PowerGems.getPlugin().getDataFolder()+"\\data\\");
 
     public void init() {
         metrics = new Metrics(PowerGems.getPlugin(), 20723);
@@ -46,13 +46,6 @@ public class MetricsManager implements Listener {
         if (!map.isEmpty()) {
             Gson gson = new Gson();
             ConnectionManager.getInstance().sendData("powergems/gemlevelusage", gson.toJson(map));
-        }
-
-        if(ExceptionHandler.getInstance().hasErrors){
-            List<String> errors = ExceptionHandler.getInstance().errorMessages;
-            Gson gson = new Gson();
-            ConnectionManager.getInstance().sendData("powergems/errorcodes", gson.toJson(errors));
-            metricsFile.remove("error_messages");
         }
         
         metrics.shutdown();
@@ -82,4 +75,8 @@ public class MetricsManager implements Listener {
         gemLevelDistributionData.put(playerUUID, usageInfos);
     }
 
+    public void sendError(String errorMessage) {
+        Gson gson = new Gson();
+        ConnectionManager.getInstance().sendData("powergems/errorcodes", gson.toJson(errorMessage));
+    }
 }

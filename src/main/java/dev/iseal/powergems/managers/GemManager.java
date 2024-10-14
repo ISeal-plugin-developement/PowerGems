@@ -186,10 +186,10 @@ public class GemManager implements Dumpable {
      * @return An ItemStack representing the created gem.
      */
     public ItemStack createGem() {
-        int random = rand.nextInt(10) + 1;
+        int random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
         int repeating = 0;
         while (!agcm.isGemActive(lookUpName(random)) && repeating < gcm.getGemCreationAttempts()) {
-            random = rand.nextInt(10) + 1;
+            random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
             repeating++;
         }
         if (repeating >= gcm.getGemCreationAttempts()) {
