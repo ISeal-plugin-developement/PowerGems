@@ -1,8 +1,8 @@
 package dev.iseal.powergems.commands;
 
-import dev.iseal.powergems.managers.Metrics.ConnectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.sealLib.Metrics.ConnectionManager;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class DebugCommand implements CommandExecutor, TabCompleter {
 
@@ -60,7 +59,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 ConnectionManager.getInstance().invalidateToken();
                 break;
             case "dump":
-                ExceptionHandler.getInstance().dumpAllClasses(Level.WARNING);
+                ExceptionHandler.getInstance().dumpAllClasses();
                 break;
             default:
                 plr.sendMessage(ChatColor.DARK_RED + "Invalid subcommand.");

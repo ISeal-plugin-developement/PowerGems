@@ -5,8 +5,8 @@ import dev.iseal.powergems.listeners.powerListeners.IceTargetListener;
 import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.Metrics.MetricsManager;
 import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Metrics.MetricsManager;
 
 public class SingletonManager {
 
@@ -39,17 +39,16 @@ public class SingletonManager {
         configManager = new ConfigManager();
         configManager.setUpConfig();
         namespacedKeyManager = new NamespacedKeyManager();
-        updaterManager = new UpdaterManager();
+        updaterManager = UpdaterManager.getInstance();
         tempDataManager = new TempDataManager();
         sandMoveListen = new SandMoveListener();
         iceTargetListen = new IceTargetListener();
         fallingBlockHitListen = new FallingBlockHitListener();
-        gemManager = new GemManager();
+        gemManager = GemManager.getInstance();
         strenghtMoveListen = new StrenghtMoveListener();
         utils = new Utils();
-        recipeManager = new RecipeManager();
-        cooldownManager = new CooldownManager();
-        metricsManager = new MetricsManager();
+        recipeManager = RecipeManager.getInstance();
+        cooldownManager = CooldownManager.getInstance();
     }
 
     public void initLater() {

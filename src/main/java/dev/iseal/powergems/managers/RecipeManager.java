@@ -3,7 +3,7 @@ package dev.iseal.powergems.managers;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -32,6 +32,14 @@ public class RecipeManager implements Listener {
     private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
     private final ArrayList<Recipe> upgradeRecipes = new ArrayList<>();
+
+    private static RecipeManager instance = null;
+    public static RecipeManager getInstance() {
+        if (instance == null) {
+            instance = new RecipeManager();
+        }
+        return instance;
+    }
 
     public void initiateRecipes() {
         gemManager = SingletonManager.getInstance().gemManager;

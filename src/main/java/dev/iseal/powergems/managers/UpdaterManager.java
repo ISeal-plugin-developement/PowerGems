@@ -16,6 +16,14 @@ import java.util.logging.Logger;
  */
 public class UpdaterManager extends Thread {
 
+    private static UpdaterManager instance = null;
+    public static UpdaterManager getInstance() {
+        if (instance == null) {
+            instance = new UpdaterManager();
+        }
+        return instance;
+    }
+
     // The UpdateChecker object used to perform update checks
     UpdateChecker uc = null;
     Logger l = Bukkit.getServer().getLogger();

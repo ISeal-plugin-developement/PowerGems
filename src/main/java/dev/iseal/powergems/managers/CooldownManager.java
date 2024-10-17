@@ -23,6 +23,14 @@ public class CooldownManager implements Dumpable {
     private final BlockingQueue<CooldownObject> leftClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> shiftClickCooldowns = new LinkedBlockingQueue<>();
 
+    private static CooldownManager instance;
+    public static CooldownManager getInstance() {
+        if (instance == null) {
+            instance = new CooldownManager();
+        }
+        return instance;
+    }
+
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
         if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
             rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));

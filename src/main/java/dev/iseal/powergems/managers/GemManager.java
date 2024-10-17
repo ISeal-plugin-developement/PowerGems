@@ -2,8 +2,8 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -31,6 +31,14 @@ import java.util.logging.Logger;
  * random gem, and more.
  */
 public class GemManager implements Dumpable {
+
+    private static GemManager instance = null;
+    public static GemManager getInstance() {
+        if (instance == null) {
+            instance = new GemManager();
+        }
+        return instance;
+    }
 
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
@@ -350,18 +358,12 @@ public class GemManager implements Dumpable {
      * If the item is not a gem, returns null.
      * 
      * @param item The ItemStack to check.
+     * @param plr The player performing the action. Used to auto-fix the gem in case of errors.
      * @return The Class object representing the gem's class, or null if the item is
      *         not a gem.
      */
-    public Class<?> getGemClass(ItemStack item) {
-        if (!isGem(item))
-            return null;
-        try {
-            return grm.getGemClass(item);
-        } catch (Exception e) {
-            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "ERROR_ON_GEM_CLASS_GET", item);
-            return null;
-        }
+    public Class<?> getGemClass(ItemStack item, Player plr) {
+        return grm.getGemClass(item, plr);
     }
 
     /**

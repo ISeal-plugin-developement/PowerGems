@@ -2,9 +2,9 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 
 import java.io.File;
