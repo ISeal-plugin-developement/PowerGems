@@ -2,8 +2,8 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class GemReflectionManager implements Dumpable {
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
     public void registerGems() {
-        Utils.findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
+        GlobalUtils .findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
                 .forEach(this::addGemClass);
     }
 

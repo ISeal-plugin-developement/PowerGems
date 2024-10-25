@@ -1,7 +1,11 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.*;
+import dev.iseal.sealLib.I18N.I18N;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -48,7 +52,7 @@ public class FireGem extends Gem {
         world.createExplosion(playerLocation, level + 1f, true, false);
         for (Entity entity : plr.getNearbyEntities(level+3, level+3, level+3)) {
             if (entity instanceof LivingEntity) {
-                ((LivingEntity) entity).damage(5 * (level / 2), plr);
+                ((LivingEntity) entity).damage(5 * ((double) level / 2), plr);
                 entity.setFireTicks(100);
             }
         }
@@ -57,7 +61,7 @@ public class FireGem extends Gem {
     @Override
     protected void shiftClick(Player plr) {
         if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
-            plr.sendMessage(ChatColor.DARK_RED + "You are already charging a fireball.");
+            plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
             return;
         }
         Location plrEyeLoc = plr.getEyeLocation();

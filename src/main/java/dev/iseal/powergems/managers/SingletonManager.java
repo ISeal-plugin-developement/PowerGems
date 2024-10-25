@@ -36,7 +36,7 @@ public class SingletonManager {
     public MetricsManager metricsManager;
 
     public void init() {
-        configManager = new ConfigManager();
+        configManager = ConfigManager.getInstance();
         configManager.setUpConfig();
         namespacedKeyManager = new NamespacedKeyManager();
         updaterManager = UpdaterManager.getInstance();

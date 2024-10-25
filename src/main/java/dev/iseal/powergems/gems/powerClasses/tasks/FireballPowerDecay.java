@@ -4,6 +4,7 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.sealLib.I18N.I18N;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -31,7 +32,7 @@ public class FireballPowerDecay extends BukkitRunnable {
         if (currentPower <= 0) {
             tdm.chargingFireball.remove(plr);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new TextComponent(ChatColor.RED + "You failed to launch the fireball."));
+                    new TextComponent(I18N.getTranslation("FIREBALL_FAIL_LAUNCH")));
             this.cancel();
             return;
         }
@@ -39,7 +40,7 @@ public class FireballPowerDecay extends BukkitRunnable {
             spawnFireball();
             tdm.chargingFireball.remove(plr);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new TextComponent(ChatColor.RED + "You successfully launched the fireball."));
+                    new TextComponent(I18N.getTranslation("FIREBALL_LAUNCHED")));
             this.cancel();
             return;
         }

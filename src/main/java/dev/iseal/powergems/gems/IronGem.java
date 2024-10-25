@@ -62,7 +62,7 @@ public class IronGem extends Gem {
             } else {
                 tdm.ironRightLeft.add(op.getUniqueId());
             }
-        }, 150 * level);
+        }, 150L * level);
     }
 
     @Override

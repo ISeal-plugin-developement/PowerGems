@@ -47,6 +47,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("allowCosmeticParticleEffects", true);
         file.setDefault("cosmeticParticleEffectInterval", 5L);
         file.setDefault("isWorldGuardSupportEnabled", true);
+        file.setDefault("languageCode", "en");
+        file.setDefault("countryCode", "US");
     }
 
     @Override
@@ -138,5 +140,11 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean isWorldGuardEnabled() {
         return file.getBoolean("isWorldGuardSupportEnabled");
+    }
+    public String getLanguageCode() {
+        return file.getString("languageCode");
+    }
+    public String getCountryCode() {
+        return file.getString("countryCode");
     }
 }

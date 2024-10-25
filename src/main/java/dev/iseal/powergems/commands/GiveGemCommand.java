@@ -2,6 +2,7 @@ package dev.iseal.powergems.commands;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,12 +24,12 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
             @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("Only players can execute this command!");
+            commandSender.sendMessage(I18N.getTranslation("NOT_PLAYER"));
             return true;
         }
         Player plr = (Player) commandSender;
         if (!plr.hasPermission(command.getPermission())) {
-            plr.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command.");
+            plr.sendMessage(I18N.getTranslation("NO_PERMISSION"));
             return true;
         }
         if (args.length < 1) {

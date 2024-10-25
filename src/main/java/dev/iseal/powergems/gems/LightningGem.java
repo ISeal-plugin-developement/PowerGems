@@ -1,7 +1,11 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.*;
+import dev.iseal.sealLib.I18N.I18N;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -27,7 +31,7 @@ public class LightningGem extends Gem {
     protected void rightClick(Player plr) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
         if (possibleTarget == null) {
-            plr.sendMessage(ChatColor.DARK_RED + "You must be looking at a block to do that");
+            plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_BLOCK"));
             return;
         }
         Location targetLocation = possibleTarget.getLocation();

@@ -3,6 +3,7 @@ package dev.iseal.powergems.managers;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.sealLib.I18N.I18N;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,12 +13,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +34,6 @@ public class RecipeManager implements Listener {
     private GeneralConfigManager gcm = null;
     private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
-    private final ArrayList<Recipe> upgradeRecipes = new ArrayList<>();
 
     private static RecipeManager instance = null;
     public static RecipeManager getInstance() {
@@ -46,14 +48,14 @@ public class RecipeManager implements Listener {
         gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         nkm = SingletonManager.getInstance().namespacedKeyManager;
         if (gcm.canUpgradeGems()) {
-            l.info("Creating upgrade recipes...");
+            l.info("[PowerGems] " + I18N.translate("CREATING_UPGRADE_RECIPES"));
             validateUpgradeRecipes();
-            l.info("Upgrade recipes created.");
+            l.info("[PowerGems] " + I18N.translate("UPGRADE_RECIPES_CREATED"));
         }
         if (gcm.canCraftGems()) {
-            l.info("Creating crafting recipe");
+            l.info("[PowerGems] " + I18N.translate("CREATING_CRAFTING_RECIPE"));
             craftRecipe();
-            l.info("Crafting recipe created.");
+            l.info("[PowerGems] " + I18N.translate("CRAFTING_RECIPE_CREATED"));
         }
     }
 
@@ -188,7 +190,7 @@ public class RecipeManager implements Listener {
                 }
 
                 if (index == -1) {
-                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!");
+                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!?!?");
                 }
                 if (index == -2) {
                     //its offhand
@@ -218,7 +220,7 @@ public class RecipeManager implements Listener {
 
             if (!arr.containsKey("shape")) {
                 arr.put("shape", "ndn,dgd,ndn");
-                l.info("Shape not found for crafting (is the file malformed?), using default shape.");
+                l.info("[PowerGems] " + I18N.translate("CRAFT_SHAPE_NOT_FOUND"));
                 changed = true;
             }
             if (!arr.containsKey("ingredients")) {
@@ -227,7 +229,7 @@ public class RecipeManager implements Listener {
                 defaultIngredients.put("g", "NETHER_STAR");
                 defaultIngredients.put("d", "DIAMOND_BLOCK");
                 arr.put("ingredients", defaultIngredients);
-                l.info("Ingredients not found for crafting (is the file malformed?), using default ingredients.");
+                l.info("[PowerGems] " + I18N.translate("CRAFT_INGREDIENTS_NOT_FOUND"));
                 changed = true;
             }
 
@@ -272,7 +274,7 @@ public class RecipeManager implements Listener {
                     if (!arr.containsKey("shape")) {
                         arr.put("shape", "nen,ege,nen");
                         changed = true;
-                        l.info("Shape not found for " + key + " (is the file malformed?), using default shape.");
+                        l.info("[PowerGems] " + I18N.translate("SHAPE_NOT_FOUND_KEY").replace("{key}", key));
                     }
                     if (!arr.containsKey("ingredients")) {
                         HashMap<String, String> defaultIngredients = new HashMap<>();
@@ -280,7 +282,7 @@ public class RecipeManager implements Listener {
                         defaultIngredients.put("e", Material.EXPERIENCE_BOTTLE.name());
                         arr.put("ingredients", defaultIngredients);
                         changed = true;
-                        l.info("Ingredients not found for " + key + " (is the file malformed?), using default ingredients.");
+                        l.info("[PowerGems] " + I18N.translate("INGREDIENTS_NOT_FOUND_KEY").replace("{key}", key));
                     }
 
                     if (changed)

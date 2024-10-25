@@ -18,16 +18,21 @@ import dev.iseal.powergems.misc.WrapperObjects.GemUsageInfo;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Metrics.ConnectionManager;
 import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PowerGems extends JavaPlugin {
@@ -42,20 +47,29 @@ public class PowerGems extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        l.info("Initializing plugin");
+        l.info("[PowerGems] Initializing plugin");
         plugin = this;
         sm = SingletonManager.getInstance();
         sm.init();
         if (!getDataFolder().exists())
-            l.warning("Generating configuration, this WILL spam the console.");
+            l.warning("[PowerGems] Generating configuration, this WILL spam the console.");
         firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+        l.info("[PowerGems] -----------------------------------");
+        l.info("[PowerGems] PowerGems v" + getDescription().getVersion());
+        l.info("[PowerGems] Made by ISeal for Spigot 1.19.4 and up");
+        l.info("[PowerGems] For info and to interact with the plugin, visit: "+ ConnectionManager.getInstance().sendData("discord", "", "GET", false));
+        try {
+            I18N.getInstance().setBundle(this, gcm.getLanguageCode(), gcm.getCountryCode());
+        } catch (IOException e) {
+            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_SET_BUNDLE");
+        }
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
         if (gcm.allowOnlyOneGem())
             new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
         if (gcm.allowCosmeticParticleEffects())
             new CosmeticParticleEffect().runTaskTimer(this, 0, gcm.cosmeticParticleEffectInterval());
-        l.info("Registering listeners");
+        l.info("[PowerGems] "+I18N.translate("REGISTERING_LISTENERS"));
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
         pluginManager.registerEvents(new EnterExitListener(), this);
@@ -74,29 +88,27 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
         pluginManager.registerEvents(new ServerLoadListener(), this);
-        pluginManager.registerEvents(sm.metricsManager, this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
-        l.info("Registered listeners");
-        l.info("Registering commands");
+        l.info("[PowerGems] "+I18N.translate("REGISTERED_LISTENERS"));
+        l.info("[PowerGems] "+I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
         Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new GiveAllGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
-        l.info("Registered commands");
+        l.info("[PowerGems] "+I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();
-            l.info("Registering bstats metrics");
-            sm.metricsManager = dev.iseal.sealLib.Metrics.MetricsManager.getInstance();
+            l.info("[PowerGems] "+I18N.translate("REGISTERING_METRICS"));
+            sm.metricsManager = MetricsManager.getInstance();
             sm.metricsManager.addMetrics(PowerGems.getPlugin(), 20723);
             sm.metricsManager.addJoinMetrics(this::registerPlayerInfo);
             sm.metricsManager.addQuitMetrics(this::registerPlayerInfo);
             sm.metricsManager.addShutdownMetrics((player -> {
-                registerPlayerInfo(player);
                 Map<String, Map<String, Integer>> map = new HashMap<>();
                 gemLevelDistributionData.forEach((uuid, gemUsageInfos) -> {
                     gemUsageInfos.forEach(gemUsageInfo -> {
@@ -113,14 +125,15 @@ public class PowerGems extends JavaPlugin {
                 }
             }));
         }
-        l.info("Plugin initialized");
+        pluginManager.registerEvents(sm.metricsManager, this);
+        l.info("[PowerGems] "+I18N.translate("INITIALIZED_PLUGIN"));
     }
 
     @Override
     public void onDisable() {
         if (sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class).isAllowMetrics())
             sm.metricsManager.exitAndSendInfo();
-        getLogger().info("Shutting down!");
+        getLogger().info("[PowerGems] Shutting down!");
     }
 
     // getters beyond this point

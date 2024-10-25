@@ -4,6 +4,7 @@ import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
 import com.jeff_media.updatechecker.UserAgentBuilder;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -25,11 +26,8 @@ public class UpdaterManager extends Thread {
     }
 
     // The UpdateChecker object used to perform update checks
-    UpdateChecker uc = null;
-    Logger l = Bukkit.getServer().getLogger();
-    // String constants used in logging messages
-    private final String checkRequestedByString = "Performing update check requested by ";
-    private final String checkDoneString = "Update check requested by ";
+    private UpdateChecker uc = null;
+    private final Logger l = Bukkit.getServer().getLogger();
 
     /**
      * The run method is called when the thread is started.
@@ -48,7 +46,7 @@ public class UpdaterManager extends Thread {
                 .onFail((commandSenders, e) -> handleResult(commandSenders, e, true))
                 .onSuccess((commandSenders, s) -> handleResult(commandSenders, null, false))
                 .checkNow(); // And check right now
-        l.info("Running update check");
+        l.info("[PowerGems] "+ I18N.translate("RUNNING_UPDATE_CHECK"));
     }
 
     /**
@@ -62,11 +60,10 @@ public class UpdaterManager extends Thread {
      * @param isFail         A boolean indicating whether the update check failed
      */
     private void handleResult(CommandSender[] commandSenders, Exception e, boolean isFail) {
-        String doneByString = "";
-        for (CommandSender cmdsnr : commandSenders) {
-            doneByString = doneByString + cmdsnr.getName() + " ";
-        }
-        l.info(checkDoneString + doneByString + (isFail ? "failed" : "successful"));
+        l.info(I18N.translate("UPDATE_CHECK_COMPLETED")
+                .replace("{result}", isFail ? I18N.translate("FAIL") : I18N.translate("SUCCESS"))
+                .replace("{error}", e == null ? "none" : e.getMessage())
+                .replace("{issuer}", commandSenders[0].getName()));
         if (isFail) {
             l.warning("Update test failed with error " + e.getMessage());
         }
@@ -80,7 +77,9 @@ public class UpdaterManager extends Thread {
      * @param sender The CommandSender object that requested the update check
      */
     public void startUpdate(CommandSender sender) {
-        l.info(checkRequestedByString + sender.getName());
+        l.info("[PowerGems] "+ I18N.translate("UPDATE_CHECK_STARTED")
+                .replace("{issuer}", sender.getName())
+        );
         uc.checkNow(sender);
     }
 }

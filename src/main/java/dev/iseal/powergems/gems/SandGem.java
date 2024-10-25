@@ -5,8 +5,8 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -107,7 +107,7 @@ public class SandGem extends Gem {
     @Override
     protected void shiftClick(Player plr) {
         if (sm.sandMoveListen.hasToRemoveFrom(plr.getUniqueId())) {
-            plr.sendMessage(ChatColor.DARK_RED + "You already have a trap active");
+            plr.sendMessage(I18N.getTranslation("ALREADY_HAS_TRAP_ACTIVE"));
             return;
         }
 

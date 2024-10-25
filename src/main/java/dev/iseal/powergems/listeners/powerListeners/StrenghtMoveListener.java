@@ -1,6 +1,6 @@
 package dev.iseal.powergems.listeners.powerListeners;
 
-import org.bukkit.ChatColor;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public class StrenghtMoveListener implements Listener {
                 } else {
                     event.setCancelled(true);
                     player.teleport(from);
-                    player.sendMessage(ChatColor.DARK_RED + "You cannot enter the Arena!");
+                    player.sendMessage(I18N.getTranslation("CANNOT_ENTER_ARENA"));
                     return;
                 }
             }

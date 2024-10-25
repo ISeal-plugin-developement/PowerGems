@@ -12,11 +12,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class Utils {
@@ -148,11 +146,6 @@ public class Utils {
         }
 
         return totalCount >= x;
-    }
-
-    public static Set<Class<?>> findAllClassesInPackage(String packageName, Class<?> clazz) {
-        Reflections reflections = new Reflections(packageName);
-        return (Set<Class<?>>) reflections.getSubTypesOf(clazz);
     }
 
     public boolean hasAtLeastXAmountOfGems(Player player, int x) {
