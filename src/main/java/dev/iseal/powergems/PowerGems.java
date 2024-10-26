@@ -55,10 +55,13 @@ public class PowerGems extends JavaPlugin {
             l.warning("[PowerGems] Generating configuration, this WILL spam the console.");
         firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-        l.info("[PowerGems] -----------------------------------");
+        l.info("[PowerGems] -----------------------------------------------------------------------------------------");
         l.info("[PowerGems] PowerGems v" + getDescription().getVersion());
-        l.info("[PowerGems] Made by ISeal for Spigot 1.19.4 and up");
+        l.info("[PowerGems] Made by " + getDescription().getAuthors().toString().replace("[", "").replace("]", "").replace(",", " &"));
+        l.info("[PowerGems] Loading in " + gcm.getLanguageCode() + "_" + gcm.getCountryCode() + " locale");
+        l.info("[PowerGems] Loading server version: " + Bukkit.getServer().getVersion());
         l.info("[PowerGems] For info and to interact with the plugin, visit: "+ ConnectionManager.getInstance().sendData("discord", "", "GET", false));
+        l.info("[PowerGems] -----------------------------------------------------------------------------------------");
         try {
             I18N.getInstance().setBundle(this, gcm.getLanguageCode(), gcm.getCountryCode());
         } catch (IOException e) {
