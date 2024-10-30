@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.github.ISeal-plugin-developement</groupId>
             <artifactId>SealLib</artifactId>
-            <version>1.0.0.1</version>
+            <version>1.0.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
