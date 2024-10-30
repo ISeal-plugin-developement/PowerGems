@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.5.1.0-DEV1</version>
+    <version>3.5.1.0</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.github.ISeal-plugin-developement</groupId>
             <artifactId>SealLib</artifactId>
-            <version>1.0.0.0-DEV2-c69f8105fe9e3232fb2779bfd87b2c80997e4378</version>
+            <version>1.0.0.1-DEV1-546342d48a25ea018ad1c92e8986f11e5ff6e522</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -109,12 +109,6 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.9</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jeff_media</groupId>
-            <artifactId>SpigotUpdateChecker</artifactId>
-            <version>3.0.3</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

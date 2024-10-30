@@ -59,7 +59,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 ConnectionManager.getInstance().invalidateToken();
                 break;
             case "dump":
-                ExceptionHandler.getInstance().dumpAllClasses();
+                ExceptionHandler.getInstance().dumpAllClasses(null);
                 break;
             default:
                 plr.sendMessage(I18N.translate("INVALID_SUBCOMMAND"));

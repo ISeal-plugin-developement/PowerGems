@@ -60,7 +60,7 @@ public class PowerGems extends JavaPlugin {
         l.info("[PowerGems] Made by " + getDescription().getAuthors().toString().replace("[", "").replace("]", "").replace(",", " &"));
         l.info("[PowerGems] Loading in " + gcm.getLanguageCode() + "_" + gcm.getCountryCode() + " locale");
         l.info("[PowerGems] Loading server version: " + Bukkit.getServer().getVersion());
-        l.info("[PowerGems] For info and to interact with the plugin, visit: "+ ConnectionManager.getInstance().sendData("discord", "", "GET", false));
+        l.info("[PowerGems] For info and to interact with the plugin, visit: "+ ConnectionManager.getInstance().sendDataToAPI("discord", "", "GET", false));
         l.info("[PowerGems] -----------------------------------------------------------------------------------------");
         try {
             I18N.getInstance().setBundle(this, gcm.getLanguageCode(), gcm.getCountryCode());
