@@ -65,6 +65,7 @@ public class UpdaterManager extends Thread {
                 .replace("{issuer}", commandSender)
                 .replace("{latestVer}", latestVer));
         if (isFail) {
+            assert e != null;
             l.warning("Update test failed with error " + e.getMessage());
         }
     }

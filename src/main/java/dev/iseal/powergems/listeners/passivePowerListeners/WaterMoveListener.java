@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class WaterMoveListener implements Listener {
 
     private boolean playerHasAllowedGem(Player plr) {
         return gm.getPlayerGems(plr).stream()
-                .anyMatch(i -> allowedGems.contains(i.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)));
+                .anyMatch(i -> allowedGems.contains(Objects.requireNonNull(i.getItemMeta()).getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)));
     }
 
     private void applyPotionEffects(Player plr, int duration, int amplifier) {

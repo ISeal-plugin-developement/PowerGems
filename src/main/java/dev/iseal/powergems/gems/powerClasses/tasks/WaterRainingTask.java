@@ -19,6 +19,7 @@ public class WaterRainingTask extends BukkitRunnable {
         this.hasGemRaining = WaterMoveListener.hasGemRaining;
         for (UUID uuid : hasGemRaining) {
             Player plr = Bukkit.getPlayer(uuid);
+            assert plr != null;
             double temperature = plr.getLocation().getBlock().getTemperature();
             boolean canSeeSky = plr.getWorld().getHighestBlockAt(plr.getLocation()).getY() <= plr.getLocation().getY();
             if (temperature > 0.15 && temperature < 0.95 && canSeeSky) {

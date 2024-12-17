@@ -37,7 +37,7 @@ public class StrengthGem extends Gem {
         Location playerLocation = plr.getLocation();
         List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
         for (Entity entity : nearbyEntities) {
-            if (entity instanceof Player nearbyPlayer && ! ((Player) entity).equals(plr)) {
+            if (entity instanceof Player nearbyPlayer && ! entity.equals(plr)) {
                 Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
                 nearbyPlayer.setVelocity(knockbackVector.multiply(power));
                 nearbyPlayer.damage(5);

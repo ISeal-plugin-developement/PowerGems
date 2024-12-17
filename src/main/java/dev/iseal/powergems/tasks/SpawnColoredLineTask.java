@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SpawnColoredLineTask extends BukkitRunnable {
@@ -109,7 +110,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
     
     private void spawnLine() {
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(lineRed, lineGreen, lineBlue), 1);
-        currentLineLocation.getWorld().spawnParticle(
+        Objects.requireNonNull(currentLineLocation.getWorld()).spawnParticle(
                 Particle.REDSTONE,
                 currentLineLocation,
                 5,
@@ -125,7 +126,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 double z = circleRadius * Math.cos(phi);
                 Location particleLocation = currentCircleLocation.clone().add(x, y, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(circleRed, circleGreen, circleBlue), 1);
-                currentCircleLocation.getWorld().spawnParticle(
+                Objects.requireNonNull(currentCircleLocation.getWorld()).spawnParticle(
                         Particle.REDSTONE,
                         particleLocation,
                         5,

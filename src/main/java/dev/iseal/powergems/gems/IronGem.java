@@ -49,6 +49,7 @@ public class IronGem extends Gem {
         plr.setAbsorptionAmount(2 * level);
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         try {
+            assert knockbackInstance != null;
             knockbackInstance.addModifier(knockbackAttribute);
         } catch (IllegalArgumentException ex) {
             ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_RIGHT", plr.getName());
@@ -92,7 +93,9 @@ public class IronGem extends Gem {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         try {
+            assert armorAttribute != null;
             armorAttribute.addModifier(armorModifier);
+            assert toughnessAttribute != null;
             toughnessAttribute.addModifier(toughnessModifier);
         } catch (IllegalArgumentException ex) {
             ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "ALREADY_HAS_IRON_MODIFIERS_SHIFT", plr.getName());
@@ -101,6 +104,7 @@ public class IronGem extends Gem {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
             if (op.isOnline()) {
                 armorAttribute.removeModifier(armorModifier);
+                assert toughnessAttribute != null;
                 toughnessAttribute.removeModifier(toughnessModifier);
             } else {
                 tdm.ironShiftLeft.add(op.getUniqueId());
@@ -111,12 +115,15 @@ public class IronGem extends Gem {
     public void removeShiftModifiers(Player plr) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
+        assert armorAttribute != null;
         armorAttribute.removeModifier(armorModifier);
+        assert toughnessAttribute != null;
         toughnessAttribute.removeModifier(toughnessModifier);
     }
 
     public void removeRightModifiers(Player plr) {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+        assert knockbackInstance != null;
         knockbackInstance.removeModifier(knockbackAttribute);
     }
 }
