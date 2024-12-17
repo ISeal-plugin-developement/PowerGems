@@ -26,7 +26,6 @@ public class SandMoveListener implements Listener {
             Location to = e.getTo();
             for (UUID id : slowSandList.keySet()) {
                 Block block = slowSandList.get(id);
-                assert to != null;
                 if (!block.getWorld().equals(to.getWorld())) {
                     continue;
                 }
