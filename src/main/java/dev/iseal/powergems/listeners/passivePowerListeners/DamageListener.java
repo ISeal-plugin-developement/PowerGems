@@ -12,7 +12,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class DamageListener implements Listener {
 
@@ -31,7 +30,7 @@ public class DamageListener implements Listener {
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) 
             return;
         for (ItemStack i : gm.getPlayerGems(p)){
-            if (allowedGems.contains(Objects.requireNonNull(i.getItemMeta()).getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING))){
+            if (allowedGems.contains(i.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING))){
                 event.setCancelled(true);
                 return;
             }

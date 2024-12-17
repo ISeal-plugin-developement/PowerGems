@@ -7,13 +7,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class ReloadConfigCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
-        if (!sender.hasPermission(Objects.requireNonNull(command.getPermission()))) {
+        if (!sender.hasPermission(command.getPermission())) {
             sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }

@@ -28,7 +28,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -93,11 +96,11 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(sm.recipeManager, this);
         l.info("[PowerGems] "+I18N.translate("REGISTERED_LISTENERS"));
         l.info("[PowerGems] "+I18N.translate("REGISTERING_COMMANDS"));
-        Objects.requireNonNull(Bukkit.getServer().getPluginCommand("givegem")).setExecutor(new GiveGemCommand());
-        Objects.requireNonNull(Bukkit.getServer().getPluginCommand("giveallgem")).setExecutor(new GiveAllGemCommand());
-        Objects.requireNonNull(Bukkit.getServer().getPluginCommand("checkupdates")).setExecutor(new CheckUpdateCommand());
-        Objects.requireNonNull(Bukkit.getServer().getPluginCommand("reloadconfig")).setExecutor(new ReloadConfigCommand());
-        Objects.requireNonNull(Bukkit.getServer().getPluginCommand("debug")).setExecutor(new DebugCommand());
+        Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
+        Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new GiveAllGemCommand());
+        Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
+        Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
+        Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
         l.info("[PowerGems] "+I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();

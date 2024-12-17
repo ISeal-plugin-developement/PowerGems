@@ -52,7 +52,7 @@ public class LavaGem extends Gem {
                         nullBlock.setType(Material.AIR);
                     });
                 }
-            }, 600 + (times * 20L));
+            }, 600 + (times * 20));
             times--;
             radius = radius + 3;
         }

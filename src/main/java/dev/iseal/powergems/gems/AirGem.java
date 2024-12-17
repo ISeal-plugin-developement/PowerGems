@@ -17,8 +17,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.Objects;
-
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -46,7 +44,7 @@ public class AirGem extends Gem {
                 255,
                 0.4D,
                 (location) -> {
-                    Objects.requireNonNull(location.getWorld()).getNearbyEntities(location, 0.5, 0.5, 0.5)
+                    location.getWorld().getNearbyEntities(location, 0.5, 0.5, 0.5)
                             .stream()
                             .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
                             .forEach(entity -> {

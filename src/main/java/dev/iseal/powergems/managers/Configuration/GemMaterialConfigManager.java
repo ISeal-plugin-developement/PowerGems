@@ -39,7 +39,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
             if (key.equals("RandomGemMaterial")) {
                 continue;
             }
-            if (GemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
+            if (gemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
                 Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
                 continue;
             }

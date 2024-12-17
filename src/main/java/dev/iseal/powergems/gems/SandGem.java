@@ -20,7 +20,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class SandGem extends Gem {
 
@@ -83,7 +82,7 @@ public class SandGem extends Gem {
                 1+level/2D, // Circle radius
                 loc -> {
                     double radius = 1;
-                    List<Entity> nearbyEntities = (List<Entity>) Objects.requireNonNull(loc.getWorld()).getNearbyEntities(loc, radius, radius, radius);
+                    List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 1));
@@ -93,7 +92,7 @@ public class SandGem extends Gem {
                 }, //line consumer
                 loc -> {
                     double radius = 1 + level / 2D;
-                    List<Entity> nearbyEntities = (List<Entity>) Objects.requireNonNull(loc.getWorld()).getNearbyEntities(loc, radius, radius, radius);
+                    List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 200, 1));

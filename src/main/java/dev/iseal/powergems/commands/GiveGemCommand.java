@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class GiveGemCommand implements CommandExecutor, TabCompleter {
 
@@ -24,11 +23,12 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
             @NotNull String[] args) {
-        if (!(commandSender instanceof Player plr)) {
+        if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(I18N.getTranslation("NOT_PLAYER"));
             return true;
         }
-        if (!plr.hasPermission(Objects.requireNonNull(command.getPermission()))) {
+        Player plr = (Player) commandSender;
+        if (!plr.hasPermission(command.getPermission())) {
             plr.sendMessage(I18N.getTranslation("NO_PERMISSION"));
             return true;
         }
@@ -42,23 +42,23 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
                     String gemLvlString = args[1];
                     if (isNumber(gemLvlString)) {
                         plr.getInventory().addItem(
-                                sm.gemManager.createGem(Integer.parseInt(gemNumString), Integer.parseInt(gemLvlString)));
+                                sm.gemManager.createGem(Integer.valueOf(gemNumString), Integer.valueOf(gemLvlString)));
                         return true;
                     }
                 }
-                plr.getInventory().addItem(sm.gemManager.createGem(Integer.parseInt(gemNumString)));
+                plr.getInventory().addItem(sm.gemManager.createGem(Integer.valueOf(gemNumString)));
                 return true;
             } else {
-                if (GemManager.lookUpID(gemNumString) != -1) {
+                if (sm.gemManager.lookUpID(gemNumString) != -1) {
                     if (args.length >= 2) {
                         String gemLvlString = args[1];
                         if (isNumber(gemLvlString)) {
-                            plr.getInventory().addItem(sm.gemManager.createGem(GemManager.lookUpID(gemNumString),
-                                    Integer.parseInt(gemLvlString)));
+                            plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString),
+                                    Integer.valueOf(gemLvlString)));
                             return true;
                         }
                     }
-                    plr.getInventory().addItem(sm.gemManager.createGem(GemManager.lookUpID(gemNumString)));
+                    plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString)));
                     return true;
                 }
                 plr.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");

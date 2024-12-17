@@ -49,7 +49,6 @@ public class LightningGem extends Gem {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         plr.setVelocity(playerLocation.getDirection().multiply(5));
-        assert world != null;
         world.spawnParticle(Particle.FLASH, playerLocation, 100, 0, 0, 0, 0.2);
     }
 
@@ -57,7 +56,6 @@ public class LightningGem extends Gem {
     protected void shiftClick(Player plr) {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
-        assert world != null;
         world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
         for (Entity e : world.getNearbyEntities(playerLocation, 5, 5, 5)) {
             if (e instanceof LivingEntity) {

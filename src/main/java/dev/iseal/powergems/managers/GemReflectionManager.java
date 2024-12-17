@@ -13,7 +13,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,7 +63,7 @@ public class GemReflectionManager implements Dumpable {
     public Class<? extends Gem> getGemClass(ItemStack gem ,Player plr) {
         if (!gm.isGem(gem))
             return null;
-        String gem_power = Objects.requireNonNull(gem.getItemMeta()).getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)+"Gem";
+        String gem_power = gem.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)+"Gem";
         if (gem_power.equals("ErrorGem")) {
             l.warning("A bugged gem has been found! Attempting to fix this.");
             plr.getInventory().remove(gem);

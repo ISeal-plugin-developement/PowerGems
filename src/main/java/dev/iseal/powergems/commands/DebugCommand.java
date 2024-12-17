@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DebugCommand implements CommandExecutor, TabCompleter {
 
@@ -32,11 +31,12 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
-        if (!(sender instanceof Player plr)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
         }
-        if (!plr.hasPermission(Objects.requireNonNull(command.getPermission()))) {
+        Player plr = (Player) sender;
+        if (!plr.hasPermission(command.getPermission())) {
             plr.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
