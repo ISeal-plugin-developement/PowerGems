@@ -15,10 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -134,7 +131,7 @@ public class GemManager implements Dumpable {
             return false;
         if (!is.hasItemMeta())
             return false;
-        if (is.getItemMeta().getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN))
+        if (Objects.requireNonNull(is.getItemMeta()).getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN))
             return true;
         return false;
     }
@@ -148,6 +145,7 @@ public class GemManager implements Dumpable {
         if (randomGem == null) {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
+            assert gemMeta != null;
             gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
@@ -277,6 +275,7 @@ public class GemManager implements Dumpable {
     private ItemStack generateItemStack(int gemNumber, int gemLevel) {
         ItemStack gemItem = new ItemStack(gmcm.getGemMaterial(lookUpName(gemNumber)));
         ItemMeta reGemMeta = gemItem.getItemMeta();
+        assert reGemMeta != null;
         reGemMeta.setDisplayName(getColor(lookUpName(gemNumber)) + lookUpName(gemNumber) + " Gem");
         PersistentDataContainer reDataContainer = reGemMeta.getPersistentDataContainer();
         reDataContainer.set(isGemKey, PersistentDataType.BOOLEAN, true);
@@ -328,7 +327,7 @@ public class GemManager implements Dumpable {
     public int getLevel(ItemStack item) {
         if (!isGem(item))
             return 0;
-        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdc = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
         if (!pdc.has(gemLevelKey, PersistentDataType.INTEGER)) {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);
         }
@@ -346,7 +345,7 @@ public class GemManager implements Dumpable {
     public String getName(ItemStack item) {
         if (!isGem(item))
             return "";
-        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdc = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
         if (!pdc.has(gemPowerKey, PersistentDataType.STRING)) {
             return "";
         }
@@ -376,7 +375,7 @@ public class GemManager implements Dumpable {
     public String getGemName(ItemStack item) {
         if (!isGem(item))
             return null;
-        return item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING);
+        return Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING);
     }
 
     /**
@@ -413,7 +412,7 @@ public class GemManager implements Dumpable {
         if (!isGem(item)) {
             return -1;
         }
-        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdc = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
         if (!pdc.has(gemCreationTimeKey, PersistentDataType.LONG)) {
             //old gem (migrate it)
             pdc.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());

@@ -102,6 +102,7 @@ public class RecipeManager implements Listener {
             int currentLevel = gemManager.getLevel(gem);
             if (isMatrixCorrect(matrix, gem, currentLevel + 1)) {
                 ItemMeta im = gem.getItemMeta();
+                assert im != null;
                 PersistentDataContainer pdc = im.getPersistentDataContainer();
                 pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, currentLevel + 1);
                 im = gemManager.createLore(im);
@@ -127,7 +128,7 @@ public class RecipeManager implements Listener {
                     wantedMatrix[i] = gem;
                     gemIndex = i;
                 } else {
-                    wantedMatrix[i] = new ItemStack(Material.getMaterial(ingredients.get(String.valueOf(c))));
+                    wantedMatrix[i] = new ItemStack(Objects.requireNonNull(Material.getMaterial(ingredients.get(String.valueOf(c)))));
                 }
                 i++;
             }
@@ -242,7 +243,7 @@ public class RecipeManager implements Listener {
             sr.shape(shape[0], shape[1], shape[2]);
             Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
             for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-                sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+                sr.setIngredient(entry.getKey().charAt(0), Objects.requireNonNull(Material.getMaterial(entry.getValue())));
             }
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
@@ -260,6 +261,7 @@ public class RecipeManager implements Listener {
                 for (int level = 2; level <= 5; level++) {
                     newStack = oldStack.clone();
                     ItemMeta im = newStack.getItemMeta();
+                    assert im != null;
                     PersistentDataContainer pdc = im.getPersistentDataContainer();
                     pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, level);
                     im = gemManager.createLore(im);
@@ -294,7 +296,7 @@ public class RecipeManager implements Listener {
                     Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
 
                     for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-                        sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+                        sr.setIngredient(entry.getKey().charAt(0), Objects.requireNonNull(Material.getMaterial(entry.getValue())));
                     }
 
                     if (!arr.get("shape").toString().contains("g"))

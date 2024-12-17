@@ -29,6 +29,7 @@ public class DeathEvent implements Listener {
         for (ItemStack item : e.getDrops()) {
             if (item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
+                assert meta != null;
                 PersistentDataContainer dataContainer = meta.getPersistentDataContainer();
                 if (dataContainer.has(nkm.getKey("is_power_gem"), PersistentDataType.BOOLEAN)) {
                     toKeep.add(item);
@@ -47,7 +48,7 @@ public class DeathEvent implements Listener {
         if (toRestore != null) {
             if (generalConfigManager.doGemDecay()) {
                 for (ItemStack item : toRestore) {
-                    PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+                    PersistentDataContainer pdc = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
                     String power = pdc.get(nkm.getKey("gem_power"), PersistentDataType.STRING);
                     if (pdc.get(nkm.getKey("gem_level"), PersistentDataType.INTEGER) > 1) {
                         e.getPlayer().getInventory().addItem(SingletonManager.getInstance().gemManager.createGem(power,

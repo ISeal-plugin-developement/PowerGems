@@ -20,6 +20,7 @@ public class StrenghtMoveListener implements Listener {
             Location from = event.getFrom();
             Location to = event.getTo();
 
+            assert to != null;
             if (startingLocation.getWorld() != to.getWorld()) {
                 return;
             }
