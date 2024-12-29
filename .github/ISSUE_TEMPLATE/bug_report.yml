@@ -74,7 +74,7 @@ body:
     validations:
       required: false
   - type: input
-    id: dump
+    id: addons
     attributes:
       label: Addons loaded
       placeholder: (none if there aren't any)
