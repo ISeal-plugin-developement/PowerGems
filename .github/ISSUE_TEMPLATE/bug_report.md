@@ -1,37 +1,90 @@
----
 name: Bug report
 about: Create a bug report
-title: "[BUG] Brief bug description"
+title: "[Bug]: "
 labels: bug
 assignees: ''
-
----
-
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Server:**
- - OS: [e.g. Linux]
- - Server software: [e.g. Paper]
- - Plugin version: [e.g. 3.0.0.0]
- - Server logs ( in a [gist](https://gist.github.com/) )
-
-**Plugin output:**
- - Output of /d dump ( in a [gist](https://gist.github.com/) )
- - Addons loaded: ( none if there aren't any)
-
-**Additional context**
-Add any other context about the problem here.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please Fill out **ALL** the information below
+  - type: input
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened! 
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: To reproduce
+      description: Steps to reproduce the behavior:
+      placeholder: Tell us what you see!
+      value: "1. Go to '...' \n 2. Click on '....' \n 3. Scroll down to '....' \n 4. See error"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: Tell us what you expected!
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operation System the server is running on
+      description: What OS are you using?
+      options:
+        - Linux
+        - Windows
+        - Mac
+        - Not listed (Please Provide in Comments)
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: software
+    attributes:
+      label: Server Software
+      placeholder: ex. Paper
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version of Powergems
+      placeholder: ex. 3.0.0.0
+    validations:
+      required: true
+  - type: input
+    id: logs
+    attributes:
+      label: Console Logs
+      description: in a [gist](https://gist.github.com/)
+    validations:
+      required: true
+  - type: input
+    id: dump
+    attributes:
+      label: Output of /d dump
+      description: in a [gist](https://gist.github.com/)
+    validations:
+      required: false
+  - type: input
+    id: dump
+    attributes:
+      label: Addons loaded
+      placeholder: (none if there aren't any)
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here. If applicable, add screenshots to help explain your problem in the comments.
+    validations:
+      required: false 
