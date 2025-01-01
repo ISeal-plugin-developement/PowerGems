@@ -3,15 +3,13 @@ package dev.iseal.powergems.managers.Configuration;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class GemMaterialConfigManager extends AbstractConfigManager implements Dumpable {
+public class GemMaterialConfigManager extends AbstractConfigManager{
 
     private GemManager gemManager = null;
     private GeneralConfigManager gcm = null;
@@ -97,13 +95,6 @@ public class GemMaterialConfigManager extends AbstractConfigManager implements D
             }
         }
         return possibleMaterials;
-    }
-
-    @Override
-    public HashMap<String, Object> dump() {
-        HashMap<String, Object> map = new HashMap<>();
-        file.keySet().forEach(key -> map.put(key, file.get(key)));
-        return map;
     }
 
 }

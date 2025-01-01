@@ -1,9 +1,9 @@
 package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class GemReflectionManager implements Dumpable {
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
     public void registerGems() {
-        Utils.findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
+        GlobalUtils .findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
                 .forEach(this::addGemClass);
     }
 
@@ -60,14 +60,27 @@ public class GemReflectionManager implements Dumpable {
             return false;
     }
     
-    public Class<? extends Gem> getGemClass(ItemStack gem) {
+    public Class<? extends Gem> getGemClass(ItemStack gem ,Player plr) {
         if (!gm.isGem(gem))
             return null;
         String gem_power = gem.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)+"Gem";
-        return registeredGems.keySet().stream()
+        if (gem_power.equals("ErrorGem")) {
+            l.warning("A bugged gem has been found! Attempting to fix this.");
+            plr.getInventory().remove(gem);
+            gem = gm.createGem();
+            plr.getInventory().addItem(gem);
+        }
+        Class<? extends Gem> gemclass = registeredGems.keySet().stream()
                 .filter(clazz -> clazz.getSimpleName().equals(gem_power))
                 .findFirst()
                 .orElse(null);
+        if (gemclass == null) {
+            l.warning("A bugged gem has been found! Did you add / remove any addons? Attempting to fix this.");
+            plr.getInventory().remove(gem);
+            gem = gm.createGem();
+            plr.getInventory().addItem(gem);
+        }
+        return gemclass;
     }
 
     public ArrayList<Class<? extends Gem>> getAllGemsClasses() {
@@ -79,7 +92,7 @@ public class GemReflectionManager implements Dumpable {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
             return false;
         }
-        Class<? extends Gem> gemClass = getGemClass(item);
+        Class<? extends Gem> gemClass = getGemClass(item, plr);
         if (gemClass == null) {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
             return false;
@@ -98,7 +111,7 @@ public class GemReflectionManager implements Dumpable {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
             return null;
         }
-        Class<? extends Gem> gemClass = getGemClass(item);
+        Class<? extends Gem> gemClass = getGemClass(item, plr);
         if (gemClass == null) {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
             return null;

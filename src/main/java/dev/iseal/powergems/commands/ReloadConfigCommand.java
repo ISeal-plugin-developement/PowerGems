@@ -1,7 +1,7 @@
 package dev.iseal.powergems.commands;
 
 import dev.iseal.powergems.managers.SingletonManager;
-import org.bukkit.ChatColor;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,12 +12,12 @@ public class ReloadConfigCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
         if (!sender.hasPermission(command.getPermission())) {
-            sender.sendMessage(ChatColor.DARK_RED + "You do not have permission to use this command!");
+            sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
-        sender.sendMessage(ChatColor.GREEN + "Reloading config...");
+        sender.sendMessage(I18N.translate("RELOADING_CONFIG"));
         SingletonManager.getInstance().configManager.reloadConfig();
-        sender.sendMessage(ChatColor.GREEN + "Config reloaded!");
-        return false;
+        sender.sendMessage(I18N.translate("RELOADED_CONFIG"));
+        return true;
     }
 }

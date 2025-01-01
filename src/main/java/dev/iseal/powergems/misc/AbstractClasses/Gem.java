@@ -6,8 +6,8 @@ import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -38,7 +38,7 @@ public abstract class Gem {
         level = gm.getLevel(item);
         this.plr = plr;
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
-            plr.sendMessage(ChatColor.DARK_RED+"You are not allowed to use gems in this region.");
+            plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
         if (plr.isSneaking()) {

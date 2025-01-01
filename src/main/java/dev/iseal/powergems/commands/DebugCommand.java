@@ -1,9 +1,9 @@
 package dev.iseal.powergems.commands;
 
-import dev.iseal.powergems.managers.Metrics.ConnectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
-import org.bukkit.ChatColor;
+import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Metrics.ConnectionManager;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class DebugCommand implements CommandExecutor, TabCompleter {
 
@@ -33,16 +32,16 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.DARK_RED + "You need to be a player to execute this command!");
+            sender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
         }
         Player plr = (Player) sender;
         if (!plr.hasPermission(command.getPermission())) {
-            plr.sendMessage(ChatColor.DARK_RED + "You do not have permission to execute this command.");
+            plr.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
         if (args.length < 1) {
-            plr.sendMessage(ChatColor.DARK_RED + "You need to specify a subcommand.");
+            plr.sendMessage(I18N.translate("NO_SUBCOMMAND"));
             return true;
         }
 
@@ -60,10 +59,10 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 ConnectionManager.getInstance().invalidateToken();
                 break;
             case "dump":
-                ExceptionHandler.getInstance().dumpAllClasses(Level.WARNING);
+                ExceptionHandler.getInstance().dumpAllClasses(null);
                 break;
             default:
-                plr.sendMessage(ChatColor.DARK_RED + "Invalid subcommand.");
+                plr.sendMessage(I18N.translate("INVALID_SUBCOMMAND"));
                 break;
         }
         return true;

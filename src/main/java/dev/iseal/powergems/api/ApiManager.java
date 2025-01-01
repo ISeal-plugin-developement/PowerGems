@@ -2,6 +2,7 @@ package dev.iseal.powergems.api;
 
 import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,7 +24,7 @@ public class ApiManager {
     public boolean registerGemClass(Class<? extends Gem> gemClass) {
         boolean success = grm.addGemClass(gemClass);
         if (!success)
-            Bukkit.getLogger().info("Failed to register gem class " + gemClass.getName());
+            Bukkit.getLogger().info(I18N.translate("FAIL_REGISTER_GEM_CLASS").replace("{class}", gemClass.getName()));
         return success;
     }
 

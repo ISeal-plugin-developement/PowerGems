@@ -3,15 +3,13 @@ package dev.iseal.powergems.managers.Configuration;
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class GeneralConfigManager extends AbstractConfigManager implements Dumpable {
+public class GeneralConfigManager extends AbstractConfigManager {
 
     public GeneralConfigManager() {
         super(null);
@@ -49,6 +47,8 @@ public class GeneralConfigManager extends AbstractConfigManager implements Dumpa
         file.setDefault("allowCosmeticParticleEffects", true);
         file.setDefault("cosmeticParticleEffectInterval", 5L);
         file.setDefault("isWorldGuardSupportEnabled", true);
+        file.setDefault("languageCode", "en");
+        file.setDefault("countryCode", "US");
     }
 
     @Override
@@ -141,11 +141,10 @@ public class GeneralConfigManager extends AbstractConfigManager implements Dumpa
     public boolean isWorldGuardEnabled() {
         return file.getBoolean("isWorldGuardSupportEnabled");
     }
-
-    @Override
-    public HashMap<String, Object> dump() {
-        HashMap<String, Object> map = new HashMap<>();
-        file.keySet().forEach(key -> map.put(key, file.get(key)));
-        return map;
+    public String getLanguageCode() {
+        return file.getString("languageCode");
+    }
+    public String getCountryCode() {
+        return file.getString("countryCode");
     }
 }

@@ -10,7 +10,8 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,13 +30,14 @@ public class WorldGuardAddonManager {
     public StateFlag GEMS_ENABLED_FLAG = null;
 
     public void init() {
-        Bukkit.getServer().getLogger().info("[PowerGems] Attempting to register WorldGuard flag");
+        Bukkit.getServer().getLogger().info("[PowerGems] "+ I18N.translate("ATTEMPT_REGISTER_WG_FLAG"));
         FlagRegistry registry = worldGuard.getFlagRegistry();
         try {
             // create flag
             StateFlag flag = new StateFlag("powergems-gems-enabled", true);
             registry.register(flag);
             GEMS_ENABLED_FLAG = flag; // only set var if it didn't crash already
+            Bukkit.getLogger().info("[PowerGems] "+I18N.translate("WG_FLAG_REGISTERED_SUCCESS"));
         } catch (FlagConflictException e) {
             // some other plugin registered a flag with the same name already.
             // use the existing flag, and hope it doesn't crash - be sure to check type
@@ -45,7 +47,7 @@ public class WorldGuardAddonManager {
             } else {
                 // types don't match - we're fucked, throw exception or stay silent?
                 // I guess just logging will do
-                Bukkit.getLogger().severe("[PowerGems] Attempting to register the flag has yielded bad results, do you have a conflicting plugin?");
+                Bukkit.getLogger().severe("[PowerGems] "+I18N.translate("ATTEMPT_REGISTER_WG_FLAG_FAILED"));
             }
         } catch (IllegalStateException ex) {
             ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "FLAG_REGISTERING_FAILED", registry, System.currentTimeMillis());

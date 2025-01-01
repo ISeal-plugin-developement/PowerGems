@@ -4,7 +4,7 @@ import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
-import org.bukkit.ChatColor;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,7 +38,8 @@ public class UseEvent implements Listener {
 
         if (tdm.cantUseGems.containsKey(player)) {
             if (System.currentTimeMillis() < tdm.cantUseGems.get(player)) {
-                player.sendMessage(ChatColor.DARK_RED + "You can't use gems for another " + (tdm.cantUseGems.get(player) - System.currentTimeMillis()) / 1000 + " seconds!");
+                player.sendMessage(I18N.translate("ON_COOLDOWN_GEMS").replace("{time}",
+                        String.valueOf((tdm.cantUseGems.get(player) - System.currentTimeMillis()) / 1000)));
                 return;
             } else {
                 tdm.cantUseGems.remove(player);
@@ -52,8 +53,7 @@ public class UseEvent implements Listener {
         if (agcm.isGemActive(gm.getGemName(item))) {
             gm.runCall(item, a, p);
         } else {
-            p.sendMessage(ChatColor.DARK_RED + "That gem is disabled!");
-            p.sendMessage(ChatColor.DARK_RED + "Ask the server manager if you think it should be activated.");
+            p.sendMessage(I18N.translate("GEM_DISABLED"));
         }
     }
 

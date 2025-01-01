@@ -1,9 +1,8 @@
 package dev.iseal.powergems.managers;
 
-import com.jeff_media.updatechecker.UpdateCheckSource;
-import com.jeff_media.updatechecker.UpdateChecker;
-import com.jeff_media.updatechecker.UserAgentBuilder;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Updater.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -16,12 +15,17 @@ import java.util.logging.Logger;
  */
 public class UpdaterManager extends Thread {
 
+    private static UpdaterManager instance = null;
+    public static UpdaterManager getInstance() {
+        if (instance == null) {
+            instance = new UpdaterManager();
+        }
+        return instance;
+    }
+
     // The UpdateChecker object used to perform update checks
-    UpdateChecker uc = null;
-    Logger l = Bukkit.getServer().getLogger();
-    // String constants used in logging messages
-    private final String checkRequestedByString = "Performing update check requested by ";
-    private final String checkDoneString = "Update check requested by ";
+    private UpdateChecker uc = null;
+    private final Logger l = Bukkit.getServer().getLogger();
 
     /**
      * The run method is called when the thread is started.
@@ -29,36 +33,37 @@ public class UpdaterManager extends Thread {
      * process.
      */
     public void run() {
-        uc = new UpdateChecker(PowerGems.getPlugin(), UpdateCheckSource.SPIGOT, "108943")
-                .setDownloadLink("https://www.spigotmc.org/resources/1-19-1-20-4-powergems.108943/")
-                .setNotifyByPermissionOnJoin("powergems.check_update")
-                .setUserAgent(new UserAgentBuilder().addPluginNameAndVersion())
-                .checkEveryXHours(1) // check every hour
-                .setColoredConsoleOutput(true)
-                .setUsingPaidVersion(false)
-                .setTimeout(3000)
-                .onFail((commandSenders, e) -> handleResult(commandSenders, e, true))
-                .onSuccess((commandSenders, s) -> handleResult(commandSenders, null, false))
-                .checkNow(); // And check right now
-        l.info("Running update check");
+        // check interval is 1hr (20 ticks * 60 seconds * 60 minutes)
+        uc = new UpdateChecker("kCgEfc6s", PowerGems.getPlugin(), "powergems.notify", 20*60*60, this::handleResult, this::handleResult);
+        l.info("[PowerGems] "+ I18N.translate("RUNNING_UPDATE_CHECK"));
     }
+
+    private void handleResult(String latestVer, String sender) {
+        handleResult(sender, null, false, latestVer);
+    }
+
+    private void handleResult(Exception e) {
+        handleResult(Bukkit.getConsoleSender().getName(), e, true, "");
+    }
+
+
 
     /**
      * This method is called when the update check is completed.
      * It logs a message to the console indicating the result of the update check.
      *
-     * @param commandSenders The CommandSender objects that requested the update
+     * @param commandSender The sender that requested the update
      *                       check
      * @param e              The Exception object if the update check failed, or
      *                       null if it was successful
      * @param isFail         A boolean indicating whether the update check failed
      */
-    private void handleResult(CommandSender[] commandSenders, Exception e, boolean isFail) {
-        String doneByString = "";
-        for (CommandSender cmdsnr : commandSenders) {
-            doneByString = doneByString + cmdsnr.getName() + " ";
-        }
-        l.info(checkDoneString + doneByString + (isFail ? "failed" : "successful"));
+    private void handleResult(String commandSender, Exception e, boolean isFail, String latestVer) {
+        l.info(I18N.translate("UPDATE_CHECK_COMPLETED")
+                .replace("{result}", isFail ? I18N.translate("FAIL") : I18N.translate("SUCCESS"))
+                .replace("{error}", e == null ? "none" : e.getMessage())
+                .replace("{issuer}", commandSender)
+                .replace("{latestVer}", latestVer));
         if (isFail) {
             l.warning("Update test failed with error " + e.getMessage());
         }
@@ -72,7 +77,9 @@ public class UpdaterManager extends Thread {
      * @param sender The CommandSender object that requested the update check
      */
     public void startUpdate(CommandSender sender) {
-        l.info(checkRequestedByString + sender.getName());
-        uc.checkNow(sender);
+        l.info("[PowerGems] "+ I18N.translate("UPDATE_CHECK_STARTED")
+                .replace("{issuer}", sender.getName())
+        );
+        uc.check(sender.getName());
     }
 }

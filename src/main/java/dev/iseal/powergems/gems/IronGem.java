@@ -5,7 +5,7 @@ import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.ExceptionHandler;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
@@ -62,7 +62,7 @@ public class IronGem extends Gem {
             } else {
                 tdm.ironRightLeft.add(op.getUniqueId());
             }
-        }, 150 * level);
+        }, 150L * level);
     }
 
     @Override

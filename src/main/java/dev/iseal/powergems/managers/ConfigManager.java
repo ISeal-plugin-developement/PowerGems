@@ -2,9 +2,9 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.ExceptionHandler;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -21,8 +21,15 @@ public class ConfigManager implements Dumpable {
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
     private final Logger l = Bukkit.getLogger();
 
+    private static ConfigManager instance;
+    public static ConfigManager getInstance() {
+        if (instance == null)
+            instance = new ConfigManager();
+        return instance;
+    }
+
     public void setUpConfig() {
-        Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
+        GlobalUtils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
         Class<? extends AbstractConfigManager> currentToDebug = null;
         try {
             for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
@@ -49,7 +56,7 @@ public class ConfigManager implements Dumpable {
         if (!registeredConfigurations.contains(clazz)){
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("EARLY_ASK_FOR_CONFIG_INSTANCE"), Level.WARNING, "EARLY_ASK_FOR_CONFIG_INSTANCE", clazz.getName());
             // oh, god (attempt desperate fix(really f-ing bad code))
-            Utils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
+            GlobalUtils.findAllClassesInPackage("dev.iseal.powergems.managers.Configuration", AbstractConfigManager.class).forEach(this::addConfigClass);
         }
         if (!registeredConfigInstances.containsKey(clazz)){
             registerConfigInstance(clazz);

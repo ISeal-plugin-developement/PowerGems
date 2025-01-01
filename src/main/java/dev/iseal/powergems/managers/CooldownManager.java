@@ -4,6 +4,7 @@ import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
+import dev.iseal.sealLib.I18N.I18N;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,6 +23,14 @@ public class CooldownManager implements Dumpable {
     private final BlockingQueue<CooldownObject> rightClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> leftClickCooldowns = new LinkedBlockingQueue<>();
     private final BlockingQueue<CooldownObject> shiftClickCooldowns = new LinkedBlockingQueue<>();
+
+    private static CooldownManager instance;
+    public static CooldownManager getInstance() {
+        if (instance == null) {
+            instance = new CooldownManager();
+        }
+        return instance;
+    }
 
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
         if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
@@ -108,15 +117,15 @@ public class CooldownManager implements Dumpable {
         long cooldownMillis = 0;
         if (action.equals("left")) {
             if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis())
-                return ChatColor.GREEN + "Ready";
+                return I18N.translate("READY");
             cooldownMillis = getLeftClickCooldown(plr, caller) - System.currentTimeMillis();
         } else if (action.equals("right")) {
             if (getRightClickCooldown(plr, caller) < System.currentTimeMillis())
-                return ChatColor.GREEN + "Ready";
+                return I18N.translate("READY");
             cooldownMillis = getRightClickCooldown(plr, caller) - System.currentTimeMillis();
         } else if (action.equals("shift")) {
             if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis())
-                return ChatColor.GREEN + "Ready";
+                return I18N.translate("READY");
             cooldownMillis = getShiftClickCooldown(plr, caller) - System.currentTimeMillis();
         }
         long seconds = TimeUnit.MILLISECONDS.toSeconds(cooldownMillis)
