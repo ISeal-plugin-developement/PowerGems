@@ -6,6 +6,10 @@ author: ISeal
 load: STARTUP
 softdepend: [WorldGuard]
 commands:
+  getallgems:
+    description: Command to give yourself all gem
+    usage: /getallgems
+    permission: powergems.givegem
   givegem:
     description: Command to give yourself a gem
     usage: /givegem <gem>
