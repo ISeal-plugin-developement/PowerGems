@@ -1,11 +1,12 @@
 package dev.iseal.powergems;
 
-import com.google.gson.Gson;
 import com.sk89q.worldguard.WorldGuard;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
@@ -14,21 +15,17 @@ import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.WrapperObjects.GemUsageInfo;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import dev.iseal.powergems.tasks.CosmeticParticleEffect;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Metrics.ConnectionManager;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -109,6 +106,10 @@ public class PowerGems extends JavaPlugin {
         // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
         // IInventoryMoveEvent(), this);
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
+        if (gcm.doDebuffForTemperature()) {
+            pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
+            pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
+        }
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);

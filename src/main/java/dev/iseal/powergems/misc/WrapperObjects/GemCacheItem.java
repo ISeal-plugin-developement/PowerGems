@@ -19,6 +19,6 @@ public class GemCacheItem {
 
     public boolean isExpired() {
         // 1 minute
-        return System.currentTimeMillis() - insertionTime > SingletonManager.gemCacheExpireTime;
+        return System.currentTimeMillis() - insertionTime > SingletonManager.gemCacheExpireTime* 1000L;
     }
 }

@@ -70,6 +70,9 @@ public class AvoidTargetListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!avoidTargetList.containsKey(plr.getUniqueId())) {
+                    return;
+                }
                 if (!avoidTargetList.get(plr.getUniqueId()).isDead())
                     avoidTargetList.get(plr.getUniqueId()).remove();
                 avoidTargetList.remove(plr.getUniqueId());
