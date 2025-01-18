@@ -10,6 +10,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -231,6 +233,21 @@ public class Utils {
         double y = playerLocation.getY() + Math.random() * 2 - 1;
         double z = playerLocation.getZ() + Math.random() * 1.5 - 0.75;
         return new Location(player.getWorld(), x, y, z);
+    }
+
+    public void addPreciseEffect(Player player, PotionEffectType type, int duration, int amplifier) {
+        PotionEffect currentEffect = player.getPotionEffect(type);
+
+        if (currentEffect == null) {
+            player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+            return;
+        }
+
+        int currentAmplifier = currentEffect.getAmplifier();
+        int currentDuration = currentEffect.getDuration();
+
+        player.removePotionEffect(type);
+        player.addPotionEffect(new PotionEffect(type, duration+currentDuration, Math.max(amplifier, currentAmplifier)));
     }
 
 }

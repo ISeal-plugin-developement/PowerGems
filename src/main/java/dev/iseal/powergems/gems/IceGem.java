@@ -1,10 +1,10 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
-import dev.iseal.powergems.listeners.powerListeners.IceTargetListener;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +25,6 @@ public class IceGem extends Gem {
         super("Ice");
     }
 
-    private final IceTargetListener itl = sm.iceTargetListen;
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 
     @Override
@@ -63,10 +62,9 @@ public class IceGem extends Gem {
         Location l = plr.getLocation();
         World w = plr.getWorld();
         for (int i = 0; i < level * 2; i++) {
-            w.spawnEntity(l, EntityType.SNOWMAN);
+            LivingEntity snowman = (LivingEntity) w.spawnEntity(l, EntityType.SNOWMAN);
+            snowman.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
         }
-        itl.addToList(plr);
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> itl.removeFromList(plr), 1200);
     }
 }

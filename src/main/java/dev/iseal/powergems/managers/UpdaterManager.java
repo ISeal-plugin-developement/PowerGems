@@ -1,7 +1,7 @@
 package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Updater.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

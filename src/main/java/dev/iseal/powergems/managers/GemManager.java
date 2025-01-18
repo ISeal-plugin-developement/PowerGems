@@ -3,6 +3,7 @@ package dev.iseal.powergems.managers;
 import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,10 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,6 +57,7 @@ public class GemManager implements Dumpable {
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = Bukkit.getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
+    private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -313,8 +312,12 @@ public class GemManager implements Dumpable {
      *         inventory.
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
+        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isExpired()) {
+            return gemCache.get(plr.getUniqueId()).getOwnedGems();
+        }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
+        gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
     }
 

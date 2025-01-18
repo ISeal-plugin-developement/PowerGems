@@ -1,7 +1,7 @@
 package dev.iseal.powergems.commands;
 
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Metrics.ConnectionManager;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.command.Command;

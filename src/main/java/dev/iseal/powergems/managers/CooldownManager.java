@@ -4,7 +4,7 @@ import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

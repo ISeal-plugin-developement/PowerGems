@@ -2,7 +2,7 @@ package dev.iseal.powergems.api;
 
 import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

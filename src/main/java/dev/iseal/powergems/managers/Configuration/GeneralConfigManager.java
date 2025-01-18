@@ -38,6 +38,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         file.setDefault("delayToUseGemsOnJoin", 30);
         file.setDefault("gemCreationAttempts", 10);
+        file.setDefault("gemCacheExpireTime", 60);
         file.setDefault("allowMetrics", true);
         file.setDefault("blockedReplacingBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
@@ -146,5 +147,9 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public String getCountryCode() {
         return file.getString("countryCode");
+    }
+
+    public int getGemCacheExpireTime() {
+        return file.getInt("gemCacheExpireTime");
     }
 }
