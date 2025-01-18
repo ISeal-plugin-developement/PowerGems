@@ -9,7 +9,7 @@ commands:
   getallgems:
     description: Command to give yourself all gem
     usage: /getallgems
-    permission: powergems.getallgem
+    permission: powergems.getallgems
   givegem:
     description: Command to give yourself a gem
     usage: /givegem <gem>
@@ -33,7 +33,7 @@ commands:
     aliases: [d, db]
     permission: powergems.debug
 permissions:
- powergems.getallgem:
+    powergems.getallgems:
         description: Permission to use /getallgem
         default: op
     powergems.givegem:
@@ -55,7 +55,7 @@ permissions:
         description: Permission to use all PowerGems commands
         default: op
         children:
-            powergems.getallgem: true
+            powergems.getallgems: true
             powergems.givegem: true
             powergems.giveallgem: true
             powergems.checkupdates: true

@@ -25,6 +25,10 @@ public class GetAllGemsCommand implements CommandExecutor {
             return true;
         }
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+            if (plr.getInventory().firstEmpty() == -1) {
+                plr.sendMessage(I18N.getTranslation("INVENTORY_FULL"));
+                return true;
+            }
             plr.getInventory().addItem(sm.gemManager.createGem(i));
         }
         plr.sendMessage(I18N.getTranslation("ALL_GEMS_GIVEN"));
