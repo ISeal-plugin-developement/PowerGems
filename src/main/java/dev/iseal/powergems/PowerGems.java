@@ -1,36 +1,53 @@
 package dev.iseal.powergems;
 
-import com.sk89q.worldguard.WorldGuard;
-import de.leonhard.storage.Yaml;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sk89q.worldguard.WorldGuard;
+
+import de.leonhard.storage.Yaml;
+import dev.iseal.powergems.commands.CheckUpdateCommand;
+import dev.iseal.powergems.commands.DebugCommand;
+import dev.iseal.powergems.commands.GetAllGemsCommand;
+import dev.iseal.powergems.commands.GiveAllGemCommand;
+import dev.iseal.powergems.commands.GiveGemCommand;
+import dev.iseal.powergems.commands.ReloadConfigCommand;
+import dev.iseal.powergems.listeners.AvoidTargetListener;
+import dev.iseal.powergems.listeners.CraftListener;
+import dev.iseal.powergems.listeners.DeathEvent;
+import dev.iseal.powergems.listeners.DropEvent;
+import dev.iseal.powergems.listeners.EnterExitListener;
+import dev.iseal.powergems.listeners.EntityExplodeListener;
+import dev.iseal.powergems.listeners.InventoryCloseListener;
+import dev.iseal.powergems.listeners.NoGemHittingListener;
+import dev.iseal.powergems.listeners.ServerLoadListener;
+import dev.iseal.powergems.listeners.TradeListener;
+import dev.iseal.powergems.listeners.UseEvent;
+import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
@@ -115,6 +132,8 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
         pluginManager.registerEvents(new ServerLoadListener(), this);
+        pluginManager.registerEvents(new TradeListener(), this);
+        pluginManager.registerEvents(new CraftListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
