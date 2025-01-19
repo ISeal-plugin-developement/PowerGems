@@ -1,6 +1,3 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
-
 name: Build and Release
 
 on:
@@ -29,12 +26,33 @@ jobs:
           echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
           echo "EXECUTE=$(mvn help:evaluate -Dexpression=execute -q -DforceStdout)" >> $GITHUB_ENV
 
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view "v${{ env.VERSION }}" > /dev/null 2>&1; then
+            echo "RELEASE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "RELEASE_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Stop if release exists
+        if: env.RELEASE_EXISTS == 'true'
+        run: echo "Release v${{ env.VERSION }} already exists. Stopping workflow."
+
       - name: Run Maven package
-        if: ${{ env.EXECUTE == 'true' }}
+        if: ${{ env.EXECUTE == 'true' && env.RELEASE_EXISTS == 'false' }}
         run: mvn clean package
 
+      - name: Get previous release tag
+        id: get_prev_release
+        run: echo "PREV_RELEASE=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_ENV
+
+      - name: Get commit messages
+        id: get_commits
+        run: echo "COMMITS=$(git log ${{ env.PREV_RELEASE }}..HEAD --pretty=format:'%h - %s')" >> $GITHUB_ENV
+
       - name: Create prerelease
-        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' }}
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' && env.RELEASE_EXISTS == 'false' }}
         uses: ncipollo/release-action@v1
         id: preRelease
         with:
@@ -50,7 +68,7 @@ jobs:
             !! THIS IS A PRERELEASE AND NOT FINAL !!
 
       - name: Create release final
-        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'false' }}
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'false' && env.RELEASE_EXISTS == 'false' }}
         uses: ncipollo/release-action@v1
         id: finalRelease
         with:
@@ -62,5 +80,5 @@ jobs:
           prerelease: false
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
-            Changelog for this version: ${{ github.event.head_commit.message }}
-            
+            Changelog for this version:
+            ${{ env.COMMITS }}
