@@ -15,10 +15,10 @@ public class TradeListener implements Listener {
         if (!(event.getInventory() instanceof MerchantInventory)) {
             return;
         }
-        
-        ItemStack clicked = event.getCurrentItem();
+        ItemStack clicked = event.getCurrentItem();        
         if (clicked != null && SingletonManager.getInstance().gemManager.isGem(clicked)) {
             event.setCancelled(true);
+            event.getInventory().setItem(2, null);
         }
     }
 }
