@@ -43,15 +43,6 @@ jobs:
         if: ${{ env.EXECUTE == 'true' && env.RELEASE_EXISTS == 'false' }}
         run: mvn clean package
 
-      - name: Get latest non-prerelease tag
-        id: get_latest_tag
-        run: echo "LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_EN
-
-      - name: Get commit messages
-        id: get_commits
-        run: echo "COMMITS=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:'%s')" >> $GITHUB_ENV
-
-
       - name: Create prerelease
         if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' && env.RELEASE_EXISTS == 'false' }}
         uses: ncipollo/release-action@v1
@@ -81,5 +72,4 @@ jobs:
           prerelease: false
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
-            Changelog for this version:
-            ${{ env.COMMITS }}
+            Changelog for this version: ${{ github.event.head_commit.message }}
