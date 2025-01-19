@@ -44,7 +44,7 @@ permissions:
         default: op
     powergems.checkupdates:
         description: Permission to use /checkupdates
-        default: true
+        default: op
     powergems.reloadconfig:
         description: Permission to use /reloadconfig
         default: op
