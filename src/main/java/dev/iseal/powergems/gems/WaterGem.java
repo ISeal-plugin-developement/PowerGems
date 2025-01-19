@@ -67,7 +67,6 @@ public class WaterGem extends Gem {
         int endX = playerPos.getBlockX() + halfRadius;
         int endY = playerPos.getBlockY() + halfRadius*2;
         int endZ = playerPos.getBlockZ() + halfRadius;
-        System.out.println("Start: " + startX + " " + startY + " " + startZ);
 
         // Iterate over the cube
         for (int x = startX; x <= endX; x++) {

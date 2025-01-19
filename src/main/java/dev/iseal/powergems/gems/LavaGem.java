@@ -1,14 +1,16 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.listeners.powerListeners.LavaTargetListener;
+import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +25,6 @@ public class LavaGem extends Gem {
         super("Lava");
     }
 
-    private final LavaTargetListener ltl = new LavaTargetListener();
     private final Utils u = SingletonManager.getInstance().utils;
 
     @Override
@@ -65,14 +66,10 @@ public class LavaGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
-        ltl.addToList(plr);
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                ltl.removeFromList(plr);
-            }
-        }, 2400L);
+        LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
+        blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
+        blaze.setCustomNameVisible(true);
+        blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level-1));
+        AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
     }
 }

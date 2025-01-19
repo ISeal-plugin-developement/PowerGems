@@ -6,7 +6,7 @@ import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

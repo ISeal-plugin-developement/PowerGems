@@ -5,7 +5,7 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

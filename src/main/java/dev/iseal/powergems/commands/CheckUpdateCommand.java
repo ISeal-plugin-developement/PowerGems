@@ -2,7 +2,7 @@ package dev.iseal.powergems.commands;
 
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.UpdaterManager;
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

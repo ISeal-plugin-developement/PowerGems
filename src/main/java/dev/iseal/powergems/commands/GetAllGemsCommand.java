@@ -2,20 +2,19 @@ package dev.iseal.powergems.commands;
 
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class GiveAllGemCommand implements CommandExecutor {
+public class GetAllGemsCommand implements CommandExecutor {
 
     private final SingletonManager sm = SingletonManager.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
-            @NotNull String[] args) {
+                             @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(I18N.getTranslation("NOT_PLAYER"));
             return true;
@@ -25,30 +24,14 @@ public class GiveAllGemCommand implements CommandExecutor {
             plr.sendMessage(I18N.getTranslation("NO_PERMISSION"));
             return true;
         }
-        if (args.length < 1) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.getInventory().addItem(sm.gemManager.createGem());
+        for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+            if (plr.getInventory().firstEmpty() == -1) {
+                plr.sendMessage(I18N.getTranslation("INVENTORY_FULL"));
+                return true;
             }
-            return true;
-        } else {
-            String gemNumString = args[0];
-            if (isNumber(gemNumString)) {
-                int gemInt = Integer.valueOf(gemNumString);
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.getInventory().addItem(sm.gemManager.createGem(gemInt));
-                }
-            }
-            return true;
+            plr.getInventory().addItem(sm.gemManager.createGem(i));
         }
+        plr.sendMessage(I18N.getTranslation("ALL_GEMS_GIVEN"));
+        return true;
     }
-
-    private boolean isNumber(String num) {
-        try {
-            Integer.valueOf(num);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
 }

@@ -1,6 +1,6 @@
 package dev.iseal.powergems.listeners.powerListeners;
 
-import dev.iseal.sealLib.I18N.I18N;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
