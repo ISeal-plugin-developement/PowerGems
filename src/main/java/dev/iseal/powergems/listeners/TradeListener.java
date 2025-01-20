@@ -3,6 +3,7 @@ package dev.iseal.powergems.listeners;
 import java.util.Arrays;
 import java.util.List;
 
+import dev.iseal.powergems.managers.GemManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.VillagerAcquireTradeEvent;
@@ -14,9 +15,11 @@ import dev.iseal.powergems.managers.SingletonManager;
 
 public class TradeListener implements Listener {
 
+    private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+
     private boolean hasGemInIngredients(List<ItemStack> ingredients) {
         for (ItemStack item : ingredients) {
-            if (item != null && SingletonManager.getInstance().gemManager.isGem(item)) {
+            if (item != null && gemManager.isGem(item)) {
                 return true;
             }
         }
