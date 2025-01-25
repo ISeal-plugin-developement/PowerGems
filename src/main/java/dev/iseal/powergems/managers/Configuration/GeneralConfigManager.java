@@ -1,13 +1,14 @@
 package dev.iseal.powergems.managers.Configuration;
 
-import de.leonhard.storage.Config;
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.ArrayList;
+import de.leonhard.storage.Config;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 
@@ -116,7 +117,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         return file.getBoolean("runUpdater");
     }
     public boolean isBlockedReplacingBlock(Block block) {
-        ArrayList<String> blocks = (ArrayList<String>) file.get("blockedReplacingBlocks");
+        List<String> blocks = file.getStringList("blockedReplacingBlocks");
         for (String mat : blocks) {
             Material material = Material.valueOf(mat);
             if (block.getType().equals(material)) {
