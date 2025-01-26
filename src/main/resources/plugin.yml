@@ -27,10 +27,10 @@ commands:
     usage: /reloadconfig
     aliases: [rc]
     permission: powergems.reloadconfig
-  debug:
+  pgDebug:
     description: Debug command
-    usage: /debug
-    aliases: [d, db]
+    usage: /pgDebug
+    aliases: [pgd, pgdb]
     permission: powergems.debug
 permissions:
     powergems.getallgems:

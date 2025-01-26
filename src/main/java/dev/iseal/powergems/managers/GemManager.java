@@ -74,8 +74,12 @@ public class GemManager implements Dumpable {
     public void initLater() {
         sm = SingletonManager.getInstance();
         // register default gems
+        ArrayList<String> oldGems = new ArrayList<>(gemIdLookup);
+        gemIdLookup.clear();
         grm = GemReflectionManager.getInstance();
         grm.registerGems();
+        Collections.sort(gemIdLookup);
+        gemIdLookup.addAll(oldGems);
         cm = sm.configManager;
         nkm = sm.namespacedKeyManager;
         isGemKey = nkm.getKey("is_power_gem");

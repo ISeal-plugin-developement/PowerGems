@@ -122,7 +122,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new GiveAllGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
-        Bukkit.getServer().getPluginCommand("debug").setExecutor(new DebugCommand());
+        Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
@@ -160,8 +160,11 @@ public class PowerGems extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        /*
+        //TODO: part of the metrics rework. disabled for now, needs a complete rework.
         if (!errorOnDependencies && sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class).isAllowMetrics())
             sm.metricsManager.exitAndSendInfo();
+         */
         getLogger().info("Shutting down!");
     }
 
