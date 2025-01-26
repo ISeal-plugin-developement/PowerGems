@@ -1,5 +1,6 @@
 package dev.iseal.powergems.commands;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Metrics.ConnectionManager;
@@ -31,6 +32,9 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
+        if (attemptNoPlayer(sender, args))
+            return true;
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
@@ -58,14 +62,21 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             case "invalidateToken":
                 ConnectionManager.getInstance().invalidateToken();
                 break;
-            case "dump":
-                ExceptionHandler.getInstance().dumpAllClasses(null);
-                break;
             default:
                 plr.sendMessage(I18N.translate("INVALID_SUBCOMMAND"));
                 break;
         }
         return true;
+    }
+
+    public boolean attemptNoPlayer(CommandSender sender, String[] args) {
+        switch (args[0]) {
+            case "dump":
+                ExceptionHandler.getInstance().dumpAllClasses(PowerGems.class);
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Nullable
