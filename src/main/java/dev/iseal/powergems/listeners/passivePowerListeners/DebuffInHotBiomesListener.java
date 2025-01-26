@@ -5,7 +5,6 @@ import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.Utils;
-import net.royawesome.jlibnoise.module.combiner.Power;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

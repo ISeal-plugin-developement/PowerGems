@@ -1,12 +1,10 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.GlobalUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
