@@ -1,10 +1,13 @@
 package dev.iseal.powergems.managers;
 
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -16,9 +19,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.Interfaces.Dumpable;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 /**
  * This class is responsible for managing the creation, identification, and
@@ -285,6 +294,10 @@ public class GemManager implements Dumpable {
         reGemMeta = createLore(reGemMeta, gemNumber);
         reGemMeta.setCustomModelData(gemNumber);
         gemItem.setItemMeta(reGemMeta);
+        int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
+        l.info(gcm.getPluginPrefix() + "Created a " 
+        + lookUpName(gemNumber) 
+        + " gem with custom model data " + customModelData);
         return gemItem;
     }
 
