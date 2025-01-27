@@ -1,36 +1,32 @@
 package dev.iseal.powergems;
 
-import com.sk89q.worldguard.WorldGuard;
-import de.leonhard.storage.Yaml;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sk89q.worldguard.WorldGuard;
+
+import de.leonhard.storage.Yaml;
+import dev.iseal.powergems.commands.*;
+import dev.iseal.powergems.listeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.*;
+import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.*;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
@@ -115,6 +111,8 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
         pluginManager.registerEvents(new ServerLoadListener(), this);
+        pluginManager.registerEvents(new TradeEventListener(), this);
+        pluginManager.registerEvents(new CraftEventListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
