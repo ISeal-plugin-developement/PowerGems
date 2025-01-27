@@ -299,10 +299,10 @@ public class GemManager implements Dumpable {
         reGemMeta = createLore(reGemMeta, gemNumber);
         reGemMeta.setCustomModelData(gemNumber);
         gemItem.setItemMeta(reGemMeta);
-        int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
-        l.info(gcm.getPluginPrefix() + "Created a " 
-        + lookUpName(gemNumber) 
-        + " gem with custom model data " + customModelData);
+        //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
+        //l.info(gcm.getPluginPrefix() + "Created a " 
+        //+ lookUpName(gemNumber) 
+        //+ " gem with custom model data " + customModelData);
         return gemItem;
     }
 
