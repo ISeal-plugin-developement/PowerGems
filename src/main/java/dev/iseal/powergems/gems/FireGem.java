@@ -1,5 +1,7 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
@@ -14,6 +16,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.inventory.meta.ItemMeta;
+import java.util.ArrayList;
 
 public class FireGem extends Gem {
 
@@ -72,5 +76,20 @@ public class FireGem extends Gem {
         for (int i = 0; i < 10; i++) {
             world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
         }
+    }
+
+    @Override
+    public ItemStack gemInfo(ItemStack item) {
+        // Use base gem info which includes level and cooldowns
+        ItemStack infoItem = super.gemInfo(item);
+        ItemMeta meta = infoItem.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>(meta.getLore());
+        
+        // Add configured lore from GemLoreConfigManager
+        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Fire")));
+        
+        meta.setLore(lore);
+        infoItem.setItemMeta(meta);
+        return infoItem;
     }
 }

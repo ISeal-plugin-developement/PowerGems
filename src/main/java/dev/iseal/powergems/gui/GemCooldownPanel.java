@@ -52,28 +52,28 @@ public class GemCooldownPanel {
                 break; // No more slots available
             }
 
-            ItemStack gemItem = gem.toItemStack(); //TODO: Implement this method in Gem class and Gem subclasses
+            // Create a basic ItemStack for the gem
+            ItemStack gemItem = new ItemStack(org.bukkit.Material.EMERALD); // Default material, will be overridden by gemInfo
+            
+            // Get gem information using the implemented gemInfo method
+            gemItem = gem.gemInfo(gemItem);
             ItemMeta meta = gemItem.getItemMeta();
+            
             if (meta != null) {
-                // Set the display name with color
-                meta.setDisplayName(ChatColor.GREEN + gem.getName());
-
-                // Retrieve cooldown times for different actions (left-click, right-click, shift-click)
-                String leftCd = cooldownManager.getFormattedTimer(player, gem.getClass(), "left");
-                String rightCd = cooldownManager.getFormattedTimer(player, gem.getClass(), "right");
-                String shiftCd = cooldownManager.getFormattedTimer(player, gem.getClass(), "shift");
-
-                // Set lore to display cooldown information
-                meta.setLore(java.util.Arrays.asList(
-                        ChatColor.YELLOW + "Left Cooldown: " + leftCd,
-                        ChatColor.YELLOW + "Right Cooldown: " + rightCd,
-                        ChatColor.YELLOW + "Shift Cooldown: " + shiftCd
-                ));
+                // Get existing lore from gemInfo
+                java.util.ArrayList<String> lore = new java.util.ArrayList<>(meta.getLore());
+                
+                // Add cooldown information
+                lore.add("");
+                lore.add(ChatColor.YELLOW + "Cooldowns:");
+                lore.add(ChatColor.WHITE + "Left Click: " + cooldownManager.getFormattedTimer(player, gem.getClass(), "left"));
+                lore.add(ChatColor.WHITE + "Right Click: " + cooldownManager.getFormattedTimer(player, gem.getClass(), "right"));
+                lore.add(ChatColor.WHITE + "Shift Click: " + cooldownManager.getFormattedTimer(player, gem.getClass(), "shift"));
+                
+                meta.setLore(lore);
                 gemItem.setItemMeta(meta);
+                panelInventory.setItem(slotIndex++, gemItem);
             }
-
-            panelInventory.setItem(slotIndex, gemItem);
-            slotIndex++;
         }
 
         // Optionally, fill remaining slots with placeholder items for aesthetic purposes
