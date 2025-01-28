@@ -19,6 +19,7 @@ import dev.iseal.powergems.commands.DebugCommand;
 import dev.iseal.powergems.commands.GetAllGemsCommand;
 import dev.iseal.powergems.commands.GiveAllGemCommand;
 import dev.iseal.powergems.commands.GiveGemCommand;
+import dev.iseal.powergems.commands.PanelCommand;
 import dev.iseal.powergems.commands.ReloadConfigCommand;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.CraftEventListener;
@@ -145,6 +146,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
+        Bukkit.getServer().getPluginCommand("panel").setExecutor(new PanelCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();

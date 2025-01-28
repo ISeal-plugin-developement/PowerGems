@@ -68,6 +68,7 @@ public class GemManager implements Dumpable {
     private final Logger l = Bukkit.getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
+    private HashMap<String, Gem> gems = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -446,6 +447,11 @@ public class GemManager implements Dumpable {
         return grm.runParticleCall(item, plr);
     }
 
+    /**
+     * Adds a gem to the manager.
+     *
+     * @param gem The Gem object to add.
+     */
     public void addGem(Gem gem) {
         String name = gem.getName();
         if (gemIdLookup.contains(name)) {
@@ -453,6 +459,19 @@ public class GemManager implements Dumpable {
             return;
         }
         gemIdLookup.add(gem.getName());
+        gems.put(name, gem); // Add the gem to the gems map
+        l.info(gcm.getPluginPrefix()+"Registered gem: " + name);
+    }
+
+    /**
+     * Returns a HashMap of all gems.
+     * Each gem is represented as an ItemStack, and the key is the gem number.
+     * 
+     * @return A HashMap where the keys are gem numbers and the values are
+     *         ItemStacks representing the gems.
+     */
+    public HashMap<String, Gem> getGems() {
+        return gems; // Return the internal HashMap containing all registered gems
     }
 
     @Override

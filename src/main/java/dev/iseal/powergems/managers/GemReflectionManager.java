@@ -122,6 +122,7 @@ public class GemReflectionManager implements Dumpable {
         }
         Gem gemInstance = registeredGems.get(gemClass);
         return gemInstance.particle();
+
     }
 
     @Override
