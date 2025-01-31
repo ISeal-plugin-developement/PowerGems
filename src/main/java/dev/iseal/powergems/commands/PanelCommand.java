@@ -28,13 +28,11 @@ public class PanelCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
                             @NotNull String[] args) {
 
-        // Check if sender is a player
         if (!(sender instanceof Player)) {
             sender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
         }
 
-        // Check permissions
         if (!sender.hasPermission(command.getPermission())) {
             sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;

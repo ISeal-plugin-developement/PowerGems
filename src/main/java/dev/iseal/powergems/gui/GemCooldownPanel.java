@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,15 +21,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem; // Add this import
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class GemCooldownPanel implements Listener {
 
+    private final Logger logger = PowerGems.getPlugin().getLogger();
     private final GemManager gemManager;
     private final CooldownManager cooldownManager;
     private final GemMaterialConfigManager gemMaterialConfigManager;
@@ -50,7 +54,7 @@ public class GemCooldownPanel implements Listener {
         
         int size = calculateInventorySize(gemManager.getGems().size());
         this.panelInventory = Bukkit.createInventory(null, size, 
-            ChatColor.DARK_AQUA + "❖ Gem Cooldown Manager ❖");
+            I18N.translate("GUI_COOLDOWN_PANEL_TITLE")); // Ensure this key exists in language files
             
         setupPanel();
     }
@@ -64,7 +68,7 @@ public class GemCooldownPanel implements Listener {
     private ItemStack createGemDisplay(String gemName) {
         Material gemMaterial = gemMaterialConfigManager.getGemMaterial(gemName);
         if (gemMaterial == null) {
-            Bukkit.getLogger().warning("[PowerGems] Material for gem '" + gemName + "' is not defined.");
+            logger.warning(I18N.translate("LOGGER_MATERIAL_NOT_DEFINED") + ": " + gemName);
             return null;
         }
 
@@ -72,11 +76,14 @@ public class GemCooldownPanel implements Listener {
         ItemMeta meta = display.getItemMeta();
         if (meta == null) return null;
 
-        // Set custom model data based on gem ID
-        int gemID = GemManager.lookUpID(gemName);
-        meta.setCustomModelData(gemID); // This matches the custom model data set in GemManager
+        int gemID = GemManager.lookUpID(gemName); 
+        if (gemID != 0) { 
+            meta.setCustomModelData(gemID);
+        } else {
+            logger.warning(I18N.translate("LOGGER_NO_CUSTOM_MODEL_DATA") + ": " + gemName);
+        }
 
-        // Add name and enchant effect
+        // Add name and enchant effect idk why
         meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + gemName + " Gem" + ChatColor.GOLD + " ✧");
         meta.addEnchant(org.bukkit.enchantments.Enchantment.LUCK, 1, true);
         meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
@@ -84,29 +91,28 @@ public class GemCooldownPanel implements Listener {
         // Build lore
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatColor.YELLOW + "⌚ Cooldowns:");
-        
+        lore.add(ChatColor.YELLOW + I18N.translate("LORE_COOLDOWNS"));
+
         String[] actions = {"left", "right", "shift"};
         String[] actionIcons = {"➔", "⬆", "⇧"};
-        String[] actionNames = {"Left Click", "Right Click", "Shift Click"};
 
         // Add cooldowns
         for (int i = 0; i < actions.length; i++) {
-            long cooldown = cooldownManager.getFullCooldown(1, gemName, actions[i]);
-            lore.add(ChatColor.GREEN + actionIcons[i] + " " + actionNames[i] + ": " + 
-                    ChatColor.WHITE + cooldown + "s");
+            long cooldownTime = cooldownManager.getFullCooldown(1, gemName, actions[i]);
+            String translatedActionCooldown = I18N.translate("ACTION_COOLDOWN") + ": " + cooldownTime + "s";
+            lore.add(ChatColor.GREEN + actionIcons[i] + " " + translatedActionCooldown);
         }
 
         // Add powers
         lore.add("");
-        lore.add(ChatColor.YELLOW + "✦ Powers:");
+        lore.add(ChatColor.YELLOW + I18N.translate("LORE_POWERS"));
         List<String> powers = gemLoreConfigManager.getLore(gemID);
         if (powers != null && !powers.isEmpty()) {
             for (String power : powers) {
                 lore.add(ChatColor.WHITE + "• " + power);
             }
         } else {
-            lore.add(ChatColor.RED + "No powers defined");
+            lore.add(ChatColor.RED + I18N.translate("LORE_NO_POWERS"));
         }
 
         meta.setLore(lore);
@@ -150,25 +156,23 @@ public class GemCooldownPanel implements Listener {
         if (gemName != null) {
             // Play sound effect
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            
-            // Send detailed gem info message
             player.sendMessage("");
-            player.sendMessage(ChatColor.GOLD + "=== " + ChatColor.AQUA + gemName + " Gem Info" + 
+            player.sendMessage(ChatColor.GOLD + "=== " + ChatColor.AQUA + I18N.translate("GEM_INFO_TITLE") + 
                                 ChatColor.GOLD + " ===");
             
             // Show cooldowns
             String[] actions = {"left", "right", "shift"};
-            String[] actionNames = {"Left Click", "Right Click", "Shift Click"};
+            String[] actionIcons = {"➔", "⬆", "⇧"};
             for (int i = 0; i < actions.length; i++) {
-                long cooldown = cooldownManager.getFullCooldown(1, gemName, actions[i]);
-                player.sendMessage(ChatColor.GREEN + actionNames[i] + ": " + 
-                                    ChatColor.WHITE + cooldown + "s");
+                long cooldownTime = cooldownManager.getFullCooldown(1, gemName, actions[i]);
+                String translatedCooldownInfo = I18N.translate("ACTION_COOLDOWN_INFO") + ": " + cooldownTime + "s";
+                player.sendMessage(ChatColor.GREEN + actionIcons[i] + " " + translatedCooldownInfo);
             }
 
             // Show powers
             player.sendMessage("");
-            player.sendMessage(ChatColor.YELLOW + "Powers:");
-            int gemID = GemManager.lookUpID(gemName);
+            player.sendMessage(ChatColor.YELLOW + I18N.translate("POWERS_TITLE"));
+            int gemID = GemManager.lookUpID(gemName); 
             List<String> powers = gemLoreConfigManager.getLore(gemID);
             if (powers != null) {
                 for (String power : powers) {
@@ -211,11 +215,9 @@ public class GemCooldownPanel implements Listener {
         panelInventory.clear();
         slotToGemMap.clear();
         int slotIndex = PADDING;
-
-        // Add header item in the middle of first row
+        
         setHeaderItem(4);
 
-        // Add gems with proper spacing
         for (Gem gem : gemManager.getGems().values()) {
             if (slotIndex >= panelInventory.getSize() - PADDING) break;
 
@@ -242,12 +244,12 @@ public class GemCooldownPanel implements Listener {
         ItemStack header = new ItemStack(Material.END_CRYSTAL);
         ItemMeta meta = header.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + "Gem Information" + ChatColor.GOLD + " ✧");
+            meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + I18N.translate("HEADER_TITLE") + ChatColor.GOLD + " ✧");
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "View information about all available gems");
-            lore.add(ChatColor.GRAY + "and their cooldown times.");
+            lore.add(ChatColor.GRAY + I18N.translate("HEADER_LORE_1"));
+            lore.add(ChatColor.GRAY + I18N.translate("HEADER_LORE_2"));
             lore.add("");
-            lore.add(ChatColor.YELLOW + "Click a gem to see detailed information!");
+            lore.add(ChatColor.YELLOW + I18N.translate("HEADER_LORE_3"));
             meta.setLore(lore);
             header.setItemMeta(meta);
         }
@@ -289,7 +291,7 @@ public class GemCooldownPanel implements Listener {
      * @return True if it matches, false otherwise.
      */
     private boolean isGemCooldownManager(String title) {
-        return Objects.equals(title, ChatColor.DARK_AQUA + "❖ Gem Cooldown Manager ❖");
+        return Objects.equals(title, I18N.translate("GUI_COOLDOWN_PANEL_TITLE"));
     }
 }
 

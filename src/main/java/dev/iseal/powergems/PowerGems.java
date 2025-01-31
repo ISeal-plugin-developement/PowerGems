@@ -140,7 +140,6 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         
-        // Register the GemCooldownPanel
         GemCooldownPanel panel = new GemCooldownPanel();
         getServer().getPluginManager().registerEvents(panel, this);
         

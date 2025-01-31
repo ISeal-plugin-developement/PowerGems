@@ -15,6 +15,8 @@ public class CooldownConfigManager extends AbstractConfigManager {
 
     }
 
+
+    //TODO: This method not finsihed yet
     public void saveUpdatedCooldown() {
         long leftCooldown = 60L;
         long shiftCooldown = 50L;
@@ -24,7 +26,6 @@ public class CooldownConfigManager extends AbstractConfigManager {
         file.set("cooldown.shiftClick", shiftCooldown);
         file.set("cooldown.rightClick", rightCooldown);
 
-        // Use write() instead of save() to persist changes to disk
         file.write();
     }
 
