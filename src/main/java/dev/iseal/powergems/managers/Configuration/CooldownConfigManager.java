@@ -16,6 +16,14 @@ public class CooldownConfigManager extends AbstractConfigManager {
     }
 
     @Override
+    public void saveUpdatedCooldown() {
+
+        
+        file.set 
+    }
+
+
+    @Override
     public void lateInit() {
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
             file.setDefault(GemManager.lookUpName(i) + "LeftCooldown", 60);
