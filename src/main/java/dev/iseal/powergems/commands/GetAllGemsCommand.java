@@ -14,7 +14,7 @@ public class GetAllGemsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
-                             @NotNull String[] args) {
+                            @NotNull String[] args) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(I18N.getTranslation("NOT_PLAYER"));
             return true;

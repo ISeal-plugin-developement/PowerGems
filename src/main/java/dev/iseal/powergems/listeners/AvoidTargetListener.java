@@ -2,7 +2,6 @@ package dev.iseal.powergems.listeners;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

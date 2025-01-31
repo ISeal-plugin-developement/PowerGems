@@ -157,4 +157,9 @@ public class CooldownManager implements Dumpable {
         map.put("shiftClickCooldowns", shiftClickCooldowns);
         return map;
     }
+
+    public void reloadFromConfig() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reloadFromConfig'");
+    }
 }

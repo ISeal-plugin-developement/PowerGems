@@ -135,4 +135,32 @@ public class ConfigManager implements Dumpable {
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
     }
+
+    public void save() {
+        for (Class<? extends AbstractConfigManager> currentClass : registeredConfigurations) {
+            AbstractConfigManager instance = getRegisteredConfigInstance(currentClass);
+            try {
+                // Persist each configuration file to disk
+                instance.file.write();
+            } catch (Exception e) {
+                // Use your logger or ExceptionHandler as needed
+                ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "SAVE_CONFIG", currentClass);
+            }
+        }
+    }
+
+    public void updateCooldown(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
+    }
+
+    public void saveConfig() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
+    }
+
+    public void set(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'set'");
+    }
 }

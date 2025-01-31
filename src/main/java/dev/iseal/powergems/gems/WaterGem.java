@@ -2,6 +2,8 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,8 +11,10 @@ import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import java.util.ArrayList;
 
 public class WaterGem extends Gem {
 
@@ -22,6 +26,21 @@ public class WaterGem extends Gem {
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
+    }
+
+    @Override
+    public ItemStack gemInfo(ItemStack item) {
+        // Use base gem info which includes level and cooldowns
+        ItemStack infoItem = super.gemInfo(item);
+        ItemMeta meta = infoItem.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>(meta.getLore());
+        
+        // Add configured lore from GemLoreConfigManager
+        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Water")));
+        
+        meta.setLore(lore);
+        infoItem.setItemMeta(meta);
+        return infoItem;
     }
 
     @Override
