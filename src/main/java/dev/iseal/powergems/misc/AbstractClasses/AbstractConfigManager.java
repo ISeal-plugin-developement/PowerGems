@@ -8,7 +8,7 @@ import dev.iseal.powergems.misc.Interfaces.Dumpable;
 
 public abstract class AbstractConfigManager implements Dumpable {
 
-    protected Config file;
+    public Config file;
 
     public AbstractConfigManager(String name) {
         if (name != null)

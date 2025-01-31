@@ -348,8 +348,9 @@ public class GemManager implements Dumpable {
      * @return The level of the gem, or 0 if the item is not a gem.
      */
     public int getLevel(ItemStack item) {
-        if (!isGem(item))
+        if (!isGem(item)) {
             return 0;
+        }
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
         if (!pdc.has(gemLevelKey, PersistentDataType.INTEGER)) {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);

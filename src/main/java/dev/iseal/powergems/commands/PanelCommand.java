@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import dev.iseal.powergems.gui.GemCooldownPanel;
-import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 /**
@@ -22,14 +21,13 @@ public class PanelCommand implements CommandExecutor {
      * Constructs a new PanelCommand with necessary manager instances.
      */
     public PanelCommand() {
-        SingletonManager sm = SingletonManager.getInstance();
         this.panel = new GemCooldownPanel();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
-            @NotNull String[] args) {
-        
+                            @NotNull String[] args) {
+
         // Check if sender is a player
         if (!(sender instanceof Player)) {
             sender.sendMessage(I18N.translate("NOT_PLAYER"));
@@ -37,7 +35,7 @@ public class PanelCommand implements CommandExecutor {
         }
 
         // Check permissions
-        if (!sender hasPermission(command.getPermission())) {
+        if (!sender.hasPermission(command.getPermission())) {
             sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
