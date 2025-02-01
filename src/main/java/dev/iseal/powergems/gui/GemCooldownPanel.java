@@ -205,9 +205,9 @@ public class GemCooldownPanel implements Listener {
             String gemName = gemManager.getGemName(gem);
             ItemStack gemItem = createGemDisplay(gemName);
             if (gemItem != null) {
-                panelInventory.setItem(slotIndex.get(), gemItem);
-                slotToGemMap.put(slotIndex.get(), gemName);
-                slotIndex.incrementAndGet();
+                int currentSlot = slotIndex.getAndIncrement();
+                panelInventory.setItem(currentSlot, gemItem);
+                slotToGemMap.put(currentSlot, gemName);
             }
         });
 

@@ -1,6 +1,11 @@
 package dev.iseal.powergems.managers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,9 +68,7 @@ public class GemManager implements Dumpable {
     private final Logger l = Bukkit.getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
-    private HashMap<String, Gem> gems = new HashMap<>();
-
-    /**
+        /**
      * Initializes the gem manager with necessary keys and configurations.
      */
     public void initLater() {
