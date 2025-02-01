@@ -1,23 +1,20 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
+import dev.iseal.powergems.managers.CooldownManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.CooldownManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.logging.Logger;
 
 public abstract class Gem {
 
@@ -28,6 +25,7 @@ public abstract class Gem {
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
     protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
+    protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     protected int level;
     protected Particle particle;
     protected String name;
@@ -39,6 +37,11 @@ public abstract class Gem {
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
             return;
+
+        if (gcm.doAttemptFixOldGems()){
+            gm.attemptFixGem(item);
+        }
+
         level = gm.getLevel(item);
         this.plr = plr;
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
