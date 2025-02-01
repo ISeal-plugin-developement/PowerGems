@@ -1,11 +1,6 @@
 package dev.iseal.powergems.managers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,6 +157,7 @@ public class GemManager implements Dumpable {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
             gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
+            gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
             randomGem.setItemMeta(gemMeta);
@@ -297,7 +293,9 @@ public class GemManager implements Dumpable {
         reDataContainer.set(gemLevelKey, PersistentDataType.INTEGER, gemLevel);
         reDataContainer.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
         reGemMeta = createLore(reGemMeta, gemNumber);
-        reGemMeta.setCustomModelData(gemNumber);
+        // index 0 empty, index 1 random gem, index 2-x gems
+        // might want to make an index for every level of gem in the future, could be fun
+        reGemMeta.setCustomModelData(gemNumber+2);
         gemItem.setItemMeta(reGemMeta);
         //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
         //l.info(gcm.getPluginPrefix() + "Created a " 
@@ -453,6 +451,21 @@ public class GemManager implements Dumpable {
             return;
         }
         gemIdLookup.add(gem.getName());
+    }
+
+    public void attemptFixGem(ItemStack item) {
+        String name = getName(item);
+        if (Objects.equals(name, "")) {
+            return;
+        }
+        int id = lookUpID(name);
+        ItemMeta meta = item.getItemMeta();
+
+        // fix for broken model data
+        if (meta.getCustomModelData() != id+2) {
+            meta.setCustomModelData(id+2);
+            item.setItemMeta(meta);
+        }
     }
 
     @Override

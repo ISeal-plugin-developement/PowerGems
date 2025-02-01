@@ -37,6 +37,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("randomizedColors", false);
         file.setDefault("allowMovingGems", false);
         file.setDefault("doDebuffForTemperature", true);
+        file.setDefault("attemptFixOldGems", false);
         file.setDefault("cooldownBoostPerLevelInSeconds", 2L);
         file.setDefault("delayToUseGemsOnJoin", 30);
         file.setDefault("gemCreationAttempts", 10);
@@ -155,5 +156,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean doDebuffForTemperature() {
         return file.getBoolean("doDebuffForTemperature");
+    }
+    public boolean doAttemptFixOldGems() {
+        return file.getBoolean("attemptFixOldGems");
     }
 }
