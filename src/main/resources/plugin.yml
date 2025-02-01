@@ -7,7 +7,7 @@ load: STARTUP
 softdepend: [WorldGuard]
 commands:
   panel:
-    description: Command to open the PowerGems panel
+    description: Powergems configuration panel
     usage: /panel
     aliases: [pg]
     permission: powergems.panel

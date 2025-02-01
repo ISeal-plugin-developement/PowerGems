@@ -3,7 +3,7 @@ package dev.iseal.powergems.gui;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -27,7 +27,6 @@ import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class GemCooldownPanel implements Listener {
@@ -52,9 +51,9 @@ public class GemCooldownPanel implements Listener {
         this.gemMaterialConfigManager = singletonManager.configManager.getRegisteredConfigInstance(GemMaterialConfigManager.class);
         this.gemLoreConfigManager = singletonManager.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class);
         
-        int size = calculateInventorySize(gemManager.getGems().size());
+        int size = calculateInventorySize(gemManager.getAllGems().size());
         this.panelInventory = Bukkit.createInventory(null, size, 
-            I18N.translate("GUI_COOLDOWN_PANEL_TITLE")); // Ensure this key exists in language files
+            I18N.translate("GUI_COOLDOWN_PANEL_TITLE")); 
             
         setupPanel();
     }
@@ -83,12 +82,9 @@ public class GemCooldownPanel implements Listener {
             logger.warning(I18N.translate("LOGGER_NO_CUSTOM_MODEL_DATA") + ": " + gemName);
         }
 
-        // Add name and enchant effect idk why
         meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + gemName + " Gem" + ChatColor.GOLD + " ✧");
-        meta.addEnchant(org.bukkit.enchantments.Enchantment.LUCK, 1, true);
         meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
 
-        // Build lore
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.YELLOW + I18N.translate("LORE_COOLDOWNS"));
@@ -96,23 +92,12 @@ public class GemCooldownPanel implements Listener {
         String[] actions = {"left", "right", "shift"};
         String[] actionIcons = {"➔", "⬆", "⇧"};
 
-        // Add cooldowns
+        String standardizedGemName = GemManager.lookUpName(gemID);
+
         for (int i = 0; i < actions.length; i++) {
-            long cooldownTime = cooldownManager.getFullCooldown(1, gemName, actions[i]);
+            long cooldownTime = cooldownManager.getFullCooldown(1, standardizedGemName, actions[i]);
             String translatedActionCooldown = I18N.translate("ACTION_COOLDOWN") + ": " + cooldownTime + "s";
             lore.add(ChatColor.GREEN + actionIcons[i] + " " + translatedActionCooldown);
-        }
-
-        // Add powers
-        lore.add("");
-        lore.add(ChatColor.YELLOW + I18N.translate("LORE_POWERS"));
-        List<String> powers = gemLoreConfigManager.getLore(gemID);
-        if (powers != null && !powers.isEmpty()) {
-            for (String power : powers) {
-                lore.add(ChatColor.WHITE + "• " + power);
-            }
-        } else {
-            lore.add(ChatColor.RED + I18N.translate("LORE_NO_POWERS"));
         }
 
         meta.setLore(lore);
@@ -138,7 +123,7 @@ public class GemCooldownPanel implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!isGemCooldownManager(event.getView().getTitle())) {
+        if (!isGemCooldownManager(event.getView().getTopInventory())) {
             return;
         }
         event.setCancelled(true);
@@ -154,13 +139,11 @@ public class GemCooldownPanel implements Listener {
 
         String gemName = slotToGemMap.get(event.getSlot());
         if (gemName != null) {
-            // Play sound effect
             player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
             player.sendMessage("");
             player.sendMessage(ChatColor.GOLD + "=== " + ChatColor.AQUA + I18N.translate("GEM_INFO_TITLE") + 
                                 ChatColor.GOLD + " ===");
             
-            // Show cooldowns
             String[] actions = {"left", "right", "shift"};
             String[] actionIcons = {"➔", "⬆", "⇧"};
             for (int i = 0; i < actions.length; i++) {
@@ -169,7 +152,6 @@ public class GemCooldownPanel implements Listener {
                 player.sendMessage(ChatColor.GREEN + actionIcons[i] + " " + translatedCooldownInfo);
             }
 
-            // Show powers
             player.sendMessage("");
             player.sendMessage(ChatColor.YELLOW + I18N.translate("POWERS_TITLE"));
             int gemID = GemManager.lookUpID(gemName); 
@@ -190,7 +172,7 @@ public class GemCooldownPanel implements Listener {
      */
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (isGemCooldownManager(event.getView().getTitle())) {
+        if (isGemCooldownManager(event.getView().getTopInventory())) {
             event.setCancelled(true);
         }
     }
@@ -202,7 +184,7 @@ public class GemCooldownPanel implements Listener {
      */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (isGemCooldownManager(event.getView().getTitle())) {
+        if (isGemCooldownManager(event.getView().getTopInventory())) {
             Player player = (Player) event.getPlayer();
             player.playSound(player.getLocation(), Sound.UI_TOAST_OUT, 0.5f, 1.0f);
         }
@@ -214,22 +196,20 @@ public class GemCooldownPanel implements Listener {
     private void setupPanel() {
         panelInventory.clear();
         slotToGemMap.clear();
-        int slotIndex = PADDING;
-        
+        final AtomicInteger slotIndex = new AtomicInteger(PADDING);
+
         setHeaderItem(4);
 
-        for (Gem gem : gemManager.getGems().values()) {
-            if (slotIndex >= panelInventory.getSize() - PADDING) break;
-
-            String gemName = gem.getName();
+        // Iterate over all registered gems using existing project methods.
+        gemManager.getAllGems().forEach((id, gem) -> {
+            String gemName = gemManager.getGemName(gem);
             ItemStack gemItem = createGemDisplay(gemName);
-            
             if (gemItem != null) {
-                panelInventory.setItem(slotIndex, gemItem);
-                slotToGemMap.put(slotIndex, gemName);
-                slotIndex++;
+                panelInventory.setItem(slotIndex.get(), gemItem);
+                slotToGemMap.put(slotIndex.get(), gemName);
+                slotIndex.incrementAndGet();
             }
-        }
+        });
 
         fillEmptySlots();
     }
@@ -285,13 +265,13 @@ public class GemCooldownPanel implements Listener {
     }
 
     /**
-     * Checks if the inventory title matches the Gem Cooldown Manager.
+     * Checks whether the given inventory is the Gem Cooldown Panel.
      *
-     * @param title The title to check.
+     * @param inv The inventory to check.
      * @return True if it matches, false otherwise.
      */
-    private boolean isGemCooldownManager(String title) {
-        return Objects.equals(title, I18N.translate("GUI_COOLDOWN_PANEL_TITLE"));
+    private boolean isGemCooldownManager(Inventory inv) {
+        return inv == panelInventory;
     }
 }
 

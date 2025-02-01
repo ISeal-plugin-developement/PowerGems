@@ -460,7 +460,6 @@ public class GemManager implements Dumpable {
             return;
         }
         gemIdLookup.add(gem.getName());
-        gems.put(name, gem); // Add the gem to the gems map
         l.info(gcm.getPluginPrefix()+"Registered gem: " + name);
     }
 
@@ -474,7 +473,6 @@ public class GemManager implements Dumpable {
     public HashMap<String, Gem> getGems() {
         return gems; // Return the internal HashMap containing all registered gems
     }
-
     @Override
     public HashMap<String, Object> dump() {
         HashMap<String, Object> dump = new HashMap<>();
