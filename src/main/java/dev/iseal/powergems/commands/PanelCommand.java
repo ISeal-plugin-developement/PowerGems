@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import dev.iseal.powergems.gui.GemCooldownPanel;
+import dev.iseal.powergems.gui.GemMainPanel;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 /**
@@ -15,13 +15,13 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
  */
 public class PanelCommand implements CommandExecutor {
 
-    private final GemCooldownPanel panel;
+    private final GemMainPanel panel;
 
     /**
      * Constructs a new PanelCommand with necessary manager instances.
      */
     public PanelCommand() {
-        this.panel = new GemCooldownPanel();
+        this.panel = new GemMainPanel();
     }
 
     @Override

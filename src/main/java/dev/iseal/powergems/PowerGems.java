@@ -43,7 +43,7 @@ import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.gui.GemCooldownPanel;
+import dev.iseal.powergems.gui.GemMainPanel;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import dev.iseal.powergems.tasks.CosmeticParticleEffect;
@@ -140,7 +140,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         
-        GemCooldownPanel panel = new GemCooldownPanel();
+        GemMainPanel panel = new GemMainPanel();
         getServer().getPluginManager().registerEvents(panel, this);
         
         l.info(I18N.translate("REGISTERED_LISTENERS"));
