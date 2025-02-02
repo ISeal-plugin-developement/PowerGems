@@ -1,6 +1,11 @@
 package dev.iseal.powergems.managers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,8 +68,7 @@ public class GemManager implements Dumpable {
     private final Logger l = Bukkit.getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
-
-    /**
+        /**
      * Initializes the gem manager with necessary keys and configurations.
      */
     public void initLater() {
@@ -345,8 +349,9 @@ public class GemManager implements Dumpable {
      * @return The level of the gem, or 0 if the item is not a gem.
      */
     public int getLevel(ItemStack item) {
-        if (!isGem(item))
+        if (!isGem(item)) {
             return 0;
+        }
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
         if (!pdc.has(gemLevelKey, PersistentDataType.INTEGER)) {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);
@@ -444,6 +449,11 @@ public class GemManager implements Dumpable {
         return grm.runParticleCall(item, plr);
     }
 
+    /**
+     * Adds a gem to the manager.
+     *
+     * @param gem The Gem object to add.
+     */
     public void addGem(Gem gem) {
         String name = gem.getName();
         if (gemIdLookup.contains(name)) {
@@ -451,21 +461,6 @@ public class GemManager implements Dumpable {
             return;
         }
         gemIdLookup.add(gem.getName());
-    }
-
-    public void attemptFixGem(ItemStack item) {
-        String name = getName(item);
-        if (Objects.equals(name, "")) {
-            return;
-        }
-        int id = lookUpID(name);
-        ItemMeta meta = item.getItemMeta();
-
-        // fix for broken model data
-        if (meta.getCustomModelData() != id+2) {
-            meta.setCustomModelData(id+2);
-            item.setItemMeta(meta);
-        }
     }
 
     @Override

@@ -4,6 +4,8 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
@@ -17,9 +19,10 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -118,5 +121,20 @@ public class IronGem extends Gem {
     public void removeRightModifiers(Player plr) {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         knockbackInstance.removeModifier(knockbackAttribute);
+    }
+
+    @Override
+    public ItemStack gemInfo(ItemStack item) {
+        // Use base gem info which includes level and cooldowns
+        ItemStack infoItem = super.gemInfo(item);
+        ItemMeta meta = infoItem.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>(meta.getLore());
+        
+        // Add configured lore from GemLoreConfigManager
+        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Iron")));
+        
+        meta.setLore(lore);
+        infoItem.setItemMeta(meta);
+        return infoItem;
     }
 }

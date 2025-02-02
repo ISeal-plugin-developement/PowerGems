@@ -1,8 +1,7 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Utils;
+import java.util.ArrayList;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -13,9 +12,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.misc.Utils;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 
 public class AirGem extends Gem {
 
@@ -89,5 +95,20 @@ public class AirGem extends Gem {
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));
+    }
+
+    @Override
+    public ItemStack gemInfo(ItemStack item) {
+        // Use base gem info which includes level and cooldowns
+        ItemStack infoItem = super.gemInfo(item);
+        ItemMeta meta = infoItem.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>(meta.getLore());
+        
+        // Add configured lore from GemLoreConfigManager
+        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Air")));
+        
+        meta.setLore(lore);
+        infoItem.setItemMeta(meta);
+        return infoItem;
     }
 }

@@ -6,6 +6,11 @@ author: ISeal
 load: STARTUP
 softdepend: [WorldGuard]
 commands:
+  panel:
+    description: Powergems configuration panel
+    usage: /panel
+    aliases: [pg]
+    permission: powergems.panel
   getallgems:
     description: Command to give yourself all gem
     usage: /getallgems
@@ -33,6 +38,9 @@ commands:
     aliases: [pgd, pgdb]
     permission: powergems.debug
 permissions:
+    powergems.panel:
+        description: Permission to use /panel
+        default: op
     powergems.getallgems:
         description: Permission to use /getallgem
         default: op

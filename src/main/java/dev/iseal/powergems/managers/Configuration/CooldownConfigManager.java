@@ -15,6 +15,20 @@ public class CooldownConfigManager extends AbstractConfigManager {
 
     }
 
+
+    //TODO: This method not finsihed yet
+    public void saveUpdatedCooldown() {
+        long leftCooldown = 60L;
+        long shiftCooldown = 50L;
+        long rightCooldown = 40L;
+
+        file.set("cooldown.leftClick", leftCooldown);
+        file.set("cooldown.shiftClick", shiftCooldown);
+        file.set("cooldown.rightClick", rightCooldown);
+
+        file.write();
+    }
+
     @Override
     public void lateInit() {
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {

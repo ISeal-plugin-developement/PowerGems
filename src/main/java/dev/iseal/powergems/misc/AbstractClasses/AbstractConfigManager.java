@@ -1,14 +1,14 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
+import java.util.HashMap;
+
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.managers.ConfigManager;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
 
-import java.util.HashMap;
-
 public abstract class AbstractConfigManager implements Dumpable {
 
-    protected Config file;
+    public Config file;
 
     public AbstractConfigManager(String name) {
         if (name != null)
