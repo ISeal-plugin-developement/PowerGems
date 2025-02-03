@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -42,79 +43,56 @@ public class GemMainPanel implements Listener {
     protected final GemLoreConfigManager gemLoreConfigManager;
     protected final Inventory panelInventory;
     protected final HashMap<Integer, String> slotToGemMap = new HashMap<>();
-    protected static final int PADDING = 9; // One row padding
+    protected static final int PADDING = 9;
     protected final SingletonManager singletonManager;
     private final GemReflectionManager grm = new GemReflectionManager();
 
-    protected GemManager getGemManager() {
-        return SingletonManager.getInstance().gemManager;
-    }
-
-    /**
-     * Constructs a new GemMainPanel with necessary manager instances.
-     */
     public GemMainPanel() {
         this.singletonManager = SingletonManager.getInstance();
         this.gemManager = singletonManager.gemManager;
         this.cooldownManager = singletonManager.cooldownManager;
-        this.gemMaterialConfigManager = singletonManager.configManager.getRegisteredConfigInstance(GemMaterialConfigManager.class);
-        this.gemLoreConfigManager = singletonManager.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class);
-        
+        this.gemMaterialConfigManager = singletonManager.configManager
+            .getRegisteredConfigInstance(GemMaterialConfigManager.class);
+        this.gemLoreConfigManager = singletonManager.configManager
+            .getRegisteredConfigInstance(GemLoreConfigManager.class);
         int size = calculateInventorySize(gemManager.getAllGems().size());
-        this.panelInventory = Bukkit.createInventory(null, size, I18N.translate("GUI_PANEL_TITLE")); 
+        this.panelInventory = Bukkit.createInventory(null, size, I18N.translate("GUI_PANEL_TITLE"));
         setupPanel();
     }
 
-    /**
-     * Creates a display ItemStack for a gem in the cooldown panel.
-     *
-     * @param gemName The name of the gem to create a display for
-     * @return An ItemStack representing the gem in the panel, or null if invalid
-     */
     protected ItemStack createGemDisplay(String gemName) {
         Material gemMaterial = gemMaterialConfigManager.getGemMaterial(gemName);
         if (gemMaterial == null) {
             logger.warning(I18N.translate("LOGGER_MATERIAL_NOT_DEFINED") + ": " + gemName);
             return null;
         }
-
         ItemStack display = new ItemStack(gemMaterial);
         ItemMeta meta = display.getItemMeta();
         if (meta == null) return null;
-
-        int gemID = GemManager.lookUpID(gemName); 
-        if (gemID != 0) { 
+        int gemID = GemManager.lookUpID(gemName);
+        if (gemID != 0) {
             meta.setCustomModelData(gemID);
         } else {
             logger.warning(I18N.translate("LOGGER_NO_CUSTOM_MODEL_DATA") + ": " + gemName);
         }
-
         meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + gemName + " Gem" + ChatColor.GOLD + " ✧");
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.YELLOW + I18N.translate("LORE_COOLDOWNS"));
-
         String[] actions = {"left", "right", "shift"};
         String[] actionIcons = {"➔", "⬆", "⇧"};
-
         String standardizedGemName = GemManager.lookUpName(gemID);
-
         for (int i = 0; i < actions.length; i++) {
             long cooldownTime = cooldownManager.getFullCooldown(1, standardizedGemName, actions[i]);
             String translatedActionCooldown = I18N.translate("ACTION_COOLDOWN") + ": " + cooldownTime + "s";
             lore.add(ChatColor.GREEN + actionIcons[i] + " " + translatedActionCooldown);
         }
-
         meta.setLore(lore);
         display.setItemMeta(meta);
         return display;
     }
 
-    /**
-     * Opens the gem cooldown panel GUI for a player.
-     */
     public void open(CommandSender sender) {
         if (sender instanceof Player player) {
             setupPanel();
@@ -127,17 +105,14 @@ public class GemMainPanel implements Listener {
     public Gem onGemInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!isGemCooldownManager(player.getOpenInventory().getTopInventory())) {
-            return null; 
+            return null;
         }
-
-        ItemStack item = event.getItem();
-        return getInteractedGem(item, player);
+        return getInteractedGem(event.getItem(), player);
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        // Cancel any drag actions in our panel inventory.
-        if (isGemCooldownManager(event.getView().getTopInventory())) {
+        if (event.getView().getTopInventory().equals(panelInventory)) {
             event.setCancelled(true);
         }
     }
@@ -150,50 +125,64 @@ public class GemMainPanel implements Listener {
         }
     }
 
-    /**
-     * Prevents items from being moved out of the panel and triggers an action
-     * when a gem is clicked.
-     */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getView().getTopInventory().equals(panelInventory)) {
+        Inventory topInv = event.getView().getTopInventory();
+        Inventory clickedInv = event.getClickedInventory();
+        
+        if (!topInv.equals(panelInventory)) {
+            return;
+        }
+        
+
+        if (clickedInv != null && clickedInv.equals(panelInventory)) {
             event.setCancelled(true);
+        }
+        
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+        
 
-            if (event.getClickedInventory() == null || !event.getClickedInventory().equals(panelInventory)) {
+        if (clickedInv == null || !clickedInv.equals(panelInventory)) {
+            return;
+        }
+        
+      
+        if (event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT) {
+            event.setCancelled(true);
+            return;
+        }
+        
+       
+        if (event.getRawSlot() >= panelInventory.getSize()) {
+            return;
+        }
+        
+        ItemStack currentItem = event.getCurrentItem();
+        if (currentItem == null || currentItem.getType() == Material.BLACK_STAINED_GLASS_PANE) {
+            return;
+        }
+        
+        String gemName = slotToGemMap.get(event.getRawSlot());
+        if (gemName != null) {
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+            GemCooldownPanel cooldownPanel = new GemCooldownPanel();
+            cooldownPanel.updateInteractedGem(currentItem, player);
+            if (cooldownPanel.getInteractedGemInstance() == null) {
+                logger.warning("Gem detection failed for item in slot " + event.getRawSlot() + " (gem name: " + gemName + "). Check configuration and custom model data.");
                 return;
             }
-
-            if (!(event.getWhoClicked() instanceof Player player)) {
-                return;
-            }
-
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.BLACK_STAINED_GLASS_PANE) {
-                return;
-            }
-
-            String gemName = slotToGemMap.get(event.getSlot());
-            if (gemName != null) {
-                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-                GemCooldownPanel cooldownPanel = new GemCooldownPanel();
-                cooldownPanel.updateInteractedGem(clickedItem, player);
-                cooldownPanel.setupGemCooldownPanel();
-                player.openInventory(cooldownPanel.panelInventory);
-            }
+            cooldownPanel.setupGemCooldownPanel();
+            player.openInventory(cooldownPanel.getInventory());
         }
     }
 
-    /**
-     * Sets up the panel inventory with gems and their cooldowns.
-     */
     protected void setupPanel() {
         panelInventory.clear();
         slotToGemMap.clear();
-        final AtomicInteger slotIndex = new AtomicInteger(PADDING);
-
+        AtomicInteger slotIndex = new AtomicInteger(PADDING);
         setHeaderItem(4);
-
-        // Iterate over all registered gems.
         gemManager.getAllGems().forEach((id, gem) -> {
             String gemName = gemManager.getGemName(gem);
             ItemStack gemItem = createGemDisplay(gemName);
@@ -203,20 +192,15 @@ public class GemMainPanel implements Listener {
                 slotToGemMap.put(currentSlot, gemName);
             }
         });
-
         fillEmptySlots();
     }
 
-    /**
-     * Sets up the header item that explains the panel's purpose.
-     *
-     * @param slot The inventory slot to place the header item in
-     */
     protected void setHeaderItem(int slot) {
         ItemStack header = new ItemStack(Material.END_CRYSTAL);
         ItemMeta meta = header.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + I18N.translate("HEADER_TITLE") + ChatColor.GOLD + " ✧");
+            meta.setDisplayName(ChatColor.GOLD + "✧ " + ChatColor.AQUA + I18N.translate("HEADER_TITLE")
+                    + ChatColor.GOLD + " ✧");
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + I18N.translate("HEADER_LORE_1"));
             lore.add(ChatColor.GRAY + I18N.translate("HEADER_LORE_2"));
@@ -228,9 +212,6 @@ public class GemMainPanel implements Listener {
         panelInventory.setItem(slot, header);
     }
 
-    /**
-     * Fills empty slots in the inventory with spacers.
-     */
     protected void fillEmptySlots() {
         ItemStack spacer = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta meta = spacer.getItemMeta();
@@ -245,33 +226,14 @@ public class GemMainPanel implements Listener {
         }
     }
 
-    /**
-     * Ensures the inventory has enough rows to hold gems.
-     *
-     * @param gemCount The number of gems to display.
-     * @return The calculated inventory size.
-     */
     protected int calculateInventorySize(int gemCount) {
         return Math.max(((gemCount / 7) + 3) * 9, 27);
     }
 
-    /**
-     * Checks whether the given inventory is the Gem Cooldown Panel.
-     *
-     * @param inv The inventory to check.
-     * @return True if it matches, false otherwise.
-     */
     protected boolean isGemCooldownManager(Inventory inv) {
         return inv == panelInventory;
     }
 
-    /**
-     * Retrieves the interacted gem from the item and player.
-     *
-     * @param item The item interacted with.
-     * @param player The player interacting with the item.
-     * @return The gem instance, or null if not a valid gem.
-     */
     protected Gem getInteractedGem(ItemStack item, Player player) {
         if (item == null || !gemManager.isGem(item)) {
             return null;
@@ -289,5 +251,9 @@ public class GemMainPanel implements Listener {
             logger.severe("Error instantiating gem for item " + item + ": " + e.getMessage());
             return null;
         }
+    }
+
+    public Inventory getInventory() {
+        return panelInventory;
     }
 }
