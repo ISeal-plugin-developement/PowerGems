@@ -129,32 +129,25 @@ public class GemMainPanel implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory topInv = event.getView().getTopInventory();
         Inventory clickedInv = event.getClickedInventory();
-        
+
         if (!topInv.equals(panelInventory)) {
             return;
         }
         
-
-        if (clickedInv != null && clickedInv.equals(panelInventory)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
         
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
         
-
         if (clickedInv == null || !clickedInv.equals(panelInventory)) {
             return;
         }
         
-      
         if (event.getClick() != ClickType.LEFT && event.getClick() != ClickType.RIGHT) {
-            event.setCancelled(true);
             return;
         }
         
-       
         if (event.getRawSlot() >= panelInventory.getSize()) {
             return;
         }
