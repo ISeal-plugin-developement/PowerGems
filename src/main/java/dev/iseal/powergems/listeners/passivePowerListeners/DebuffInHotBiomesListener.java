@@ -1,23 +1,14 @@
 package dev.iseal.powergems.listeners.passivePowerListeners;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.GemSpecificListener;
-import dev.iseal.powergems.misc.Utils;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
+
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.potion.PotionEffectType;
+
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.Utils;
+import dev.iseal.powergems.misc.AbstractClasses.GemSpecificListener;
 
 public class DebuffInHotBiomesListener extends GemSpecificListener {
 
