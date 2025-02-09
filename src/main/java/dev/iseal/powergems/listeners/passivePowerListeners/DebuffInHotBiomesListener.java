@@ -2,6 +2,9 @@ package dev.iseal.powergems.listeners.passivePowerListeners;
 
 import java.util.List;
 
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.GemSpecificListener;
+import dev.iseal.powergems.misc.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffectType;

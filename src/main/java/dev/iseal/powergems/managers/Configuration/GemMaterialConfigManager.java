@@ -39,7 +39,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
             if (key.equals("RandomGemMaterial")) {
                 continue;
             }
-            if (gemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
+            if (GemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
                 Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
                 continue;
             }
@@ -56,9 +56,13 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
         * @return The material of the gem, null if the item is not a gem
      */
     public Material getGemMaterial(ItemStack item) {
-        if (!gemManager.isGem(item))
+        // Reuse gemManager to verify if item is a gem
+        if (!gemManager.isGem(item)) {
             return null;
-        return getGemMaterial(gemManager.getGemName(item));
+        }
+        // Use gem’s internal name from GemManager (like gemManager.getGemName(item))
+        String gemName = gemManager.getGemName(item);
+        return getGemMaterial(gemName);
     }
 
     /*
@@ -67,11 +71,12 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
         * @param name The name of the gem, as given by GemManager#getGemName
         * @return The material of the gem
      */
-    public Material getGemMaterial(String name) {
+    public Material getGemMaterial(String gemName) {
+        // Retrieve from config or default to EMERALD
         try {
-            return Material.valueOf(file.getOrSetDefault(name + "GemMaterial", Material.EMERALD.name()));
+            return Material.valueOf(file.getOrSetDefault(gemName + "GemMaterial", Material.EMERALD.name()));
         } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for gem " + name + ". Defaulting to EMERALD");
+            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for gem " + gemName + ". Defaulting to EMERALD");
             return Material.EMERALD;
         }
     }

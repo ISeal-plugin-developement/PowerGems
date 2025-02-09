@@ -1,8 +1,8 @@
 package dev.iseal.powergems.commands;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,8 +12,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class GiveGemCommand implements CommandExecutor, TabCompleter {
 
@@ -49,16 +50,16 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
                 plr.getInventory().addItem(sm.gemManager.createGem(Integer.valueOf(gemNumString)));
                 return true;
             } else {
-                if (sm.gemManager.lookUpID(gemNumString) != -1) {
+                if (GemManager.lookUpID(gemNumString) != -1) {
                     if (args.length >= 2) {
                         String gemLvlString = args[1];
                         if (isNumber(gemLvlString)) {
-                            plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString),
+                            plr.getInventory().addItem(sm.gemManager.createGem(GemManager.lookUpID(gemNumString),
                                     Integer.valueOf(gemLvlString)));
                             return true;
                         }
                     }
-                    plr.getInventory().addItem(sm.gemManager.createGem(sm.gemManager.lookUpID(gemNumString)));
+                    plr.getInventory().addItem(sm.gemManager.createGem(GemManager.lookUpID(gemNumString)));
                     return true;
                 }
                 plr.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");

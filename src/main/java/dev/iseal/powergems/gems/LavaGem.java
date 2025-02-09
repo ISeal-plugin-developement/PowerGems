@@ -3,6 +3,8 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Systems.I18N.I18N;
@@ -14,9 +16,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
 import java.util.ArrayList;
 
 public class LavaGem extends Gem {
@@ -31,6 +33,21 @@ public class LavaGem extends Gem {
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
         super.call(act, plr, item);
+    }
+
+    @Override
+    public ItemStack gemInfo(ItemStack item) {
+        // Use base gem info which includes level and cooldowns
+        ItemStack infoItem = super.gemInfo(item);
+        ItemMeta meta = infoItem.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>(meta.getLore());
+        
+        // Add configured lore from GemLoreConfigManager
+        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Lava")));
+        
+        meta.setLore(lore);
+        infoItem.setItemMeta(meta);
+        return infoItem;
     }
 
     @Override

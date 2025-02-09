@@ -1,21 +1,23 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.CooldownManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.logging.Logger;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.CooldownManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public abstract class Gem {
 
@@ -26,7 +28,6 @@ public abstract class Gem {
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
     protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
-    protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     protected int level;
     protected Particle particle;
     protected String name;
@@ -38,10 +39,6 @@ public abstract class Gem {
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
             return;
-
-        if (gcm.doAttemptFixOldGems()){
-            gm.attemptFixGem(item);
-        }
 
         level = gm.getLevel(item);
         this.plr = plr;
@@ -94,5 +91,24 @@ public abstract class Gem {
 
     public String getName() {
         return name;
+    }
+
+    public ItemStack gemInfo(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>();
+        
+        // Add basic gem info
+        lore.add(ChatColor.GREEN + "Level: " + level);
+        lore.add(ChatColor.GREEN + "Type: " + name + " Gem");
+        
+        // Add cooldown info using CooldownManager
+        lore.add(ChatColor.YELLOW + "Cooldowns:");
+        lore.add(ChatColor.WHITE + "Left Click: " + cm.getFullCooldown(level, caller.getSimpleName(), "Left") + "s");
+        lore.add(ChatColor.WHITE + "Right Click: " + cm.getFullCooldown(level, caller.getSimpleName(), "Right") + "s"); 
+        lore.add(ChatColor.WHITE + "Shift Click: " + cm.getFullCooldown(level, caller.getSimpleName(), "Shift") + "s");
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 }
