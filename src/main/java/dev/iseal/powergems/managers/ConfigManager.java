@@ -5,7 +5,6 @@ import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import dev.iseal.sealLib.Utils.GlobalUtils;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -13,13 +12,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigManager implements Dumpable {
 
     private final ArrayList<Class< ? extends AbstractConfigManager>> registeredConfigurations = new ArrayList<>(5);
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
-    private final Logger l = Bukkit.getLogger();
 
     private static ConfigManager instance;
     public static ConfigManager getInstance() {
