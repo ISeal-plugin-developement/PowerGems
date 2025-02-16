@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
@@ -64,40 +65,29 @@ public class IceGem extends Gem {
         Location l = plr.getLocation();
         World w = plr.getWorld();
         
+        // Pre-create NamespacedKey to avoid creating multiple instances
+        NamespacedKey ownerKey = new NamespacedKey(PowerGems.getPlugin(), "OWNER_NAME");
+        NamespacedKey damageKey = new NamespacedKey(PowerGems.getPlugin(), "SNOWBALL_DAMAGE");
+        
         for (int i = 0; i < level * 2; i++) {
-            LivingEntity snowman = (LivingEntity) w.spawnEntity(l, EntityType.SNOWMAN);
-            snowman.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            Snowman golem = (Snowman) w.spawnEntity(l, EntityType.SNOWMAN);
+            
+            // Configure snowman properties
+            golem.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            golem.setCustomNameVisible(true);
+            golem.setHealth(Math.min(i + 2, 4.0));
+            golem.setDerp(true);
+            golem.setInvulnerable(true); // Prevent melting in rain
+            golem.setTarget(null);
+            golem.setAware(true);
 
-            // Set owner data
-            PersistentDataContainer ownerData = snowman.getPersistentDataContainer();
-            ownerData.set(
-                new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "OWNER_NAME"),
-                PersistentDataType.STRING,
-                plr.getName()
-            );
+            // Set PDC data
+            PersistentDataContainer pdc = golem.getPersistentDataContainer();
+            pdc.set(ownerKey, PersistentDataType.STRING, plr.getName());
+            pdc.set(damageKey, PersistentDataType.DOUBLE, 2.0 * level);
 
-            // Set health (max 4.0)
-            double health = Math.min(i + 2, 4.0);
-            snowman.setHealth(health);
-
-            if (snowman instanceof Snowman golem) {
-                golem.setDerp(true);
-                golem.setInvulnerable(true);
-
-                // Set damage multiplier
-                PersistentDataContainer pdc = golem.getPersistentDataContainer();
-                pdc.set(
-                    new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"),
-                    PersistentDataType.DOUBLE,
-                    2.0 * level
-                );
-
-                // Configure targeting
-                golem.setTarget(null);
-                golem.setAware(true);
-            }
-
-            AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
+            // Add to avoid target list
+            AvoidTargetListener.getInstance().addToList(plr, golem, 1200);
         }
     }
 }

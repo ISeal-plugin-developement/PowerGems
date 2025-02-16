@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -14,41 +15,35 @@ import dev.iseal.powergems.PowerGems;
 
 public class SnowballDamageListener implements Listener {
 
-@EventHandler
+@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 public void onSnowmanHit(EntityDamageByEntityEvent event) {
-    if (!(event.getDamager() instanceof Snowball snowball)) {
+    if (!(event.getDamager() instanceof Snowball snowball && 
+        snowball.getShooter() instanceof Snowman golem)) {
         return;
     }
-    if (!(snowball.getShooter() instanceof Snowman golem)) {
-        return;
-    }
-    // Check if this golem was spawned by Ice Gem
+
     PersistentDataContainer golemPDC = golem.getPersistentDataContainer();
-    if (!golemPDC.has(new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"), 
-                    PersistentDataType.DOUBLE)) {
-        return;
-    }
-    // Apply the damage buff
-    Double damage = golemPDC.get(
-        new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"),
-        PersistentDataType.DOUBLE
-    );
+    NamespacedKey damageKey = new NamespacedKey(PowerGems.getPlugin(), "SNOWBALL_DAMAGE");
+    
+    Double damage = golemPDC.get(damageKey, PersistentDataType.DOUBLE);
     if (damage != null) {
         event.setDamage(damage);
-        }
+    }
+}
+
+@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+public void onSnowmanTarget(EntityDamageByEntityEvent event) {
+    if (!(event.getEntity() instanceof Snowman golem && 
+        event.getDamager() instanceof Player player)) {
+        return;
     }
 
-    @EventHandler 
-    public void onSnowmanTarget(EntityDamageByEntityEvent event) {
-        if(!(event.getEntity() instanceof Snowman golem)) { return; }
-        if(!(event.getEntity() instanceof Player plr  )) { return; }
+    NamespacedKey ownerKey = new NamespacedKey(PowerGems.getPlugin(), "OWNER_NAME");
+    String ownerName = golem.getPersistentDataContainer()
+                        .get(ownerKey, PersistentDataType.STRING);
 
-        PersistentDataContainer pdc = golem.getPersistentDataContainer();
-        String ownerName = pdc.get(
-            PowerGems.getPlugin(), "OWNER_NAME", 
-            PersistentDataType.STRING);
-
-        if(ownerName != null && ownerName.equals(target.getName())) {
-            event.setCancelled(true);}
-        }
+    if (player.getName().equals(ownerName)) {
+        event.setCancelled(true);
     }
+}
+}
