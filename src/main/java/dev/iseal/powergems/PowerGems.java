@@ -112,9 +112,7 @@ public class PowerGems extends JavaPlugin {
         }, 0L, 20L);
 
         if (gcm.allowOnlyOneGem()) {
-            this.getServer().getScheduler().runTaskTimer(this, task -> {
-                new CheckMultipleEmeraldsTask().run();
-            }, 100L, 60L);
+            CheckMultipleEmeraldsTask.schedule(this);
         }
 
         if (gcm.allowCosmeticParticleEffects()) {
