@@ -23,12 +23,11 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.GlobalUtils;
 
 public class IceGem extends Gem {
+    private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 
     public IceGem() {
         super("Ice");
     }
-
-    private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -49,7 +48,7 @@ public class IceGem extends Gem {
 
     @Override
     protected void leftClick(Player plr) {
-        int distance = 15 + level * 5; // Maximum distance between the players
+        int distance = 15 + level * 5;
         LivingEntity ent = GlobalUtils.raycastInaccurate(plr, distance);
         if (ent == null) {
             plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_PLAYER"));
@@ -64,25 +63,41 @@ public class IceGem extends Gem {
     protected void shiftClick(Player plr) {
         Location l = plr.getLocation();
         World w = plr.getWorld();
+        
         for (int i = 0; i < level * 2; i++) {
             LivingEntity snowman = (LivingEntity) w.spawnEntity(l, EntityType.SNOWMAN);
             snowman.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
-            
-            // Fix: Snow golems have a max health of 4.0
-            double health = Math.min(i + 2, 4.0); // Caps health at 4.0
+
+            // Set owner data
+            PersistentDataContainer ownerData = snowman.getPersistentDataContainer();
+            ownerData.set(
+                new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "OWNER_NAME"),
+                PersistentDataType.STRING,
+                plr.getName()
+            );
+
+            // Set health (max 4.0)
+            double health = Math.min(i + 2, 4.0);
             snowman.setHealth(health);
-            
-            AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
 
             if (snowman instanceof Snowman golem) {
                 golem.setDerp(true);
+                golem.setInvulnerable(true);
+
+                // Set damage multiplier
                 PersistentDataContainer pdc = golem.getPersistentDataContainer();
                 pdc.set(
                     new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"),
-                    PersistentDataType.DOUBLE,  
-                    2.0 * level  //Set the damage multiplier based on Gem level
+                    PersistentDataType.DOUBLE,
+                    2.0 * level
                 );
+
+                // Configure targeting
+                golem.setTarget(null);
+                golem.setAware(true);
             }
+
+            AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
         }
     }
 }
