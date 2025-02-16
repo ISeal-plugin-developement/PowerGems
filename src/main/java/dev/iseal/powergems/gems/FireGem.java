@@ -13,8 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 
 public class FireGem extends Gem {
 
@@ -61,19 +65,26 @@ public class FireGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
+        //Check if player is already charging a fireball
         if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
-            plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
+            ((Audience)plr).sendMessage(Component.text(I18N.getTranslation("FIREBALL_ALREADY_CHARGING")));
             return;
         }
-        Location plrEyeLoc = plr.getEyeLocation();
-        plrEyeLoc.add(plr.getLocation().getDirection().multiply(10)); // Look 10 blocks ahead
         
-        World world = plr.getWorld();
+        FireballPowerDecay task = new FireballPowerDecay();
+        task.plr = plr;
+        task.level = level;
+        task.currentPower = 50;
+        
+        // Cache
+        sm.tempDataManager.chargingFireball.put(plr, task);
+        
+        task.runTaskTimer(PowerGems.getPlugin(), 0L, 1L);
+        
+          // Spawn particles that move to certain location
+        Location plrEyeLoc = plr.getEyeLocation();
+        plrEyeLoc.add(plr.getLocation().getDirection().multiply(10));
         plrEyeLoc.add(0, -0.5, 0);
-
-        // Spawn particles that move to certain location
-        for (int i = 0; i < 10; i++) {
-            world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
-        }
+        plr.getWorld().spawnParticle(Particle.ASH, plrEyeLoc, 10, 0, 0, 0, 0);
     }
 }
