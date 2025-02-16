@@ -48,7 +48,8 @@ public class GemReflectionManager implements Dumpable {
         if (isPossibleGemClass(clazz)) {
             try {
                 Gem instance = (Gem) clazz.getDeclaredConstructor().newInstance();
-                registeredGems.put((Class<? extends Gem>) clazz, instance);
+                Class<? extends Gem> gemClass = clazz.asSubclass(Gem.class);
+                registeredGems.put(gemClass, instance);
                 SingletonManager.TOTAL_GEM_AMOUNT++;
                 gm.addGem(instance);
             } catch (Exception e) {

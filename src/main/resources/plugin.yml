@@ -1,9 +1,10 @@
 name: PowerGems
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
-api-version: '1.19'
+api-version: '1.21.4'
 author: ISeal
 load: STARTUP
+main: dev.iseal.powergems.PowerGems
 softdepend: [WorldGuard]
 commands:
   getallgems:

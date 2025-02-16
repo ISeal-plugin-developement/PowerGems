@@ -124,7 +124,8 @@ public class ConfigManager implements Dumpable {
 
     private void addConfigClass(Class<?> clazz) {
         if (isPossibleConfigClass(clazz)) {
-            registeredConfigurations.add((Class<? extends AbstractConfigManager>) clazz);
+            Class<? extends AbstractConfigManager> gemClass = clazz.asSubclass(AbstractConfigManager.class);
+            registeredConfigurations.add(gemClass);
         }
     }
 

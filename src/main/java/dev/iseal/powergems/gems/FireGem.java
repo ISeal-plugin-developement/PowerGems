@@ -1,7 +1,5 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -14,6 +12,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class FireGem extends Gem {
 

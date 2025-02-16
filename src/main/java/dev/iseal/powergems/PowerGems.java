@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,10 +16,10 @@ import com.sk89q.worldguard.WorldGuard;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.*;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.*;
 import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.listeners.powerListeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
 import dev.iseal.powergems.tasks.CosmeticParticleEffect;
@@ -82,12 +81,25 @@ public class PowerGems extends JavaPlugin {
         } catch (IOException e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_SET_BUNDLE");
         }
-        new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
-        if (gcm.allowOnlyOneGem())
-            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
-        if (gcm.allowCosmeticParticleEffects())
-            new CosmeticParticleEffect().runTaskTimer(this, 0, gcm.cosmeticParticleEffectInterval());
-        l.info(I18N.translate("REGISTERING_LISTENERS"));
+        
+        // Replace BukkitRunnable tasks with Paper's modern scheduler API
+        this.getServer().getScheduler().runTaskTimer(this, task -> {
+            new AddCooldownToToolBar().run();
+        }, 0L, 20L);
+
+        if (gcm.allowOnlyOneGem()) {
+            this.getServer().getScheduler().runTaskTimer(this, task -> {
+                new CheckMultipleEmeraldsTask().run();
+            }, 100L, 60L);
+        }
+
+        if (gcm.allowCosmeticParticleEffects()) {
+            this.getServer().getScheduler().runTaskTimer(this, task -> {
+                new CosmeticParticleEffect().run();
+            }, 0L, gcm.cosmeticParticleEffectInterval());
+        }
+        new StrengthPermaEffect();
+        new FirePermaEffect(); 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
         pluginManager.registerEvents(new EnterExitListener(), this);
@@ -126,7 +138,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
-            WorldGuardAddonManager.getInstance().init();
+            dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager.getInstance().init();
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();
             l.info(I18N.translate("REGISTERING_METRICS"));
