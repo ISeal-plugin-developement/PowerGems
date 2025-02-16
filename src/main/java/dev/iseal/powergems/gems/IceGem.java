@@ -67,12 +67,15 @@ public class IceGem extends Gem {
         for (int i = 0; i < level * 2; i++) {
             LivingEntity snowman = (LivingEntity) w.spawnEntity(l, EntityType.SNOWMAN);
             snowman.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
-            snowman.setHealth(i + 2);
+            
+            // Fix: Snow golems have a max health of 4.0
+            double health = Math.min(i + 2, 4.0); // Caps health at 4.0
+            snowman.setHealth(health);
+            
             AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
 
             if (snowman instanceof Snowman golem) {
                 golem.setDerp(true);
-
                 PersistentDataContainer pdc = golem.getPersistentDataContainer();
                 pdc.set(
                     new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"),
