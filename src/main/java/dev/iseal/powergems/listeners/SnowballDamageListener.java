@@ -22,6 +22,13 @@ public void onSnowmanHit(EntityDamageByEntityEvent event) {
         return;
     }
 
+    // Prevent damage to other snow golems
+    if (event.getEntity() instanceof Snowman) {
+        event.setCancelled(true);
+        return;
+    }
+
+    // Apply custom damage to other entities
     PersistentDataContainer golemPDC = golem.getPersistentDataContainer();
     NamespacedKey damageKey = new NamespacedKey(PowerGems.getPlugin(), "SNOWBALL_DAMAGE");
     

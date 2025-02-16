@@ -1,5 +1,7 @@
 package dev.iseal.powergems.gems;
 
+import java.util.Comparator;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -76,18 +78,31 @@ public class IceGem extends Gem {
             golem.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
             golem.setCustomNameVisible(true);
             golem.setHealth(Math.min(i + 2, 4.0));
-            golem.setDerp(true);
-            golem.setInvulnerable(true); // Prevent melting in rain
+            golem.setDerp(true);  // More accurate throwing
             golem.setTarget(null);
             golem.setAware(true);
-
+            
+            // Set targeting parameters
+            golem.setTarget(getNearestHostilePlayer(plr, golem, 10.0));
+            
             // Set PDC data
             PersistentDataContainer pdc = golem.getPersistentDataContainer();
             pdc.set(ownerKey, PersistentDataType.STRING, plr.getName());
             pdc.set(damageKey, PersistentDataType.DOUBLE, 2.0 * level);
 
-            // Add to avoid target list
-            AvoidTargetListener.getInstance().addToList(plr, golem, 1200);
+            // Add to avoid target list and schedule removal after 300 seconds (6000 ticks)
+            AvoidTargetListener.getInstance().addToList(plr, golem, 6000);
         }
+    }
+
+    private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
+        return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
+            .filter(entity -> entity instanceof Player)  // Filter for players
+            .map(entity -> (Player) entity)             // Cast to Player
+            .filter(player -> !player.equals(owner))    // Exclude owner
+            .filter(player -> !player.isDead())         // Only target living players
+            .min(Comparator.comparingDouble(player -> 
+                player.getLocation().distanceSquared(golem.getLocation())))
+            .orElse(null);
     }
 }
