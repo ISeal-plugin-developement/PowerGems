@@ -66,6 +66,8 @@ public class FireGem extends Gem {
             return;
         }
         Location plrEyeLoc = plr.getEyeLocation();
+        plrEyeLoc.add(plr.getLocation().getDirection().multiply(10)); // Look 10 blocks ahead
+        
         World world = plr.getWorld();
         plrEyeLoc.add(0, -0.5, 0);
 

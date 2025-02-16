@@ -1,12 +1,10 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -17,6 +15,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.Utils;
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -51,7 +52,7 @@ public class AirGem extends Gem {
                                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 2.5 + level, 0)));
                                 if (entity instanceof Player player) {
                                     player.damage(2.5 + level, plr);
-                                    player.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
                                 }
                             });
                 },
@@ -72,7 +73,7 @@ public class AirGem extends Gem {
                         entity.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
                         if (entity instanceof Player player) {
                             player.damage(power, plr);
-                            player.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
                         }
                     });
     }

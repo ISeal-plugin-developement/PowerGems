@@ -1,21 +1,26 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.listeners.AvoidTargetListener;
-import dev.iseal.powergems.listeners.FallingBlockHitListener;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowman;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import dev.iseal.powergems.listeners.AvoidTargetListener;
+import dev.iseal.powergems.listeners.FallingBlockHitListener;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealLib.Utils.GlobalUtils;
 
 public class IceGem extends Gem {
 
@@ -62,7 +67,19 @@ public class IceGem extends Gem {
         for (int i = 0; i < level * 2; i++) {
             LivingEntity snowman = (LivingEntity) w.spawnEntity(l, EntityType.SNOWMAN);
             snowman.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            snowman.setHealth(i + 2);
             AvoidTargetListener.getInstance().addToList(plr, snowman, 1200);
+
+            if (snowman instanceof Snowman golem) {
+                golem.setDerp(true);
+
+                PersistentDataContainer pdc = golem.getPersistentDataContainer();
+                pdc.set(
+                    new NamespacedKey(dev.iseal.powergems.PowerGems.getPlugin(), "SNOWBALL_DAMAGE"),
+                    PersistentDataType.DOUBLE,  
+                    2.0 * level  //Set the damage multiplier based on Gem level
+                );
+            }
         }
     }
 }
