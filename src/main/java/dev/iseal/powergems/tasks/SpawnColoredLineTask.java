@@ -126,10 +126,10 @@ public class SpawnColoredLineTask implements Runnable {
             Particle.REDSTONE,
             currentLineLocation,
             5,
-            0, 0, 0,  // No spread
-            0,        // No extra data
+            0, 0, 0,  
+            0,        
             dustOptions,
-            true     // Force display
+            true     
         );
         lineConsumer.accept(currentLineLocation);
     }
