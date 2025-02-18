@@ -126,7 +126,7 @@ public class GemManager implements Dumpable {
      */
     public static String lookUpName(int gemID) {
         if (gemID >= 0 && gemID < gemIdLookup.size()) {
-            return gemIdLookup.get(gemID);
+            return gemIdLookup.get(gemID)+"Gem";
         }
         return "Error";
     }
@@ -395,7 +395,7 @@ public class GemManager implements Dumpable {
     public String getGemName(ItemStack item) {
         if (!isGem(item))
             return null;
-        return item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING);
+        return getName(item);
     }
 
     /**
