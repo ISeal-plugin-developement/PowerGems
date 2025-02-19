@@ -28,7 +28,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
     public void lateInit() {
         gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         gemManager = SingletonManager.getInstance().gemManager;
-        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getGemName(gem)+"GemMaterial", gem.getType().toString()));
+        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getName(gem)+"GemMaterial", gem.getType().toString()));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
     public Material getGemMaterial(ItemStack item) {
         if (!gemManager.isGem(item))
             return null;
-        return getGemMaterial(gemManager.getGemName(item));
+        return getGemMaterial(gemManager.getName(item));
     }
 
     /*

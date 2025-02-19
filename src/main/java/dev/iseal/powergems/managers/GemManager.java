@@ -387,19 +387,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Returns the name of a gem.
-     * If the item is not a gem, returns null.
-     * 
-     * @param item The ItemStack to check.
-     * @return The name of the gem, or null if the item is not a gem.
-     */
-    public String getGemName(ItemStack item) {
-        if (!isGem(item))
-            return null;
-        return getName(item);
-    }
-
-    /**
      * Runs a method call on a gem.
      * If the item is not a gem, throws an IllegalArgumentException.
      * 
@@ -419,7 +406,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getGemName(gem1).equals(getGemName(gem2));
+        boolean powerEqual = getName(gem1).equals((gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }

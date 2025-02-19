@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.6.0.5</version>
+    <version>3.6.0.6-DEV1</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -14,7 +14,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prerelease>false</prerelease>
+        <prerelease>true</prerelease>
         <execute>true</execute>
     </properties>
 

@@ -183,9 +183,9 @@ public class PowerGems extends JavaPlugin {
         GemManager gemManager = sm.gemManager;
         gemManager.getAllGems().forEach((index, gem) -> {
             gemMaterialConfigManager.getGemMaterial(gem);
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Right");
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Left");
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Shift");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Right");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Left");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Shift");
         });
         l.warning("Finished generating configuration");
     }
