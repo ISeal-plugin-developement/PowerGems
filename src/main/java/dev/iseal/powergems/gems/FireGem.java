@@ -1,11 +1,10 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -67,6 +66,12 @@ public class FireGem extends Gem {
         Location plrEyeLoc = plr.getEyeLocation();
         World world = plr.getWorld();
         plrEyeLoc.add(0, -0.5, 0);
+
+        FireballPowerDecay decay = new FireballPowerDecay();
+        decay.plr = plr;
+        decay.level = level;
+
+        decay.runTaskTimer(PowerGems.getPlugin(), 0, 5L);
 
         // Spawn particles that move to certain location
         for (int i = 0; i < 10; i++) {

@@ -44,12 +44,11 @@ public class FireballPowerDecay extends BukkitRunnable {
             this.cancel();
             return;
         }
-        StringBuilder toSay = new StringBuilder(ChatColor.GREEN + "");
         int nOfBars = currentPower / 10;
-        toSay.append("| ".repeat(Math.max(0, nOfBars)));
-        toSay.append(ChatColor.GRAY);
-        toSay.append("| ".repeat(Math.max(0, 10 - nOfBars)));
-        plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(toSay.toString()));
+        String toSay = ChatColor.GREEN + "| ".repeat(nOfBars) +
+                ChatColor.GRAY +
+                "| ".repeat(Math.max(0, 10 - nOfBars));
+        plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(toSay));
     }
 
     private void spawnFireball() {
