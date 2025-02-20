@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dev.iseal.powergems.PowerGems;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -60,7 +61,7 @@ public class GemManager implements Dumpable {
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
-    private final Logger l = Bukkit.getLogger();
+    private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
 
@@ -126,7 +127,7 @@ public class GemManager implements Dumpable {
      */
     public static String lookUpName(int gemID) {
         if (gemID >= 0 && gemID < gemIdLookup.size()) {
-            return gemIdLookup.get(gemID)+"Gem";
+            return gemIdLookup.get(gemID);
         }
         return "Error";
     }
@@ -386,19 +387,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Returns the name of a gem.
-     * If the item is not a gem, returns null.
-     * 
-     * @param item The ItemStack to check.
-     * @return The name of the gem, or null if the item is not a gem.
-     */
-    public String getGemName(ItemStack item) {
-        if (!isGem(item))
-            return null;
-        return getName(item);
-    }
-
-    /**
      * Runs a method call on a gem.
      * If the item is not a gem, throws an IllegalArgumentException.
      * 
@@ -418,7 +406,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getGemName(gem1).equals(getGemName(gem2));
+        boolean powerEqual = getName(gem1).equals((gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }
@@ -458,13 +446,27 @@ public class GemManager implements Dumpable {
         if (Objects.equals(name, "")) {
             return;
         }
+
+        boolean broken = false;
         int id = lookUpID(name);
         ItemMeta meta = item.getItemMeta();
 
         // fix for broken model data
         if (meta.getCustomModelData() != id+2) {
-            meta.setCustomModelData(id+2);
+            meta.setCustomModelData(id + 2);
+            broken = true;
+        }
+
+        // fix for gems having "Gem" in the name
+        if (name.endsWith("Gem")) {
+            meta.getPersistentDataContainer().set(gemPowerKey, PersistentDataType.STRING, name.substring(0, name.length() - 3));
+            broken = true;
+        }
+
+        if (broken) {
+            // finally, set the new meta.
             item.setItemMeta(meta);
+            l.warning("An error in a gem has been found and fixed!");
         }
     }
 

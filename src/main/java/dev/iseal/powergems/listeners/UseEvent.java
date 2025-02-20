@@ -51,7 +51,7 @@ public class UseEvent implements Listener {
     }
 
     private void handlePower(Player p, Action a, ItemStack item) {
-        if (agcm.isGemActive(gm.getGemName(item))) {
+        if (agcm.isGemActive(gm.getName(item))) {
             gm.runCall(item, a, p);
         } else {
             p.sendMessage(I18N.translate("GEM_DISABLED"));
