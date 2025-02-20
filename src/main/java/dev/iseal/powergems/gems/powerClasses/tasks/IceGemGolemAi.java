@@ -1,4 +1,4 @@
-package dev.iseal.powergems.listeners;
+package dev.iseal.powergems.gems.powerClasses.tasks;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import dev.iseal.powergems.PowerGems;
 
-public class SnowballDamageListener implements Listener {
+public class IceGemGolemAi implements Listener {
 
 @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 public void onSnowmanHit(EntityDamageByEntityEvent event) {

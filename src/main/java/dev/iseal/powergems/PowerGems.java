@@ -20,6 +20,7 @@ import dev.iseal.powergems.commands.GetAllGemsCommand;
 import dev.iseal.powergems.commands.GiveAllGemCommand;
 import dev.iseal.powergems.commands.GiveGemCommand;
 import dev.iseal.powergems.commands.ReloadConfigCommand;
+import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.CraftEventListener;
 import dev.iseal.powergems.listeners.DeathEvent;
@@ -27,9 +28,9 @@ import dev.iseal.powergems.listeners.DropEvent;
 import dev.iseal.powergems.listeners.EnterExitListener;
 import dev.iseal.powergems.listeners.EntityExplodeListener;
 import dev.iseal.powergems.listeners.InventoryCloseListener;
+import dev.iseal.powergems.listeners.KillEventListener;
 import dev.iseal.powergems.listeners.NoGemHittingListener;
 import dev.iseal.powergems.listeners.ServerLoadListener;
-import dev.iseal.powergems.listeners.SnowballDamageListener;
 import dev.iseal.powergems.listeners.TradeEventListener;
 import dev.iseal.powergems.listeners.UseEvent;
 import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
@@ -106,7 +107,6 @@ public class PowerGems extends JavaPlugin {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_SET_BUNDLE");
         }
         
-        // Replace BukkitRunnable tasks with Paper's modern scheduler API
         this.getServer().getScheduler().runTaskTimer(this, task -> {
             new AddCooldownToToolBar().run();
         }, 0L, 20L);
@@ -135,12 +135,15 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new NoGemHittingListener(), this);
         // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
         // IInventoryMoveEvent(), this);
+        if(gcm.upgradeGemOnKill()) {
+            pluginManager.registerEvents(new KillEventListener(), this);
+        }
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
         if (gcm.doDebuffForTemperature()) {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
         }
-        pluginManager.registerEvents(new SnowballDamageListener(), this);
+        pluginManager.registerEvents(new IceGemGolemAi(), this);
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);

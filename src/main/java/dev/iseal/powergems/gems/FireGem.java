@@ -65,7 +65,6 @@ public class FireGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr) {
-        //Check if player is already charging a fireball
         if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
             ((Audience)plr).sendMessage(Component.text(I18N.getTranslation("FIREBALL_ALREADY_CHARGING")));
             return;
@@ -81,7 +80,6 @@ public class FireGem extends Gem {
         
         task.runTaskTimer(PowerGems.getPlugin(), 0L, 1L);
         
-          // Spawn particles that move to certain location
         Location plrEyeLoc = plr.getEyeLocation();
         plrEyeLoc.add(plr.getLocation().getDirection().multiply(10));
         plrEyeLoc.add(0, -0.5, 0);
