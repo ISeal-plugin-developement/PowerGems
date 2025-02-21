@@ -10,34 +10,38 @@ import org.bukkit.potion.PotionEffectType;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Configuration.GemPrenamenetEffectConfigManager;
 
 public class PernamentEffectsGiver implements Runnable {
 
     private static final int EFFECT_DURATION = 100;
     
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final GemPrenamenetEffectConfigManager effectConfig = SingletonManager.getInstance()
+            .configManager.getRegisteredConfigInstance(GemPrenamenetEffectConfigManager.class);
     private final Map<String, PotionEffectType> gemEffects = new HashMap<>();
 
     public PernamentEffectsGiver() {
-        // Register all gem effects
-        gemEffects.put("Fire", PotionEffectType.FIRE_RESISTANCE);
-        gemEffects.put("Strength", PotionEffectType.INCREASE_DAMAGE);
-        gemEffects.put("Healing", PotionEffectType.REGENERATION);
-        gemEffects.put("Air", PotionEffectType.SPEED);
-        gemEffects.put("Iron", PotionEffectType.DAMAGE_RESISTANCE);
-        gemEffects.put("Lightning", PotionEffectType.FAST_DIGGING);
-        gemEffects.put("Ice", PotionEffectType.HEALTH_BOOST);
-        gemEffects.put("Lava", PotionEffectType.JUMP);
-        gemEffects.put("Water", PotionEffectType.WATER_BREATHING);
-        gemEffects.put("Sand", PotionEffectType.SATURATION);
+        loadEffects();
+    }
+
+    private void loadEffects() {
+        String[] gemTypes = {"Fire", "Strength", "Healing", "Air", "Iron", 
+                        "Lightning", "Ice", "Lava", "Water", "Sand"};
+                        
+        for (String gemType : gemTypes) {
+            PotionEffectType effect = effectConfig.getGemEffect(gemType);
+            if (effect != null) {
+                gemEffects.put(gemType, effect);
+            }
+        }
     }
 
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            for (Map.Entry<String, PotionEffectType> entry : gemEffects.entrySet()) {
-                checkAndApplyEffect(player, entry.getKey(), entry.getValue());
-            }
+            gemEffects.forEach((gemType, effectType) -> 
+                checkAndApplyEffect(player, gemType, effectType));
         }
     }
 
@@ -46,7 +50,8 @@ public class PernamentEffectsGiver implements Runnable {
         PotionEffect existing = player.getPotionEffect(effectType);
         
         if (hasHighLevelGem) {
-            if (existing == null || (existing.getAmplifier() == 0 && existing.getDuration() <= 5)) {
+            if (existing == null || 
+            (existing.getAmplifier() == 0 && existing.getDuration() <= 5)) {
                 player.addPotionEffect(new PotionEffect(
                     effectType,
                     EFFECT_DURATION,
