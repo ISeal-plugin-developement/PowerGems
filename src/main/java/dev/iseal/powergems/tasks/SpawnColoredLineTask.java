@@ -3,6 +3,7 @@ package dev.iseal.powergems.tasks;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
