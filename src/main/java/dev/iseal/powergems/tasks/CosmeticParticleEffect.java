@@ -1,17 +1,14 @@
 package dev.iseal.powergems.tasks;
 
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.Utils;
-
-public class CosmeticParticleEffect implements Runnable {
+public class CosmeticParticleEffect extends BukkitRunnable {
 
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
@@ -23,35 +20,11 @@ public class CosmeticParticleEffect implements Runnable {
                 Particle particle = gemManager.runParticleCall(gem, player);
                 int level = gemManager.getLevel(gem);
                 if (particle == null) return;
-
-                World world = player.getWorld();
-
                 for (int i = 0; i < level; i++) {
-                    Location particleLoc = utils.getRandomLocationCloseToPlayer(player);
-                    world.spawnParticle(
-                        particle,
-                        particleLoc,
-                        1,
-                        0.001,
-                        0.001,
-                        0.001,
-                        0.001,
-                        null,
-                        true
-                    );
+                    Location loc = utils.getRandomLocationCloseToPlayer(player);
+                    player.getWorld().spawnParticle(particle, loc, 1, 0.001, 0.001, 0.001, 0.001);
                 }
             });
         });
-    }
-
-    public static void schedule(PowerGems plugin) {
-        GeneralConfigManager gcm = SingletonManager.getInstance().configManager
-                .getRegisteredConfigInstance(GeneralConfigManager.class);
-        plugin.getServer().getScheduler().runTaskTimer(
-            plugin,
-            new CosmeticParticleEffect(),
-            0L,
-            gcm.cosmeticParticleEffectInterval()
-        );
     }
 }

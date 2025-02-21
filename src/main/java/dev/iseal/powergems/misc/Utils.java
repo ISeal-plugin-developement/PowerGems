@@ -1,9 +1,9 @@
 package dev.iseal.powergems.misc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.tasks.SpawnColoredLineTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,10 +15,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.tasks.SpawnColoredLineTask;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class Utils {
 
@@ -175,12 +174,7 @@ public class Utils {
         task.spawnCircles = true;
         task.repeatAmount = repeatAmount;
         task.init();
-        PowerGems.getPlugin().getServer().getScheduler().runTaskTimer(
-            PowerGems.getPlugin(), 
-            task,
-            0L, 
-            1L
-        );
+        task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
     }
 
     public void spawnLineParticles(Location start, Location target, int red, int green, int blue, double interval, Consumer<Location> consumer, int repeatAmount) {
@@ -196,12 +190,7 @@ public class Utils {
         task.spawnCircles = false;
         task.repeatAmount = repeatAmount;
         task.init();
-        PowerGems.getPlugin().getServer().getScheduler().runTaskTimer(
-            PowerGems.getPlugin(),
-            task,
-            0L,
-            1L
-        );
+        task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
     }
 
     /*

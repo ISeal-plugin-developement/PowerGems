@@ -1,18 +1,17 @@
 package dev.iseal.powergems.tasks;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class CheckMultipleEmeraldsTask implements Runnable {
+import java.util.ArrayList;
+import java.util.Random;
+
+public class CheckMultipleEmeraldsTask extends BukkitRunnable {
 
     private final Utils ut = SingletonManager.getInstance().utils;
     private final GemManager dm = SingletonManager.getInstance().gemManager;
@@ -21,35 +20,31 @@ public class CheckMultipleEmeraldsTask implements Runnable {
     @Override
     public void run() {
         ArrayList<ItemStack> gems = new ArrayList<>();
-        Bukkit.getOnlinePlayers().forEach(player -> {
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
             if (ut.hasAtLeastXAmountOfGems(player, 2)) {
-                player.getInventory().all(Material.EMERALD).values().stream()
-                    .filter(dm::isGem)
-                    .peek(item -> item.setAmount(1))
-                    .forEach(gems::add);
-
-                // Check offhand
-                ItemStack offhand = player.getInventory().getItemInOffHand();
-                if (dm.isGem(offhand)) {
-                    offhand.setAmount(1);
-                    gems.add(offhand);
+                player.getInventory().all(Material.EMERALD)
+                        .values()
+                        .forEach(itemStack -> {
+                            if (dm.isGem(itemStack)) {
+                                itemStack.setAmount(1);
+                                gems.add(itemStack);
+                            }
+                        });
+                if (dm.isGem(player.getInventory().getItemInOffHand())) {
+                    ItemStack itemStack = player.getInventory().getItemInOffHand();
+                    itemStack.setAmount(1);
+                    gems.add(itemStack);
                 }
-
-                // Remove extra gems
                 if (gems.size() > 1) {
                     while (gems.size() > 1) {
                         ItemStack gem = gems.get(random.nextInt(gems.size()));
-                        player.getInventory().removeItem(gem);
+                        player.getInventory().remove(gem);
                         gems.remove(gem);
                     }
                 }
+                // For redundancy
                 gems.clear();
             }
         });
-    }
-    public static void schedule(PowerGems plugin) {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, task -> {
-            new CheckMultipleEmeraldsTask().run();
-        }, 100L, 60L);
     }
 }
