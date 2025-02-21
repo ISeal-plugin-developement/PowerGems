@@ -1,11 +1,15 @@
 package dev.iseal.powergems.managers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import dev.iseal.powergems.PowerGems;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -16,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
@@ -468,6 +473,30 @@ public class GemManager implements Dumpable {
             item.setItemMeta(meta);
             l.warning("An error in a gem has been found and fixed!");
         }
+    }
+
+    /**
+     * Checks if a player has a specific gem type at level 3 or higher
+     * @return true if player has the specified gem at level 3+, false otherwise
+     */
+    public boolean hasGemLevel3OrHigher(Player plr, String gemType) {
+        return getPlayerGems(plr).stream()
+            .filter(item -> item != null)
+            .filter(ItemStack::hasItemMeta)
+            .anyMatch(item -> {
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) return false;
+                
+                String gemPower = meta.getPersistentDataContainer()
+                        .get(gemPowerKey, PersistentDataType.STRING);
+                
+                // Check if it is level 3+
+                if (gemPower != null && gemPower.equals(gemType)) {
+                    int gemLevel = getLevel(item);
+                    return gemLevel >= 3;
+                }
+                return false;
+            });
     }
 
     @Override

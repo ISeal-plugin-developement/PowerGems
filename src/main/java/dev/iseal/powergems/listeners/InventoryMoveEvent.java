@@ -33,7 +33,6 @@ public class InventoryMoveEvent implements Listener {
                     }
                     id.incrementAndGet();
                 });
-                break;
         }
     }
 

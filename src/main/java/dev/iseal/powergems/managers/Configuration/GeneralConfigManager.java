@@ -53,6 +53,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("isWorldGuardSupportEnabled", true);
         file.setDefault("languageCode", "en");
         file.setDefault("countryCode", "US");
+        file.setDefault("upgradeGemOnKill", false);
+        file.setDefault("giveGemPernamentEffectOnLvl3", false);
     }
 
     @Override
@@ -159,5 +161,11 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
     public boolean doAttemptFixOldGems() {
         return file.getBoolean("attemptFixOldGems");
+    }
+    public boolean upgradeGemOnKill() {
+        return file.getBoolean("upgradeGemOnKill");
+    }
+    public boolean giveGemPernamentEffectOnLvl3() {
+        return file.getBoolean("giveGemPernamentEffectOnLvl3");
     }
 }

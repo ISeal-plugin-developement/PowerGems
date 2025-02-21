@@ -1,10 +1,10 @@
 package dev.iseal.powergems.listeners.passivePowerListeners;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.SingletonManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,14 +14,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
+import dev.iseal.powergems.managers.SingletonManager;
 
 public class WaterMoveListener implements Listener {
 
@@ -35,7 +39,17 @@ public class WaterMoveListener implements Listener {
 
     private boolean playerHasAllowedGem(Player plr) {
         return gm.getPlayerGems(plr).stream()
-                .anyMatch(i -> allowedGems.contains(i.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)));
+                .filter(item -> item != null) 
+                .filter(ItemStack::hasItemMeta) 
+                .anyMatch(item -> {
+                    ItemMeta meta = item.getItemMeta();
+                    if (meta == null) {
+                        return false;
+                    }
+                    PersistentDataContainer container = meta.getPersistentDataContainer();
+                    String gemPower = container.get(nkm.getKey("gem_power"), PersistentDataType.STRING);
+                    return gemPower != null && allowedGems.contains(gemPower);
+                });
     }
 
     private void applyPotionEffects(Player plr, int duration, int amplifier) {
@@ -63,7 +77,7 @@ public class WaterMoveListener implements Listener {
         task.runTaskTimer(PowerGems.getPlugin(), 0, 100);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true) // Add ignoreCancelled for better performance
     public void onSwim(EntityToggleSwimEvent e) {
         if (!(e.getEntity() instanceof Player plr)) return;
         if (!e.isSwimming()) {
