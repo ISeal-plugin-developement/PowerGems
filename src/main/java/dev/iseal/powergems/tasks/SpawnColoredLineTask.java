@@ -1,8 +1,5 @@
 package dev.iseal.powergems.tasks;
 
-import java.util.ArrayList;
-import java.util.function.Consumer;
-
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -10,29 +7,26 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 public class SpawnColoredLineTask extends BukkitRunnable {
 
-    // Line colors
     public int lineRed = 255;
     public int lineGreen = 255;
     public int lineBlue = 255;
-
-    // Circle colors 
     public int circleRed = 255;
     public int circleGreen = 255;
     public int circleBlue = 255;
-
-    // Locations and spacing
     public Location start = null;
     public Location target = null;
-    public double lineInterval = 0.1;
-    public double circleInterval = 1.0;
-    public double circleRadius = 1.0;
-
     public Consumer<Location> lineConsumer = loc -> {};
     public Consumer<Location> circleConsumer = loc -> {};
 
+    public double lineInterval = 0.1;
+    public double circleInterval = 1.0;
     public double circleParticleInterval = 0.1;
+    public double circleRadius = 1.0;
     public boolean spawnCircles = false;
     public boolean spawnLines = false;
     public boolean persistent = false;
@@ -46,6 +40,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
 
     private double lineDistance = 0;
     private Vector lineDirection = new Vector(0, 0, 0);
+    private double circleDistance = 0;
     private Vector circleDirection = new Vector(0, 0, 0);
 
     private double lineRun = 0;
@@ -122,10 +117,10 @@ public class SpawnColoredLineTask extends BukkitRunnable {
             Particle.REDSTONE,
             currentLineLocation,
             5,
-            0, 0, 0,  
-            0,        
+            0, 0, 0,  // No spread
+            0,        // No extra data
             dustOptions,
-            true     
+            true     // Force display
         );
         lineConsumer.accept(currentLineLocation);
     }
