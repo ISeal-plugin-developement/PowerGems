@@ -17,8 +17,6 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
 
 public class FireGem extends Gem {
 
@@ -66,10 +64,10 @@ public class FireGem extends Gem {
     @Override
     protected void shiftClick(Player plr) {
         if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
-            ((Audience)plr).sendMessage(Component.text(I18N.getTranslation("FIREBALL_ALREADY_CHARGING")));
+            plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
             return;
         }
-        
+
         FireballPowerDecay task = new FireballPowerDecay();
         task.plr = plr;
         task.level = level;

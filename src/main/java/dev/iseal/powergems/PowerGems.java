@@ -21,6 +21,7 @@ import dev.iseal.powergems.commands.GiveAllGemCommand;
 import dev.iseal.powergems.commands.GiveGemCommand;
 import dev.iseal.powergems.commands.ReloadConfigCommand;
 import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
+import dev.iseal.powergems.gems.powerClasses.tasks.PernamentEffectsGiver;
 import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.CraftEventListener;
 import dev.iseal.powergems.listeners.DeathEvent;
@@ -36,8 +37,6 @@ import dev.iseal.powergems.listeners.UseEvent;
 import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.FirePermaEffect;
-import dev.iseal.powergems.listeners.passivePowerListeners.StrengthPermaEffect;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.GemManager;
@@ -120,8 +119,6 @@ public class PowerGems extends JavaPlugin {
                 new CosmeticParticleEffect().run();
             }, 0L, gcm.cosmeticParticleEffectInterval());
         }
-        new StrengthPermaEffect();
-        new FirePermaEffect(); 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
         pluginManager.registerEvents(new EnterExitListener(), this);
@@ -135,13 +132,22 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new NoGemHittingListener(), this);
         // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
         // IInventoryMoveEvent(), this);
-        if(gcm.upgradeGemOnKill()) {
-            pluginManager.registerEvents(new KillEventListener(), this);
-        }
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
         if (gcm.doDebuffForTemperature()) {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
+        }
+        if(gcm.upgradeGemOnKill()) {
+            pluginManager.registerEvents(new KillEventListener(), this);
+        }
+        if(gcm.giveGemPernamentEffectOnLvl3()) {
+            PernamentEffectsGiver effectsGiver = new PernamentEffectsGiver();
+            this.getServer().getScheduler().runTaskTimer(
+                this,
+                effectsGiver,
+                0L,
+                100L
+            );
         }
         pluginManager.registerEvents(new IceGemGolemAi(), this);
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
