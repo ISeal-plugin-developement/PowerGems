@@ -1,5 +1,14 @@
 package dev.iseal.powergems;
 
+import dev.iseal.powergems.managers.*;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,42 +23,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.sk89q.worldguard.WorldGuard;
 
 import de.leonhard.storage.Yaml;
-import dev.iseal.powergems.commands.CheckUpdateCommand;
-import dev.iseal.powergems.commands.DebugCommand;
-import dev.iseal.powergems.commands.GetAllGemsCommand;
-import dev.iseal.powergems.commands.GiveAllGemCommand;
-import dev.iseal.powergems.commands.GiveGemCommand;
-import dev.iseal.powergems.commands.ReloadConfigCommand;
+import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
 import dev.iseal.powergems.gems.powerClasses.tasks.PernamentEffectsGiver;
-import dev.iseal.powergems.listeners.AvoidTargetListener;
-import dev.iseal.powergems.listeners.CraftEventListener;
-import dev.iseal.powergems.listeners.DeathEvent;
-import dev.iseal.powergems.listeners.DropEvent;
-import dev.iseal.powergems.listeners.EnterExitListener;
-import dev.iseal.powergems.listeners.EntityExplodeListener;
-import dev.iseal.powergems.listeners.InventoryCloseListener;
-import dev.iseal.powergems.listeners.KillEventListener;
-import dev.iseal.powergems.listeners.NoGemHittingListener;
-import dev.iseal.powergems.listeners.ServerLoadListener;
-import dev.iseal.powergems.listeners.TradeEventListener;
-import dev.iseal.powergems.listeners.UseEvent;
-import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.listeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
