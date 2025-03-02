@@ -1,11 +1,8 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Utils;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,8 +15,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.List;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.Utils;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class SandGem extends Gem {
 
@@ -127,7 +128,7 @@ public class SandGem extends Gem {
                     && block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).isEmpty()
                     && !block.isEmpty() && !block.getRelative(BlockFace.DOWN).isEmpty() ) {
 
-                Material oldMaterial = targetLocation.getBlock().getType();
+                Material oldMaterial = block.getType(); //Store the old blocks material
                 sm.sandMoveListen.addToList(block, plr.getUniqueId());
                 toReplace.put(block, oldMaterial);
             }

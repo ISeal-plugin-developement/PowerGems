@@ -1,34 +1,27 @@
 package dev.iseal.powergems;
 
-import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.sk89q.worldguard.WorldGuard;
-
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
-import dev.iseal.powergems.gems.powerClasses.tasks.PernamentEffectsGiver;
+import dev.iseal.powergems.gems.powerClasses.tasks.*;
 import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.*;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.tasks.*;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
@@ -111,8 +104,8 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new EntityExplodeListener(), this);
         if (gcm.doGemPowerTampering())
             pluginManager.registerEvents(new NoGemHittingListener(), this);
-        // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
-        // IInventoryMoveEvent(), this);
+        if (!gcm.isAllowMovingGems())
+            pluginManager.registerEvents(new InventoryMoveEvent(), this);
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
         if (gcm.doDebuffForTemperature()) {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
@@ -123,12 +116,7 @@ public class PowerGems extends JavaPlugin {
         }
         if(gcm.giveGemPernamentEffectOnLvl3()) {
             PernamentEffectsGiver effectsGiver = new PernamentEffectsGiver();
-            this.getServer().getScheduler().runTaskTimer(
-                this,
-                effectsGiver,
-                0L,
-                100L
-            );
+            effectsGiver.runTaskTimer(this, 0L, 100L);
         }
         pluginManager.registerEvents(new IceGemGolemAi(), this);
         pluginManager.registerEvents(new IronProjectileLandListener(), this);

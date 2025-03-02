@@ -28,6 +28,7 @@ public class StrengthGem extends Gem {
     @Override
     protected void rightClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 , 1)); 
     }
 
     @Override

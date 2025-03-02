@@ -7,12 +7,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.Configuration.GemPrenamenetEffectConfigManager;
 
-public class PernamentEffectsGiver implements Runnable {
+public class PernamentEffectsGiver extends BukkitRunnable {
 
     private static final int EFFECT_DURATION = 100;
     

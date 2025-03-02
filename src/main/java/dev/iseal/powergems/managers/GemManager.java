@@ -334,11 +334,26 @@ public class GemManager implements Dumpable {
      *         inventory.
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
+        // Check if the cache is valid! 
         if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isExpired()) {
-            return gemCache.get(plr.getUniqueId()).getOwnedGems();
+            ArrayList<ItemStack> cachedGems = gemCache.get(plr.getUniqueId()).getOwnedGems();
+            ArrayList<ItemStack> validatedGems = new ArrayList<>();
+            for (ItemStack item : cachedGems) {
+                if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
+                    validatedGems.add(item);
+                }
+            }
+            return validatedGems;
         }
+        
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
-        Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
+        Arrays.stream(plr.getInventory().getContents().clone())
+            .filter(item -> item != null)
+            .filter(item -> item.hasItemMeta())
+            .filter(item -> item.getItemMeta() != null)
+            .filter(this::isGem)
+            .forEach(foundGems::add);
+        
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
     }

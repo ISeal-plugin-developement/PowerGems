@@ -42,6 +42,8 @@ public class DamageListener implements Listener {
             
             String gemPower = meta.getPersistentDataContainer()
                 .get(nkm.getKey("gem_power"), PersistentDataType.STRING);
+            if (gemPower == null)
+                continue;
             
             if (allowedGems.contains(gemPower)) {
                 event.setCancelled(true);
