@@ -2,7 +2,7 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
+import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
@@ -24,6 +24,10 @@ public class GemReflectionManager implements Dumpable {
         if (instance == null)
             instance = new GemReflectionManager();
         return instance;
+    }
+
+    private GemReflectionManager() {
+        dumpableInit();
     }
 
     private final HashMap<Class< ? extends Gem>, Gem> registeredGems = new HashMap<>(10);

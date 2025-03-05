@@ -78,7 +78,10 @@ public class WaterGem extends Gem {
                     if (!block.isEmpty())
                         continue;
                     block.setType(Material.WATER);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> block.setType(Material.AIR), 400+level* 40L);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
+                        if (block.getType() == Material.WATER)
+                            block.setType(Material.AIR);
+                    }, 400+level* 40L);
                 }
             }
         }

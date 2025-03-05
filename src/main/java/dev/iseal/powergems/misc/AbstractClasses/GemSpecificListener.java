@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -24,15 +25,16 @@ public abstract class GemSpecificListener implements Listener {
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final ArrayBlockingQueue<UUID> activePlayers = new ArrayBlockingQueue<>(5);
 
-    public GemSpecificListener(List<String> allowedGems, int effectLenght) {
+    public GemSpecificListener(List<String> allowedGems, int effectLength) {
         this.allowedGems = allowedGems;
-        this.effectLength = effectLenght;
+        this.effectLength = effectLength;
     }
 
     private int playerAllowedGemsCount(Player plr) {
         return (int) gm.getPlayerGems(plr).stream()
                 .filter(Objects::nonNull)
-                .filter(itemStack -> itemStack.getItemMeta() != null)
+                .filter(ItemStack::hasItemMeta)
+                .filter(i -> i.getItemMeta() != null)
                 .filter(i -> allowedGems.contains(i.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)))
                 .count();
     }
