@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +22,7 @@ public class DamageListener implements Listener {
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
     private final ArrayList<String> allowedGems = new ArrayList<>(Arrays.asList("Air", "Lightning"));
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player plr))
             return;
@@ -33,7 +34,6 @@ public class DamageListener implements Listener {
             if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL))
                 return;
             try {
-                // i swear someone always dies beacuse of a null gem and gives them falldamage
             for (ItemStack item : gm.getPlayerGems(p)) {
                 if (item == null || !item.hasItemMeta())
                     continue;
