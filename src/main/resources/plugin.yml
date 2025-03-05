@@ -32,6 +32,10 @@ commands:
     usage: /pgDebug
     aliases: [pgd, pgdb]
     permission: powergems.debug
+  Menu:
+    description: Opens the gem selection panel
+    usage: /Menu
+    permission: powergems.openpanel
 permissions:
     powergems.getallgems:
         description: Permission to use /getallgem

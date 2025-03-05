@@ -126,6 +126,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
+        pluginManager.registerEvents(new GuiListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
@@ -137,6 +138,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
+        Bukkit.getServer().getPluginCommand("Menu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager.getInstance().init();
