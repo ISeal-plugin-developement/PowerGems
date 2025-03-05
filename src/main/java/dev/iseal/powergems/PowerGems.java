@@ -39,7 +39,7 @@ public class PowerGems extends JavaPlugin {
     private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.0.0");
+        dependencies.put("SealLib", "1.1.0.1-DEV1");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();

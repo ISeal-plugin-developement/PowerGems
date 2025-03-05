@@ -5,6 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Interfaces.Dumpable;
+import dev.iseal.sealLib.SealLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -22,7 +24,6 @@ import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 
@@ -65,6 +66,10 @@ public class GemManager implements Dumpable {
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
 
+    private GemManager() {
+        dumpableInit();
+    }
+
     /**
      * Initializes the gem manager with necessary keys and configurations.
      */
@@ -77,6 +82,12 @@ public class GemManager implements Dumpable {
         grm.registerGems();
         Collections.sort(gemIdLookup);
         gemIdLookup.addAll(oldGems);
+        if (gemIdLookup.size() != SingletonManager.TOTAL_GEM_AMOUNT) {
+            l.warning("Gem ID lookup size does not match total gem amount, this could cause issues.");
+        }
+        if (SealLib.isDebug()) {
+            l.info("[DEBUG] Gem ID lookup: " + gemIdLookup);
+        }
         cm = sm.configManager;
         nkm = sm.namespacedKeyManager;
         isGemKey = nkm.getKey("is_power_gem");

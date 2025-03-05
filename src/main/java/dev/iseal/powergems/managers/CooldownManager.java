@@ -2,8 +2,8 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
+import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,6 +30,10 @@ public class CooldownManager implements Dumpable {
             instance = new CooldownManager();
         }
         return instance;
+    }
+
+    private CooldownManager() {
+        dumpableInit();
     }
 
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {

@@ -2,7 +2,7 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
+import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
@@ -26,6 +26,10 @@ public class ConfigManager implements Dumpable {
         if (instance == null)
             instance = new ConfigManager();
         return instance;
+    }
+
+    private ConfigManager() {
+        dumpableInit();
     }
 
     public void setUpConfig() {

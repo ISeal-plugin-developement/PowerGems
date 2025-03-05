@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class DebugCommand implements CommandExecutor, TabCompleter {
 
@@ -49,11 +50,11 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
         if (attemptNoPlayer(sender, args))
             return true;
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player plr)) {
             sender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
         }
-        Player plr = (Player) sender;
+
         if (!plr.hasPermission(command.getPermission())) {
             plr.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
@@ -104,7 +105,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
     public boolean attemptNoPlayer(CommandSender sender, String[] args) {
         switch (args[0]) {
             case "dump":
-                ExceptionHandler.getInstance().dumpAllClasses(PowerGems.class);
+                ExceptionHandler.getInstance().dealWithException(new RuntimeException("Dumping all classes"), Level.WARNING, "DUMPING_CLASSES");
                 return true;
             default:
                 return false;
