@@ -29,26 +29,33 @@ public class DamageListener implements Listener {
     }
 
     private void checkIfFall(Player p, EntityDamageEvent event) {
-        if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) 
-            return;
-        
-        for (ItemStack item : gm.getPlayerGems(p)) {
-            if (item == null || !item.hasItemMeta()) 
-                continue;
-            
-            ItemMeta meta = item.getItemMeta();
-            if (meta == null)
-                continue;
-            
-            String gemPower = meta.getPersistentDataContainer()
-                .get(nkm.getKey("gem_power"), PersistentDataType.STRING);
-            if (gemPower == null)
-                continue;
-            
-            if (allowedGems.contains(gemPower)) {
-                event.setCancelled(true);
+
+            if (!event.getCause().equals(EntityDamageEvent.DamageCause.FALL))
                 return;
+            try {
+                // i swear someone always dies beacuse of a null gem and gives them falldamage
+            for (ItemStack item : gm.getPlayerGems(p)) {
+                if (item == null || !item.hasItemMeta())
+                    continue;
+
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null)
+                    continue;
+
+                String gemPower = meta.getPersistentDataContainer()
+                        .get(nkm.getKey("gem_power"), PersistentDataType.STRING);
+                if (gemPower == null)
+                    continue;
+
+                if (allowedGems.contains(gemPower)) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
+
+        } catch (Exception e) {
+            event.setCancelled(true);
+            e.printStackTrace();
         }
     }
 }

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -141,7 +143,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("Menu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
-            dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager.getInstance().init();
+            WorldGuardAddonManager.getInstance().init();
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();
             l.info(I18N.translate("REGISTERING_METRICS"));
