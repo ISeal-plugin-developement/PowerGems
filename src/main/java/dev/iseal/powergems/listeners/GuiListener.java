@@ -1,6 +1,8 @@
 package dev.iseal.powergems.listeners;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gui.MainMenuGui;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,6 +45,17 @@ public class GuiListener implements Listener {
                         player.setMetadata("OpenedConfigurator", new FixedMetadataValue(PowerGems.getPlugin(), true));
                     }
                 }
+            }
+        } else if (player.hasMetadata("OpenedConfigurator")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem != null && clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().equals("§cBack to Main Menu")) {
+                player.removeMetadata("SelectedGem", PowerGems.getPlugin());
+                player.removeMetadata("SelectedGemSlot", PowerGems.getPlugin());
+                player.closeInventory();
+                MainMenuGui panel = new MainMenuGui(player);
+                panel.openGemMenu();
             }
         }
     }

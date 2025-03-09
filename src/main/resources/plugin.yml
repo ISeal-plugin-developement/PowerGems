@@ -7,6 +7,11 @@ load: STARTUP
 depend: [SealLib]
 softdepend: [WorldGuard]
 commands:
+  openMenu:
+    description: Command to open the PowerGems menu
+    usage: /openMenu
+    aliases: [om]
+    permission: powergems.openMenu
   getallgems:
     description: Command to give yourself all gem
     usage: /getallgems

@@ -135,7 +135,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         // TODO: implement this
-        //Bukkit.getServer().getPluginCommand("menu").setExecutor(new OpenMainMenuCommand());
+        //Bukkit.getServer().getPluginCommand("openMenu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
