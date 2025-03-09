@@ -1,14 +1,10 @@
 package dev.iseal.powergems.managers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dev.iseal.powergems.PowerGems;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -65,7 +61,7 @@ public class GemManager implements Dumpable {
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
     private ArrayList<ChatColor> possibleColors = new ArrayList<>();
-    private final Logger l = Bukkit.getLogger();
+    private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
     private HashMap<String, Gem> gems = new HashMap<>();
@@ -163,6 +159,7 @@ public class GemManager implements Dumpable {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
             gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
+            gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
             randomGem.setItemMeta(gemMeta);
@@ -298,7 +295,9 @@ public class GemManager implements Dumpable {
         reDataContainer.set(gemLevelKey, PersistentDataType.INTEGER, gemLevel);
         reDataContainer.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
         reGemMeta = createLore(reGemMeta, gemNumber);
-        reGemMeta.setCustomModelData(gemNumber);
+        // index 0 empty, index 1 random gem, index 2-x gems
+        // might want to make an index for every level of gem in the future, could be fun
+        reGemMeta.setCustomModelData(gemNumber+2);
         gemItem.setItemMeta(reGemMeta);
         //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
         //l.info(gcm.getPluginPrefix() + "Created a " 
@@ -389,19 +388,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Returns the name of a gem.
-     * If the item is not a gem, returns null.
-     * 
-     * @param item The ItemStack to check.
-     * @return The name of the gem, or null if the item is not a gem.
-     */
-    public String getGemName(ItemStack item) {
-        if (!isGem(item))
-            return null;
-        return item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING);
-    }
-
-    /**
      * Runs a method call on a gem.
      * If the item is not a gem, throws an IllegalArgumentException.
      * 
@@ -421,7 +407,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getGemName(gem1).equals(getGemName(gem2));
+        boolean powerEqual = getName(gem1).equals((gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }
@@ -472,6 +458,35 @@ public class GemManager implements Dumpable {
      */
     public HashMap<String, Gem> getGems() {
         return gems; // Return the internal HashMap containing all registered gems
+    }
+
+    public void attemptFixGem(ItemStack item) {
+        String name = getName(item);
+        if (Objects.equals(name, "")) {
+            return;
+        }
+
+        boolean broken = false;
+        int id = lookUpID(name);
+        ItemMeta meta = item.getItemMeta();
+
+        // fix for broken model data
+        if (meta.getCustomModelData() != id+2) {
+            meta.setCustomModelData(id + 2);
+            broken = true;
+        }
+
+        // fix for gems having "Gem" in the name
+        if (name.endsWith("Gem")) {
+            meta.getPersistentDataContainer().set(gemPowerKey, PersistentDataType.STRING, name.substring(0, name.length() - 3));
+            broken = true;
+        }
+
+        if (broken) {
+            // finally, set the new meta.
+            item.setItemMeta(meta);
+            l.warning("An error in a gem has been found and fixed!");
+        }
     }
 
     @Override

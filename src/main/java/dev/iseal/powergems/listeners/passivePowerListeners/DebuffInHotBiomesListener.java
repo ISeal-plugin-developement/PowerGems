@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffectType;
 import java.util.List;
-
 public class DebuffInHotBiomesListener extends GemSpecificListener {
 
     private final Utils utils = SingletonManager.getInstance().utils;

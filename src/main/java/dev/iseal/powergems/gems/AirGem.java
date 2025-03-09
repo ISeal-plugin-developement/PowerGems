@@ -1,28 +1,20 @@
 package dev.iseal.powergems.gems;
 
-import java.util.ArrayList;
-
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
+import org.bukkit.*;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-
+import dev.iseal.powergems.misc.Utils;
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -39,30 +31,47 @@ public class AirGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        Location eyeLocation = plr.getEyeLocation().clone();
-        Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
+        Location playerLocation = plr.getLocation();
+        Vector playerDirection = playerLocation.getDirection();
+        double range = 20.0 * (level / 2.0 + 1.0);
+        double pullStrength = 0.1 + (level * 0.05); // Adjust based on gem level
 
-        utils.spawnLineParticles(
-                eyeLocation,
-                targetLocation,
-                255,
-                255,
-                255,
-                0.4D,
-                (location) -> {
-                    location.getWorld().getNearbyEntities(location, 0.5, 0.5, 0.5)
-                            .stream()
-                            .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
-                            .forEach(entity -> {
-                                entity.setVelocity(entity.getVelocity().add(new Vector(0, 2.5 + level, 0)));
-                                if (entity instanceof Player player) {
-                                    player.damage(2.5 + level, plr);
-                                    player.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-                                }
-                            });
-                },
-                3
-                );
+        // Start with 5 seconds and add 1 second per level
+        int pullDuration = 100 + ((level - 1) * 20);
+
+        plr.getWorld().getNearbyEntities(playerLocation, range, range, range).stream()
+                .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
+                .filter(entity -> {
+                    // Check if entity is in front of player
+                    Vector directionToEntity = entity.getLocation().toVector().subtract(playerLocation.toVector());
+                    double dot = directionToEntity.normalize().dot(playerDirection);
+                    return dot > 0.5; // ~60 degree cone
+                })
+                .forEach(entity -> {
+                    // Create particle beam from player to entity
+                    utils.spawnLineParticles(
+                            plr.getEyeLocation(),
+                            entity.getLocation(),
+                            200, 200, 255, // Light blue
+                            0.3D,
+                            null,
+                            2
+                    );
+
+                    // Create puller with duration parameter
+                    AirGemPull puller = new AirGemPull(entity, plr, pullStrength, pullDuration);
+                    puller.startPulling();
+
+                    // Apply additional effects to players
+                    if (entity instanceof Player targetPlayer) {
+                        targetPlayer.damage(2.0 + level, plr);
+                        targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
+                        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
+
+                        // Send message about being trapped in air pull
+                        targetPlayer.sendMessage(ChatColor.AQUA + "You've been caught in an air pull!");
+                    }
+                });
     }
 
     @Override
@@ -78,7 +87,7 @@ public class AirGem extends Gem {
                         entity.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
                         if (entity instanceof Player player) {
                             player.damage(power, plr);
-                            player.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
                         }
                     });
     }
@@ -95,20 +104,5 @@ public class AirGem extends Gem {
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));
-    }
-
-    @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Air")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
     }
 }

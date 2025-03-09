@@ -7,46 +7,20 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.sk89q.worldguard.WorldGuard;
-
 import de.leonhard.storage.Yaml;
-import dev.iseal.powergems.commands.CheckUpdateCommand;
-import dev.iseal.powergems.commands.DebugCommand;
-import dev.iseal.powergems.commands.GetAllGemsCommand;
-import dev.iseal.powergems.commands.GiveAllGemCommand;
-import dev.iseal.powergems.commands.GiveGemCommand;
-import dev.iseal.powergems.commands.PanelCommand;
-import dev.iseal.powergems.commands.ReloadConfigCommand;
-import dev.iseal.powergems.listeners.AvoidTargetListener;
-import dev.iseal.powergems.listeners.CraftEventListener;
-import dev.iseal.powergems.listeners.DeathEvent;
-import dev.iseal.powergems.listeners.DropEvent;
-import dev.iseal.powergems.listeners.EnterExitListener;
-import dev.iseal.powergems.listeners.EntityExplodeListener;
-import dev.iseal.powergems.listeners.InventoryCloseListener;
-import dev.iseal.powergems.listeners.NoGemHittingListener;
-import dev.iseal.powergems.listeners.ServerLoadListener;
-import dev.iseal.powergems.listeners.TradeEventListener;
-import dev.iseal.powergems.listeners.UseEvent;
-import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
-import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.commands.*;
+import dev.iseal.powergems.gems.powerClasses.tasks.*;
+import dev.iseal.powergems.listeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.gui.GemCooldownPanel;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.powergems.managers.*;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.tasks.*;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
@@ -62,7 +36,7 @@ public class PowerGems extends JavaPlugin {
     private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.0.0");
+        dependencies.put("SealLib", "1.1.0.1-DEV1");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
@@ -105,12 +79,22 @@ public class PowerGems extends JavaPlugin {
         } catch (IOException e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_SET_BUNDLE");
         }
-        new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
-        if (gcm.allowOnlyOneGem())
-            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
-        if (gcm.allowCosmeticParticleEffects())
-            new CosmeticParticleEffect().runTaskTimer(this, 0, gcm.cosmeticParticleEffectInterval());
-        l.info(I18N.translate("REGISTERING_LISTENERS"));
+        
+        this.getServer().getScheduler().runTaskTimer(this, task -> {
+            new AddCooldownToToolBar().run();
+        }, 0L, 20L);
+
+        if (gcm.allowOnlyOneGem()) {
+            this.getServer().getScheduler().runTaskTimer(this, task -> {
+                new CheckMultipleEmeraldsTask().run();
+            }, 100L, 60L);
+        }
+
+        if (gcm.allowCosmeticParticleEffects()) {
+            this.getServer().getScheduler().runTaskTimer(this, task -> {
+                new CosmeticParticleEffect().run();
+            }, 0L, gcm.cosmeticParticleEffectInterval());
+        }
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
         pluginManager.registerEvents(new EnterExitListener(), this);
@@ -122,13 +106,21 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new EntityExplodeListener(), this);
         if (gcm.doGemPowerTampering())
             pluginManager.registerEvents(new NoGemHittingListener(), this);
-        // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
-        // IInventoryMoveEvent(), this);
+        if (!gcm.isAllowMovingGems())
+            pluginManager.registerEvents(new InventoryMoveEvent(), this);
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
         if (gcm.doDebuffForTemperature()) {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
         }
+        if(gcm.upgradeGemOnKill()) {
+            pluginManager.registerEvents(new KillEventListener(), this);
+        }
+        if(gcm.giveGemPernamentEffectOnLvl3()) {
+            PernamentEffectsGiver effectsGiver = new PernamentEffectsGiver();
+            effectsGiver.runTaskTimer(this, 0L, 100L);
+        }
+        pluginManager.registerEvents(new IceGemGolemAi(), this);
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
@@ -136,14 +128,10 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
+        pluginManager.registerEvents(new GuiListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
-        
-        // Register the GemCooldownPanel
-        GemCooldownPanel panel = new GemCooldownPanel();
-        getServer().getPluginManager().registerEvents(panel, this);
-        
         l.info(I18N.translate("REGISTERED_LISTENERS"));
         l.info(I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
@@ -152,7 +140,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
-        Bukkit.getServer().getPluginCommand("panel").setExecutor(new PanelCommand(panel));
+        Bukkit.getServer().getPluginCommand("Menu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
@@ -212,9 +200,9 @@ public class PowerGems extends JavaPlugin {
         GemManager gemManager = sm.gemManager;
         gemManager.getAllGems().forEach((index, gem) -> {
             gemMaterialConfigManager.getGemMaterial(gem);
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Right");
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Left");
-            cooldownConfigManager.getStartingCooldown(gemManager.getGemName(gem), "Shift");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Right");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Left");
+            cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Shift");
         });
         l.warning("Finished generating configuration");
     }

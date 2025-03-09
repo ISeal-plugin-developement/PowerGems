@@ -1,9 +1,5 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,8 +12,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.util.ArrayList;
+
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class FireGem extends Gem {
 
@@ -68,28 +67,20 @@ public class FireGem extends Gem {
             plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
             return;
         }
+
+        FireballPowerDecay task = new FireballPowerDecay();
+        task.plr = plr;
+        task.level = level;
+        task.currentPower = 50;
+        
+        // Cache
+        sm.tempDataManager.chargingFireball.put(plr, task);
+        
+        task.runTaskTimer(PowerGems.getPlugin(), 0L, 1L);
+        
         Location plrEyeLoc = plr.getEyeLocation();
-        World world = plr.getWorld();
+        plrEyeLoc.add(plr.getLocation().getDirection().multiply(10));
         plrEyeLoc.add(0, -0.5, 0);
-
-        // Spawn particles that move to certain location
-        for (int i = 0; i < 10; i++) {
-            world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
-        }
-    }
-
-    @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Fire")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
+        plr.getWorld().spawnParticle(Particle.ASH, plrEyeLoc, 10, 0, 0, 0, 0);
     }
 }

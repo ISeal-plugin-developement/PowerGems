@@ -1,13 +1,8 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Utils;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,12 +12,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.Utils;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class SandGem extends Gem {
 
@@ -130,7 +128,7 @@ public class SandGem extends Gem {
                     && block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).isEmpty()
                     && !block.isEmpty() && !block.getRelative(BlockFace.DOWN).isEmpty() ) {
 
-                Material oldMaterial = targetLocation.getBlock().getType();
+                Material oldMaterial = block.getType(); //Store the old blocks material
                 sm.sandMoveListen.addToList(block, plr.getUniqueId());
                 toReplace.put(block, oldMaterial);
             }
@@ -145,20 +143,5 @@ public class SandGem extends Gem {
         Bukkit.getScheduler().runTaskLater(PowerGems.getPlugin(), () -> {
             sm.sandMoveListen.removeFromList(plr.getUniqueId());
         }, 50L*level);
-    }
-
-    @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Sand")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
     }
 }

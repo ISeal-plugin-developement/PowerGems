@@ -1,7 +1,8 @@
 package dev.iseal.powergems.listeners;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,10 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.UUID;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class AvoidTargetListener implements Listener {
 
@@ -66,16 +66,16 @@ public class AvoidTargetListener implements Listener {
      */
     public void addToList(Player plr, LivingEntity target, long timeUntilRemoval) {
         avoidTargetList.put(plr.getUniqueId(), target);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!avoidTargetList.containsKey(plr.getUniqueId())) {
-                    return;
+        
+        PowerGems.getPlugin().getServer().getScheduler()
+            .runTaskLater(PowerGems.getPlugin(), () -> {
+                if (avoidTargetList.containsKey(plr.getUniqueId())) {
+                    LivingEntity storedTarget = avoidTargetList.get(plr.getUniqueId());
+                    if (!storedTarget.isDead()) {
+                        storedTarget.remove();
+                    }
+                    avoidTargetList.remove(plr.getUniqueId());
                 }
-                if (!avoidTargetList.get(plr.getUniqueId()).isDead())
-                    avoidTargetList.get(plr.getUniqueId()).remove();
-                avoidTargetList.remove(plr.getUniqueId());
-            }
-        }.runTaskLater(PowerGems.getPlugin(), timeUntilRemoval);
+            }, timeUntilRemoval);
     }
 }

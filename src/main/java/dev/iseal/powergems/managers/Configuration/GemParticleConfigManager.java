@@ -31,18 +31,18 @@ public class GemParticleConfigManager extends AbstractConfigManager {
     }
 
     private void createDefaultParticleSettings(int i) {
-        if (file.contains("Gem" + GemManager.lookUpName(i) + "Particle")) return;
+        if (file.contains(GemManager.lookUpName(i) + "Particle")) return;
         if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_PARTICLE_SETTINGS");
         Particle setParticle = switch (i) {
-            case 1 -> Particle.DAMAGE_INDICATOR;
-            case 2 -> Particle.HEART;
-            case 3 -> Particle.CLOUD;
-            case 4 -> Particle.LAVA;
-            case 5 -> Particle.CRIT;
-            case 6 -> Particle.CRIT_MAGIC;
-            case 7 -> Particle.FIREWORKS_SPARK;
-            case 8 -> Particle.SNOWFLAKE;
-            case 9 -> Particle.DRIP_LAVA;
+            case 1 -> Particle.CLOUD;
+            case 2 -> Particle.LAVA;
+            case 3 -> Particle.HEART;
+            case 4 -> Particle.SNOWFLAKE;
+            case 5 -> Particle.FIREWORKS_SPARK;
+            case 6 -> Particle.DRIP_LAVA;
+            case 7 -> Particle.ELECTRIC_SPARK;
+            case 8 -> Particle.CRIT_MAGIC;
+            case 9 -> Particle.DAMAGE_INDICATOR;
             case 10 -> Particle.DRIP_WATER;
             default -> Particle.VILLAGER_ANGRY;
         };

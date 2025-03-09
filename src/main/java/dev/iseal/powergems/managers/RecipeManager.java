@@ -112,7 +112,7 @@ public class RecipeManager implements Listener {
     }
 
     private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
-        String key = gemManager.getGemName(gem).toLowerCase() + "_" + level + "_upgrade";
+        String key = gemManager.getName(gem).toLowerCase() + "_" + level + "_upgrade";
         ItemStack[] wantedMatrix = new ItemStack[9];
         HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
         String[] shape = arr.get("shape").toString().split(",");
@@ -265,7 +265,7 @@ public class RecipeManager implements Listener {
                     im = gemManager.createLore(im);
                     newStack.setItemMeta(im);
                     // generate namespacedkey based on name+level
-                    key = gemManager.getGemName(newStack).toLowerCase()  + "_" + level + "_upgrade";
+                    key = gemManager.getName(newStack).toLowerCase()  + "_" + level + "_upgrade";
                     NamespacedKey nk = new NamespacedKey(PowerGems.getPlugin(), key);
                     ShapedRecipe sr = new ShapedRecipe(nk, newStack);
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);

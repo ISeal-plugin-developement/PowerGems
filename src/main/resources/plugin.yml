@@ -1,7 +1,7 @@
 name: PowerGems
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
-api-version: '1.19'
+api-version: '1.20.1'
 author: ISeal
 load: STARTUP
 softdepend: [WorldGuard]
@@ -37,6 +37,10 @@ commands:
     usage: /pgDebug
     aliases: [pgd, pgdb]
     permission: powergems.debug
+  Menu:
+    description: Opens the gem selection panel
+    usage: /Menu
+    permission: powergems.openpanel
 permissions:
     powergems.panel:
         description: Permission to use /panel
