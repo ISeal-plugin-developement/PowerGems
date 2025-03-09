@@ -36,7 +36,7 @@ public class PowerGems extends JavaPlugin {
     private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.0.1-DEV1");
+        dependencies.put("SealLib", "1.1.1.0");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
@@ -91,7 +91,7 @@ public class PowerGems extends JavaPlugin {
             new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
 
         if(gcm.giveGemPermanentEffectOnLvl3())
-            new PermanentEffectsGiverTask().runTaskTimer(this, 0L, 100L);
+            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 100L);
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);

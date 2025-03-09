@@ -453,12 +453,12 @@ public class GemManager implements Dumpable {
     public void addGem(Gem gem) {
         String name = gem.getName();
         if (gemIdLookup.contains(name)) {
-            l.warning(gcm.getPluginPrefix()+"Gem with name " + name + " already exists, skipping.");
+            l.warning("Gem with name " + name + " already exists, skipping.");
             return;
         }
         gemIdLookup.add(gem.getName());
-        gems.put(name, gem); // Add the gem to the gems map
-        l.info(gcm.getPluginPrefix()+"Registered gem: " + name);
+        gems.put(name, gem);
+        l.info("Registered gem: " + name);
     }
 
     /**
@@ -475,6 +475,8 @@ public class GemManager implements Dumpable {
     public void attemptFixGem(ItemStack item) {
         String name = getName(item);
         if (Objects.equals(name, "")) {
+            // gem is just too fucking broken
+            // or is not an actual gem
             return;
         }
 
