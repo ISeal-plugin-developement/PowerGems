@@ -2,15 +2,18 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.gems.powerClasses.StrenghArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class StrengthGem extends Gem {
@@ -28,16 +31,17 @@ public class StrengthGem extends Gem {
     @Override
     protected void rightClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 , 1)); 
     }
 
     @Override
     protected void leftClick(Player plr) {
         double distance = 10;
-        double power = 2 + (level / 2);
+        double power = 2 + ((double) level / 2);
         Location playerLocation = plr.getLocation();
         List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
         for (Entity entity : nearbyEntities) {
-            if (entity instanceof Player nearbyPlayer && ! ((Player) entity).equals(plr)) {
+            if (entity instanceof Player nearbyPlayer && ! entity.equals(plr)) {
                 Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
                 nearbyPlayer.setVelocity(knockbackVector.multiply(power));
                 nearbyPlayer.damage(5);
@@ -50,5 +54,10 @@ public class StrengthGem extends Gem {
     protected void shiftClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
         new StrenghArena(plr).start();
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.INCREASE_DAMAGE;
     }
 }

@@ -2,6 +2,8 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,8 +11,10 @@ import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import java.util.ArrayList;
 
 public class WaterGem extends Gem {
 
@@ -86,5 +90,10 @@ public class WaterGem extends Gem {
             }
         }
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500+level*100, 2));
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.CONDUIT_POWER;
     }
 }

@@ -4,6 +4,7 @@ main: dev.iseal.powergems.PowerGems
 api-version: '1.20'
 author: ISeal
 load: STARTUP
+depend: [SealLib]
 softdepend: [WorldGuard]
 commands:
   getallgems:

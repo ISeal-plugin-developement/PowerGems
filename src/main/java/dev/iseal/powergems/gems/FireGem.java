@@ -1,10 +1,9 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -13,6 +12,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class FireGem extends Gem {
 
@@ -63,19 +67,25 @@ public class FireGem extends Gem {
             plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
             return;
         }
+
+        FireballPowerDecay task = new FireballPowerDecay();
+        task.plr = plr;
+        task.level = level;
+        task.currentPower = 50;
+        
+        // Cache
+        sm.tempDataManager.chargingFireball.put(plr, task);
+        
+        task.runTaskTimer(PowerGems.getPlugin(), 0L, 1L);
+        
         Location plrEyeLoc = plr.getEyeLocation();
-        World world = plr.getWorld();
+        plrEyeLoc.add(plr.getLocation().getDirection().multiply(10));
         plrEyeLoc.add(0, -0.5, 0);
+        plr.getWorld().spawnParticle(Particle.ASH, plrEyeLoc, 10, 0, 0, 0, 0);
+    }
 
-        FireballPowerDecay decay = new FireballPowerDecay();
-        decay.plr = plr;
-        decay.level = level;
-
-        decay.runTaskTimer(PowerGems.getPlugin(), 0, 5L);
-
-        // Spawn particles that move to certain location
-        for (int i = 0; i < 10; i++) {
-            world.spawnParticle(Particle.ASH, plrEyeLoc, 1, 0, 0, 0, 0);
-        }
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.FIRE_RESISTANCE;
     }
 }

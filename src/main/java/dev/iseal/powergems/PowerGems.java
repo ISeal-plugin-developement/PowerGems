@@ -11,19 +11,16 @@ import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.sk89q.worldguard.WorldGuard;
-
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
+import dev.iseal.powergems.gems.powerClasses.tasks.*;
 import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.*;
 import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.AddCooldownToToolBar;
-import dev.iseal.powergems.tasks.CheckMultipleEmeraldsTask;
-import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.powergems.tasks.*;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
@@ -39,7 +36,7 @@ public class PowerGems extends JavaPlugin {
     private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.0.1-DEV1");
+        dependencies.put("SealLib", "1.1.1.0");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
@@ -81,13 +78,21 @@ public class PowerGems extends JavaPlugin {
             I18N.getInstance().setBundle(this, gcm.getLanguageCode(), gcm.getCountryCode());
         } catch (IOException e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_SET_BUNDLE");
+            Bukkit.getPluginManager().disablePlugin(this);
         }
+
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
+
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100, 60);
+            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100L, 60L);
+
+
         if (gcm.allowCosmeticParticleEffects())
-            new CosmeticParticleEffect().runTaskTimer(this, 0, gcm.cosmeticParticleEffectInterval());
-        l.info(I18N.translate("REGISTERING_LISTENERS"));
+            new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
+
+        if(gcm.giveGemPermanentEffectOnLvl3())
+            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 100L);
+
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
         pluginManager.registerEvents(new EnterExitListener(), this);
@@ -99,13 +104,17 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new EntityExplodeListener(), this);
         if (gcm.doGemPowerTampering())
             pluginManager.registerEvents(new NoGemHittingListener(), this);
-        // if (!config.getBoolean("allowMovingGems")) pluginManager.registerEvents(new
-        // IInventoryMoveEvent(), this);
+        if (!gcm.isAllowMovingGems())
+            pluginManager.registerEvents(new InventoryMoveEvent(), this);
         pluginManager.registerEvents(AvoidTargetListener.getInstance(), this);
         if (gcm.doDebuffForTemperature()) {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
         }
+        if(gcm.upgradeGemOnKill()) {
+            pluginManager.registerEvents(new KillEventListener(), this);
+        }
+        pluginManager.registerEvents(new IceGemGolemAi(), this);
         pluginManager.registerEvents(new IronProjectileLandListener(), this);
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
@@ -113,6 +122,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
+        pluginManager.registerEvents(new GuiListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
@@ -124,6 +134,8 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
+        // TODO: implement this
+        //Bukkit.getServer().getPluginCommand("menu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();

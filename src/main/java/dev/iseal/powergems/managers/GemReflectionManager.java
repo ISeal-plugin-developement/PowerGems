@@ -54,7 +54,8 @@ public class GemReflectionManager implements Dumpable {
         if (isPossibleGemClass(clazz)) {
             try {
                 Gem instance = (Gem) clazz.getDeclaredConstructor().newInstance();
-                registeredGems.put((Class<? extends Gem>) clazz, instance);
+                Class<? extends Gem> gemClass = clazz.asSubclass(Gem.class);
+                registeredGems.put(gemClass, instance);
                 SingletonManager.TOTAL_GEM_AMOUNT++;
                 gm.addGem(instance);
             } catch (Exception e) {
@@ -135,6 +136,23 @@ public class GemReflectionManager implements Dumpable {
         }
         Gem gemInstance = registeredGems.get(gemClass);
         return gemInstance.particle();
+    }
+
+    public Gem getGemInstance(ItemStack item, Player plr) {
+        if (!gm.isGem(item)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
+            return null;
+        }
+        Class<? extends Gem> gemClass = getGemClass(item, plr);
+        if (gemClass == null) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
+            return null;
+        }
+        if (!registeredGems.containsKey(gemClass)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem has not been registered"), Level.WARNING, "GEM_NOT_REGISTERED", item);
+            return null;
+        }
+        return registeredGems.get(gemClass);
     }
 
     @Override

@@ -128,7 +128,8 @@ public class ConfigManager implements Dumpable {
 
     private void addConfigClass(Class<?> clazz) {
         if (isPossibleConfigClass(clazz)) {
-            registeredConfigurations.add((Class<? extends AbstractConfigManager>) clazz);
+            Class<? extends AbstractConfigManager> gemClass = clazz.asSubclass(AbstractConfigManager.class);
+            registeredConfigurations.add(gemClass);
         }
     }
 
@@ -138,5 +139,25 @@ public class ConfigManager implements Dumpable {
         dump.put("registeredConfigurations", registeredConfigurations);
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
+    }
+
+    public void save() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
+    public void updateCooldown(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
+    }
+
+    public void saveConfig() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
+    }
+
+    public void set(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 }

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Interfaces.Dumpable;
-import dev.iseal.sealLib.SealLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -45,6 +44,10 @@ public class GemManager implements Dumpable {
         return instance;
     }
 
+    private GemManager() {
+        dumpableInit();
+    }
+
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
     private SingletonManager sm = null;
@@ -65,10 +68,7 @@ public class GemManager implements Dumpable {
     private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
-
-    private GemManager() {
-        dumpableInit();
-    }
+    private HashMap<String, Gem> gems = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -82,12 +82,6 @@ public class GemManager implements Dumpable {
         grm.registerGems();
         Collections.sort(gemIdLookup);
         gemIdLookup.addAll(oldGems);
-        if (gemIdLookup.size() != SingletonManager.TOTAL_GEM_AMOUNT) {
-            l.warning("Gem ID lookup size does not match total gem amount, this could cause issues.");
-        }
-        if (SealLib.isDebug()) {
-            l.info("[DEBUG] Gem ID lookup: " + gemIdLookup);
-        }
         cm = sm.configManager;
         nkm = sm.namespacedKeyManager;
         isGemKey = nkm.getKey("is_power_gem");
@@ -340,13 +334,21 @@ public class GemManager implements Dumpable {
      *         inventory.
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
-        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isExpired()) {
+        // isValid() checks if the cache is expired or if something became null - bukkit be weird fr fr
+        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isValid()) {
             return gemCache.get(plr.getUniqueId()).getOwnedGems();
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
+    }
+
+    public Gem getGemInstance(ItemStack item, Player plr) {
+        if (!isGem(item)) {
+            return null;
+        }
+        return grm.getGemInstance(item, plr);
     }
 
     /**
@@ -443,18 +445,38 @@ public class GemManager implements Dumpable {
         return grm.runParticleCall(item, plr);
     }
 
+    /**
+     * Adds a gem to the manager.
+     *
+     * @param gem The Gem object to add.
+     */
     public void addGem(Gem gem) {
         String name = gem.getName();
         if (gemIdLookup.contains(name)) {
-            l.warning(gcm.getPluginPrefix()+"Gem with name " + name + " already exists, skipping.");
+            l.warning("Gem with name " + name + " already exists, skipping.");
             return;
         }
         gemIdLookup.add(gem.getName());
+        gems.put(name, gem);
+        l.info("Registered gem: " + name);
+    }
+
+    /**
+     * Returns a HashMap of all gems.
+     * Each gem is represented as an ItemStack, and the key is the gem number.
+     * 
+     * @return A HashMap where the keys are gem numbers and the values are
+     *         ItemStacks representing the gems.
+     */
+    public HashMap<String, Gem> getGems() {
+        return gems; // Return the internal HashMap containing all registered gems
     }
 
     public void attemptFixGem(ItemStack item) {
         String name = getName(item);
         if (Objects.equals(name, "")) {
+            // gem is just too fucking broken
+            // or is not an actual gem
             return;
         }
 

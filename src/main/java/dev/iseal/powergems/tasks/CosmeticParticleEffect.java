@@ -16,7 +16,7 @@ public class CosmeticParticleEffect extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            utils.getUserGems(player).forEach(gem -> {
+            gemManager.getPlayerGems(player).forEach(gem -> {
                 Particle particle = gemManager.runParticleCall(gem, player);
                 int level = gemManager.getLevel(gem);
                 if (particle == null) return;

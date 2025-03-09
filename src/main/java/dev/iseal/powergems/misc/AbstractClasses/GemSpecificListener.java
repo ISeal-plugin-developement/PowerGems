@@ -4,14 +4,12 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;

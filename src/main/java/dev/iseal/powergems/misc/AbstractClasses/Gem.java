@@ -13,7 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.logging.Logger;
 
@@ -25,8 +25,8 @@ public abstract class Gem {
     protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
-    protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    protected GemParticleConfigManager gpcm = null;
+    protected GeneralConfigManager gcm = null;
     protected int level;
     protected Particle particle;
     protected String name;
@@ -38,6 +38,8 @@ public abstract class Gem {
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
             return;
+
+        checkInstances();
 
         if (gcm.doAttemptFixOldGems()){
             gm.attemptFixGem(item);
@@ -84,7 +86,9 @@ public abstract class Gem {
     protected abstract void leftClick(Player plr);
 
     protected abstract void shiftClick(Player plr);
-    
+
+    public abstract PotionEffectType getEffect();
+
     public Particle particle() {
         if (particle == null) {
             particle = gpcm.getParticle(GemManager.lookUpID(name));
@@ -94,5 +98,17 @@ public abstract class Gem {
 
     public String getName() {
         return name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    //TODO: replace this with completable future to avoid this absolute garbage
+    private void checkInstances() {
+        if (gcm == null)
+            gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+        if (gpcm == null)
+            gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     }
 }

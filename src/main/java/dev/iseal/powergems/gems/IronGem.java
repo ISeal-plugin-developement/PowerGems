@@ -4,6 +4,8 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
@@ -17,9 +19,11 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -106,6 +110,11 @@ public class IronGem extends Gem {
                 tdm.ironShiftLeft.add(op.getUniqueId());
             }
         }, 200);
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.DAMAGE_RESISTANCE;
     }
 
     public void removeShiftModifiers(Player plr) {

@@ -1,6 +1,8 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -12,8 +14,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import java.util.ArrayList;
 
 public class LightningGem extends Gem {
 
@@ -64,5 +68,10 @@ public class LightningGem extends Gem {
                 }
             }
         }
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.SPEED;
     }
 }

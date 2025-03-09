@@ -1,10 +1,10 @@
 package dev.iseal.powergems.listeners;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.ItemStack;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
@@ -13,15 +13,15 @@ public class CraftEventListener implements Listener {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         CraftingInventory inventory = event.getInventory();
-
-        for (ItemStack item : inventory.getMatrix()) {
-            if (item != null && gemManager.isGem(item)) {
-                inventory.setResult(null);
-                return;
-            }
+        
+        if (inventory.getMatrix() != null && 
+            java.util.Arrays.stream(inventory.getMatrix())
+                .filter(item -> item != null)
+                .anyMatch(gemManager::isGem)) {
+            inventory.setResult(null);
         }
     }
 }
