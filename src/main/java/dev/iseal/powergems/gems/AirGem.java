@@ -1,6 +1,7 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.*;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.EntityType;
@@ -60,7 +61,7 @@ public class AirGem extends Gem {
 
                     // Create puller with duration parameter
                     AirGemPull puller = new AirGemPull(entity, plr, pullStrength, pullDuration);
-                    puller.startPulling();
+                    puller.start();
 
                     // Apply additional effects to players
                     if (entity instanceof Player targetPlayer) {
@@ -69,7 +70,7 @@ public class AirGem extends Gem {
                         targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
 
                         // Send message about being trapped in air pull
-                        targetPlayer.sendMessage(ChatColor.AQUA + "You've been caught in an air pull!");
+                        targetPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
                     }
                 });
     }
@@ -104,5 +105,10 @@ public class AirGem extends Gem {
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.SLOW_FALLING;
     }
 }

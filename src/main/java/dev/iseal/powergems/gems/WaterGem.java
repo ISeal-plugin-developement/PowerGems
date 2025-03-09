@@ -29,21 +29,6 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Water")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
-    }
-
-    @Override
     protected void rightClick(Player plr) {
         if (plr.getEyeLocation().getBlock().getType() != Material.WATER
                 || plr.getLocation().getBlock().getType() != Material.WATER)
@@ -105,5 +90,10 @@ public class WaterGem extends Gem {
             }
         }
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 500+level*100, 2));
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.CONDUIT_POWER;
     }
 }

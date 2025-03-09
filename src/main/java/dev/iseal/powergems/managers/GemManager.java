@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -22,7 +23,6 @@ import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
 import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 
@@ -42,6 +42,10 @@ public class GemManager implements Dumpable {
             instance = new GemManager();
         }
         return instance;
+    }
+
+    private GemManager() {
+        dumpableInit();
     }
 
     // Fields for storing gem-related data and configurations
@@ -330,13 +334,21 @@ public class GemManager implements Dumpable {
      *         inventory.
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
-        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isExpired()) {
+        // isValid() checks if the cache is expired or if something became null - bukkit be weird fr fr
+        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isValid()) {
             return gemCache.get(plr.getUniqueId()).getOwnedGems();
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
+    }
+
+    public Gem getGemInstance(ItemStack item, Player plr) {
+        if (!isGem(item)) {
+            return null;
+        }
+        return grm.getGemInstance(item, plr);
     }
 
     /**

@@ -104,26 +104,6 @@ public class Utils {
         return count >= x;
     }
 
-    /*
-        * Returns a list of all the gems in the player's inventory.
-        *
-        * @param plr The player to check for gems.
-        *
-        * @return A list of all the gems in the player's inventory.
-     */
-    public ArrayList<ItemStack> getUserGems(Player plr) {
-        ArrayList<ItemStack> gems = new ArrayList<>();
-        if (!hasAtLeastXAmountOfGems(plr, 1))
-            return gems;
-        for (ItemStack item : plr.getInventory().getContents()) {
-            if (gemManager.isGem(item)) {
-                gems.add(item);
-            }
-        }
-        return gems;
-
-    }
-
     public boolean hasAtLeastXAmountOfGems(Inventory inv, int x, ItemStack... moreToCheck){
         int totalCount = 0;
         // Iterate over the player's inventory once

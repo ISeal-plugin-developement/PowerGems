@@ -144,4 +144,9 @@ public class SandGem extends Gem {
             sm.sandMoveListen.removeFromList(plr.getUniqueId());
         }, 50L*level);
     }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.FAST_DIGGING;
+    }
 }

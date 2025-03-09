@@ -149,6 +149,7 @@ public class GemCooldownPanel implements Listener {
     /**
      * Builds lore for gem items, including cooldown info and listed powers.
      */
+    /*
     private List<String> buildCooldownLore(Player player, String gemName) {
         List<String> lore = new ArrayList<>();
         Gem gem = gemManager.getGems().get(gemName);
@@ -186,6 +187,8 @@ public class GemCooldownPanel implements Listener {
         return lore;
     }
 
+     */
+
     /**
      * Sets up the GUI with gem items plus a refresh button.
      */
@@ -199,25 +202,25 @@ public class GemCooldownPanel implements Listener {
             }
 
             String gemName = gem.getName();
-            Material mat = gemManager.getGemMaterial(gemName);
+            Material mat = Material.DIAMOND; //gem.getMaterial();
             if (mat == null) {
                 Bukkit.getLogger().warning("[PowerGems] Material for gem '" + gemName + "' is not defined. Skipping.");
                 continue;
             }
 
             // Example method: generateItemStack(String gemName, int gemLevel)
-            ItemStack gemItem = gemManager.generateItemStack(gemName, gem.getLevel());
-            gemItem = gem.gemInfo(gemItem);
+            //ItemStack gemItem = gemManager.generateItemStack(gemName, gem.getLevel());
+            //gemItem = gem.gemInfo(gemItem);
 
-            ItemMeta meta = gemItem.getItemMeta();
-            if (meta != null) {
-                meta.setLore(buildCooldownLore(player, gemName));
-                gemItem.setItemMeta(meta);
-            }
+            //ItemMeta meta = gemItem.getItemMeta();
+            //if (meta != null) {
+                //meta.setLore(buildCooldownLore(player, gemName));
+                //gemItem.setItemMeta(meta);
+            //}
 
-            panelInventory.setItem(slotIndex++, gemItem);
+            //panelInventory.setItem(slotIndex++, gemItem);
         }
-        fillEmptySlots(slotIndex);
+        //fillEmptySlots(slotIndex);
     }
 
     /**

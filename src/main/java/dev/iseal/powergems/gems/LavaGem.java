@@ -36,21 +36,6 @@ public class LavaGem extends Gem {
     }
 
     @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Lava")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
-    }
-
-    @Override
     protected void rightClick(Player plr) {
         int radius = 5;
         int times = (level / 2) + 1;
@@ -88,5 +73,10 @@ public class LavaGem extends Gem {
         blaze.setCustomNameVisible(true);
         blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level-1));
         AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.FIRE_RESISTANCE;
     }
 }

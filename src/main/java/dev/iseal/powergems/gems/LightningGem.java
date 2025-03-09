@@ -32,21 +32,6 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Lightning")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
-    }
-
-    @Override
     protected void rightClick(Player plr) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
         if (possibleTarget == null) {
@@ -83,5 +68,10 @@ public class LightningGem extends Gem {
                 }
             }
         }
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.SPEED;
     }
 }

@@ -29,21 +29,6 @@ public class StrengthGem extends Gem {
     }
 
     @Override
-    public ItemStack gemInfo(ItemStack item) {
-        // Use base gem info which includes level and cooldowns
-        ItemStack infoItem = super.gemInfo(item);
-        ItemMeta meta = infoItem.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(meta.getLore());
-        
-        // Add configured lore from GemLoreConfigManager
-        lore.addAll(sm.configManager.getRegisteredConfigInstance(GemLoreConfigManager.class).getLore(GemManager.lookUpID("Strength")));
-        
-        meta.setLore(lore);
-        infoItem.setItemMeta(meta);
-        return infoItem;
-    }
-
-    @Override
     protected void rightClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 1));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 , 1)); 
@@ -52,11 +37,11 @@ public class StrengthGem extends Gem {
     @Override
     protected void leftClick(Player plr) {
         double distance = 10;
-        double power = 2 + (level / 2);
+        double power = 2 + ((double) level / 2);
         Location playerLocation = plr.getLocation();
         List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
         for (Entity entity : nearbyEntities) {
-            if (entity instanceof Player nearbyPlayer && ! ((Player) entity).equals(plr)) {
+            if (entity instanceof Player nearbyPlayer && ! entity.equals(plr)) {
                 Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
                 nearbyPlayer.setVelocity(knockbackVector.multiply(power));
                 nearbyPlayer.damage(5);
@@ -69,5 +54,10 @@ public class StrengthGem extends Gem {
     protected void shiftClick(Player plr) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
         new StrenghArena(plr).start();
+    }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.INCREASE_DAMAGE;
     }
 }

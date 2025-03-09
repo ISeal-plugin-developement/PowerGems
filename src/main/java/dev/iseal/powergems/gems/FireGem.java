@@ -83,4 +83,9 @@ public class FireGem extends Gem {
         plrEyeLoc.add(0, -0.5, 0);
         plr.getWorld().spawnParticle(Particle.ASH, plrEyeLoc, 10, 0, 0, 0, 0);
     }
+
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.FIRE_RESISTANCE;
+    }
 }

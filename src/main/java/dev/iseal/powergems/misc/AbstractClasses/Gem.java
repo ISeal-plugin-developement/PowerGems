@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.logging.Logger;
 
@@ -83,7 +84,9 @@ public abstract class Gem {
     protected abstract void leftClick(Player plr);
 
     protected abstract void shiftClick(Player plr);
-    
+
+    public abstract PotionEffectType getEffect();
+
     public Particle particle() {
         if (particle == null) {
             particle = gpcm.getParticle(GemManager.lookUpID(name));
@@ -93,5 +96,9 @@ public abstract class Gem {
 
     public String getName() {
         return name;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

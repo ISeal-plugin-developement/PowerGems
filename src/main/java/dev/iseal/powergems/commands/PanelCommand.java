@@ -37,7 +37,7 @@ public class PanelCommand implements CommandExecutor {
         }
 
         // Check permissions
-        if (!sender hasPermission(command.getPermission())) {
+        if (!sender.hasPermission(command.getPermission())) {
             sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }

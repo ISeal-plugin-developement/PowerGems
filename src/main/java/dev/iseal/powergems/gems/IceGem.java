@@ -95,6 +95,11 @@ public class IceGem extends Gem {
         }
     }
 
+    @Override
+    public PotionEffectType getEffect() {
+        return PotionEffectType.HEAL;
+    }
+
     private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
         return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
             .filter(entity -> entity instanceof Player)  // Filter for players

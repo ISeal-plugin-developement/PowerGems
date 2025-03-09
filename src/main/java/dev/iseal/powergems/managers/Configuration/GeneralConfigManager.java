@@ -45,7 +45,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("gemCreationAttempts", 10);
         file.setDefault("gemsHaveDescriptions", true);
         file.setDefault("giveGemOnFirstLogin", true);
-        file.setDefault("giveGemPernamentEffectOnLvl3", false);
+        file.setDefault("giveGemPermanentEffectOnLvl3", false);
         file.setDefault("isWorldGuardSupportEnabled", true);
         file.setDefault("keepGemsOnDeath", true);
         file.setDefault("languageCode", "en");
@@ -162,8 +162,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
         return file.getBoolean("giveGemOnFirstLogin");
     }
 
-    public boolean giveGemPernamentEffectOnLvl3() {
-        return file.getBoolean("giveGemPernamentEffectOnLvl3");
+    public boolean giveGemPermanentEffectOnLvl3() {
+        return file.getBoolean("giveGemPermanentEffectOnLvl3");
     }
 
     public boolean isWorldGuardEnabled() {

@@ -4,13 +4,9 @@ main: dev.iseal.powergems.PowerGems
 api-version: '1.20.1'
 author: ISeal
 load: STARTUP
+depend: [SealLib]
 softdepend: [WorldGuard]
 commands:
-  panel:
-    description: Command to open the PowerGems panel
-    usage: /panel
-    aliases: [pg]
-    permission: powergems.panel
   getallgems:
     description: Command to give yourself all gem
     usage: /getallgems
@@ -37,14 +33,7 @@ commands:
     usage: /pgDebug
     aliases: [pgd, pgdb]
     permission: powergems.debug
-  Menu:
-    description: Opens the gem selection panel
-    usage: /Menu
-    permission: powergems.openpanel
 permissions:
-    powergems.panel:
-        description: Permission to use /panel
-        default: op
     powergems.getallgems:
         description: Permission to use /getallgem
         default: op
