@@ -15,10 +15,10 @@ commands:
     description: Command to give yourself a gem
     usage: /givegem <gem>
     permission: powergems.givegem
-  giveallgem:
+  giveallplayersgem:
     description: Command to give everyone a gem
-    usage: /giveallgem <gem>
-    permission: powergems.giveallgem
+    usage: /giveallplayersgem <gem>
+    permission: powergems.giveallplayersgem
   checkupdates:
     description: Command to check for updates
     usage: /checkupdates
@@ -40,7 +40,7 @@ permissions:
     powergems.givegem:
         description: Permission to use /givegem
         default: op
-    powergems.giveallgem:
+    powergems.giveallplayersgem:
         description: Permission to use /giveallgem
         default: op
     powergems.checkupdates:
@@ -58,7 +58,7 @@ permissions:
         children:
             powergems.getallgems: true
             powergems.givegem: true
-            powergems.giveallgem: true
+            powergems.giveallplayersgem: true
             powergems.checkupdates: true
             powergems.reloadconfig: true
             powergems.debug: true

@@ -25,8 +25,8 @@ public abstract class Gem {
     protected SingletonManager sm = SingletonManager.getInstance();
     protected GemManager gm = sm.gemManager;
     protected CooldownManager cm = sm.cooldownManager;
-    protected GemParticleConfigManager gpcm = null;
-    protected GeneralConfigManager gcm = null;
+    protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
+    protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     protected int level;
     protected Particle particle;
     protected String name;
@@ -38,8 +38,6 @@ public abstract class Gem {
     public void call(Action action, Player plr, ItemStack item) {
         if (action.equals(Action.PHYSICAL))
             return;
-
-        checkInstances();
 
         if (gcm.doAttemptFixOldGems()){
             gm.attemptFixGem(item);
@@ -102,13 +100,5 @@ public abstract class Gem {
 
     public int getLevel() {
         return level;
-    }
-
-    //TODO: replace this with completable future to avoid this absolute garbage
-    private void checkInstances() {
-        if (gcm == null)
-            gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-        if (gpcm == null)
-            gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     }
 }
