@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
-public class GiveAllGemCommand implements CommandExecutor {
+public class GiveAllPlayersGemCommand implements CommandExecutor {
 
     private final SingletonManager sm = SingletonManager.getInstance();
 
