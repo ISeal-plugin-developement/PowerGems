@@ -1,15 +1,11 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.util.ArrayList;
 
 public class HealingGem extends Gem {
 

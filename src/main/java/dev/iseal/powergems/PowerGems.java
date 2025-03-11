@@ -122,14 +122,13 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
-        pluginManager.registerEvents(new GuiListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         l.info(I18N.translate("REGISTERED_LISTENERS"));
         l.info(I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
-        Bukkit.getServer().getPluginCommand("giveallgem").setExecutor(new GiveAllGemCommand());
+        Bukkit.getServer().getPluginCommand("giveallplayersgem").setExecutor(new GiveAllPlayersGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
