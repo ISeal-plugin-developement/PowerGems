@@ -21,6 +21,11 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
 
     @Override
     public void setUpConfig() {
+        file.setHeader(
+                "This config file manages the materials of the gems",
+                "The default material is EMERALD",
+                "It is not reccomended to change the materials of the gems, beacuse it might break some stuff"
+        );
         file.setDefault("RandomGemMaterial", "EMERALD");
     }
     
