@@ -1,8 +1,5 @@
 package dev.iseal.powergems.listeners;
 
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +15,6 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class InventoryMoveEvent implements Listener {
 
-    private final Logger l = Bukkit.getLogger();
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
     @EventHandler(priority = EventPriority.HIGH)

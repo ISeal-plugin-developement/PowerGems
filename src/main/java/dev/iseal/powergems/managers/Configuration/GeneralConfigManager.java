@@ -20,41 +20,110 @@ public class GeneralConfigManager extends AbstractConfigManager {
     public void setUpConfig() {
         // WARNING: Using PowerGems.file is deprecated and should be replaced with a getter in the respective class. I'm just too lazy to do it.
         PowerGems.config = file;
+        file.setDefault("#pluginPrefix", "Prefix displayed in messages sent by the plugin");
         file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
+        
+        file.setDefault("#allowCosmeticParticleEffects", "Enables visual particle effects around players with active gems");
         file.setDefault("allowCosmeticParticleEffects", true);
+        
+        file.setDefault("#allowMetrics", "Enables anonymous usage statistics collection via bStats");
         file.setDefault("allowMetrics", true);
+        
+        file.setDefault("#allowMovingGems", "When true, players can move gems between inventories (otherwise gems are locked to inventory)");
         file.setDefault("allowMovingGems", false);
+        
+        file.setDefault("#allowOnlyOneGem", "When true, players can only have one active gem at a time");
         file.setDefault("allowOnlyOneGem", false);
+        
+        file.setDefault("#attemptFixOldGems", "Automatically attempts to repair gems from older versions when detected");
         file.setDefault("attemptFixOldGems", true);
+        
+        file.setDefault("#blockedReplacingBlocks", "List of materials that cannot be replaced by gem abilities");
         file.setDefault("blockedReplacingBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
+        
+        file.setDefault("#canCraftGems", "Enables or disables gem crafting recipes");
         file.setDefault("canCraftGems", true);
+        
+        file.setDefault("#canDropGems", "When true, players can drop gems from their inventory");
         file.setDefault("canDropGems", false);
+        
+        file.setDefault("#canUpgradeGems", "Allows gems to be upgraded to higher levels");
         file.setDefault("canUpgradeGems", true);
+        
+        file.setDefault("#cooldownBoostPerLevelInSeconds", "Reduction in cooldown time (in seconds) for each gem level");
         file.setDefault("cooldownBoostPerLevelInSeconds", 2L);
+        
+        file.setDefault("#cosmeticParticleEffectInterval", "Time in ticks between particle effect updates");
         file.setDefault("cosmeticParticleEffectInterval", 5L);
+        
+        file.setDefault("#countryCode", "Country code used for localization formatting");
         file.setDefault("countryCode", "US");
+        
+        file.setDefault("#debugMode", "Enables additional logging information for troubleshooting");
         file.setDefault("debugMode", false);
+        
+        file.setDefault("#delayToUseGemsOnJoin", "Time in seconds before players can use gems after joining the server");
         file.setDefault("delayToUseGemsOnJoin", 30);
+        
+        file.setDefault("#doDebuffForTemperature", "Apply environmental effects to players based on gem temperature compatibility");
         file.setDefault("doDebuffForTemperature", true);
+        
+        file.setDefault("#doGemDecay", "Gems lose 1 level when you die");
         file.setDefault("doGemDecay", true);
+        
+        file.setDefault("#doGemDecayOnLevel1", "Whether level 1 gems should decay(basically get destroyed when you die  with a lvl 1 gem)");
         file.setDefault("doGemDecayOnLevel1", false);
+        
+        file.setDefault("#dragonEggHalfCooldown", "Players with Dragon Egg in inventory get reduced gem cooldowns");
         file.setDefault("dragonEggHalfCooldown", true);
+        
+        file.setDefault("#explosionDamageAllowed", "Whether gem abilities can cause explosion damage to blocks");
         file.setDefault("explosionDamageAllowed", true);
+        
+        file.setDefault("#gemCacheExpireTime", "Time in seconds before cached gem data expires");
         file.setDefault("gemCacheExpireTime", 60);
+        
+        file.setDefault("#gemCreationAttempts", "Number of attempts to generate a valid random gem before giving up");
         file.setDefault("gemCreationAttempts", 10);
+        
+        file.setDefault("#gemsHaveDescriptions", "Show descriptive lore text on gem items");
         file.setDefault("gemsHaveDescriptions", true);
+        
+        file.setDefault("#giveGemOnFirstLogin", "Give a random gem to players when they first join the server");
         file.setDefault("giveGemOnFirstLogin", true);
+        
+        file.setDefault("#giveGemPermanentEffectOnLvl3", "Level 3+ gems provide passive effects without activation");
         file.setDefault("giveGemPermanentEffectOnLvl3", false);
+        
+        file.setDefault("#isWorldGuardSupportEnabled", "Enable integration with WorldGuard");
         file.setDefault("isWorldGuardSupportEnabled", true);
+        
+        file.setDefault("#keepGemsOnDeath", "Players keep their gems when they die");
         file.setDefault("keepGemsOnDeath", true);
+        
+        file.setDefault("#languageCode", "Language code for plugin messages (en, de, etc.)");
         file.setDefault("languageCode", "en");
+        
+        file.setDefault("#maxGemLevel", "Maximum level gems can reach through upgrades");
         file.setDefault("maxGemLevel", 5);
+        
+        file.setDefault("#pluginPrefix", "Prefix displayed in messages sent by the plugin");
         file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
+        
+        file.setDefault("#preventGemPowerTampering", "Prevents players from modifying gem powers through commands/exploits");
         file.setDefault("preventGemPowerTampering", true);
+        
+        file.setDefault("#randomizedColors", "Use random colors for gem names instead of preset colors");
         file.setDefault("randomizedColors", false);
+        
+        file.setDefault("#runUpdater", "Check for plugin updates on startup");
         file.setDefault("runUpdater", true);
+        
+        file.setDefault("#upgradeGemOnKill", "Gems level up when you kill a player");
         file.setDefault("upgradeGemOnKill", false);
+        
+        file.setDefault("#useNewAllowOnlyOneGemAlgorithm", "Use improved detection algorithm for the 'allowOnlyOneGem' feature");
         file.setDefault("useNewAllowOnlyOneGemAlgorithm", true);
     }
 

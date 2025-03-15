@@ -12,6 +12,12 @@ public class CooldownConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
+        file.setHeader(
+                "This config file manages the cooldowns of the gems",
+                "The cooldowns are in seconds",
+                "The default cooldown is 60 seconds",
+                "Change the numbers to whatever you want change the cooldowns"
+        );
 
     }
 
