@@ -11,15 +11,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.HashMap;
-import java.util.Random;
-
 public class InventoryCloseListener implements Listener {
 
     private ItemStack randomGem = null;
     private final GemManager gm = SingletonManager.getInstance().gemManager;
-    private final Random rand = new Random();
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
@@ -63,41 +58,4 @@ public class InventoryCloseListener implements Listener {
             }
         }
     }
-
-    @Deprecated(since = "3.3.1.0", forRemoval = true)
-    private void checkIfMultipleGems(Player plr) {
-        if (!PowerGems.config.getBoolean("allowOnlyOneGem")) {
-            return;
-        }
-        HashMap<ItemStack, Integer> gems = new HashMap<>(3);
-        final PlayerInventory plrInv = plr.getInventory();
-        int index = 0;
-        for (ItemStack i : plrInv.getContents()) {
-            if (gm.isGem(i)) {
-                i.setAmount(1);
-                gems.put(i, index);
-                plrInv.setItem(index, null);
-            }
-            index++;
-        }
-        if (gems.isEmpty()) {
-            return;
-        }
-        if (gems.size() == 1) {
-            ItemStack firstGem = gems.keySet().stream().findFirst().get();
-            if (gems.get(firstGem) == -1) {
-                plrInv.setItemInOffHand(firstGem);
-                return;
-            }
-            plrInv.setItem(gems.get(firstGem), firstGem);
-            return;
-        }
-        ItemStack randomGem = gems.keySet().stream().skip(rand.nextInt(gems.size())).findFirst().get();
-        if (gems.get(randomGem) == -1) {
-            plrInv.setItemInOffHand(randomGem);
-            return;
-        }
-        plrInv.setItem(gems.get(randomGem), randomGem);
-    }
-
 }

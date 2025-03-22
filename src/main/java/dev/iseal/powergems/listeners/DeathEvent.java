@@ -4,6 +4,7 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -20,7 +21,7 @@ public class DeathEvent implements Listener {
     private final GeneralConfigManager generalConfigManager = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         if (!generalConfigManager.doKeepGemsOnDeath())
             return;
