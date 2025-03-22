@@ -128,32 +128,11 @@ public class ConfigManager implements Dumpable {
             registeredConfigurations.add(gemClass);
         }
     }
-
     @Override
     public HashMap<String, Object> dump() {
         HashMap<String, Object> dump = new HashMap<>();
         dump.put("registeredConfigurations", registeredConfigurations);
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
-    }
-
-    public void save() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
-    public void updateCooldown(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
-    }
-
-    public void saveConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
-    }
-
-    public void set(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 }
