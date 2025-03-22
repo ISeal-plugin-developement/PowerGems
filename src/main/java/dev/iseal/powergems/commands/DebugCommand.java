@@ -1,7 +1,5 @@
 package dev.iseal.powergems.commands;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
@@ -26,7 +24,6 @@ import java.util.logging.Level;
 public class DebugCommand implements CommandExecutor, TabCompleter {
 
     private final SingletonManager sm = SingletonManager.getInstance();
-    private final GemManager gm = sm.gemManager;
     private final NamespacedKeyManager nkm = sm.namespacedKeyManager;
     private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
 

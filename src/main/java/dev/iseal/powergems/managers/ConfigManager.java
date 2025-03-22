@@ -5,21 +5,17 @@ import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import dev.iseal.sealLib.Utils.GlobalUtils;
-import org.bukkit.Bukkit;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigManager implements Dumpable {
 
     private final ArrayList<Class< ? extends AbstractConfigManager>> registeredConfigurations = new ArrayList<>(5);
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
-    private final Logger l = Bukkit.getLogger();
 
     private static ConfigManager instance;
     public static ConfigManager getInstance() {
@@ -132,32 +128,11 @@ public class ConfigManager implements Dumpable {
             registeredConfigurations.add(gemClass);
         }
     }
-
     @Override
     public HashMap<String, Object> dump() {
         HashMap<String, Object> dump = new HashMap<>();
         dump.put("registeredConfigurations", registeredConfigurations);
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
-    }
-
-    public void save() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
-    public void updateCooldown(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
-    }
-
-    public void saveConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
-    }
-
-    public void set(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 }
