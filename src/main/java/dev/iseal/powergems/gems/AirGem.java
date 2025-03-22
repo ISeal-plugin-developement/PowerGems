@@ -1,18 +1,28 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import java.util.List;
+
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
-import java.util.List;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class AirGem extends Gem {
 
@@ -27,27 +37,32 @@ public class AirGem extends Gem {
         caller = this.getClass();
         super.call(act, plr, item);
     }
+
     @Override
     protected void rightClick(Player plr) {
-        // 1. Compute a ray from the players eye location
-        Location eyeLoc = plr.getEyeLocation();
-        Vector dir = eyeLoc.getDirection().normalize();
         double maxDistance = 20.0 * (level / 2.0 + 1.0);
 
+        List<Entity> nearbyEntities = plr.getNearbyEntities(maxDistance, maxDistance, maxDistance);
         LivingEntity lookingAt = null;
-        double step = 0.5;
-        for (double dist = 0; dist <= maxDistance; dist += step) {
-            Location checkLoc = eyeLoc.clone().add(dir.clone().multiply(dist));
-            for (Entity e : plr.getWorld().getNearbyEntities(checkLoc, 0.5, 0.5, 0.5)) {
-                if (e instanceof LivingEntity target && !target.getUniqueId().equals(plr.getUniqueId())) {
-                    lookingAt = target;
-                    break;
-                }
+        double closestDistance = maxDistance;
+
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof LivingEntity) || entity.getUniqueId().equals(plr.getUniqueId())) {
+                continue;
             }
-            if (lookingAt != null) break;
+
+            if (!plr.hasLineOfSight(entity)) {
+                continue;
+            }
+
+            double distance = plr.getLocation().distance(entity.getLocation());
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                lookingAt = (LivingEntity) entity;
+            }
         }
 
-        // 2. If an entity is directly in the line of sight, pull it
+        // If an entity is in line of sight, pull it
         if (lookingAt != null) {
             Location targetLoc = lookingAt.getLocation();
             utils.spawnLineParticles(
@@ -67,7 +82,6 @@ public class AirGem extends Gem {
                 tPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
             }
 
-            // 3. Check for other nearby entities around the entity that was pulled
             double range = 5.0;
             List<LivingEntity> others = targetLoc.getWorld().getNearbyEntities(targetLoc, range, range, range).stream()
                     .filter(e -> e instanceof LivingEntity && !e.getUniqueId().equals(plr.getUniqueId()))
@@ -78,6 +92,7 @@ public class AirGem extends Gem {
             }
         }
     }
+
     @Override
     protected void leftClick(Player plr) {
         Location playerLocation = plr.getLocation();
