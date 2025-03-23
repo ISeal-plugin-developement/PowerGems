@@ -45,7 +45,9 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("gemCreationAttempts", 10);
         file.setDefault("gemsHaveDescriptions", true);
         file.setDefault("giveGemOnFirstLogin", true);
-        file.setDefault("giveGemPermanentEffectOnLvl3", false);
+        file.setDefault("unlockNewAbilitiesOnLevelX", 3);
+        file.setDefault("giveGemPermanentEffectOnLevelX", true);
+        file.setDefault("unlockShiftAbilityOnLevelX", false);
         file.setDefault("isWorldGuardSupportEnabled", true);
         file.setDefault("keepGemsOnDeath", true);
         file.setDefault("languageCode", "en");
@@ -56,6 +58,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("runUpdater", true);
         file.setDefault("upgradeGemOnKill", false);
         file.setDefault("useNewAllowOnlyOneGemAlgorithm", true);
+
     }
 
     @Override
@@ -162,8 +165,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
         return file.getBoolean("giveGemOnFirstLogin");
     }
 
-    public boolean giveGemPermanentEffectOnLvl3() {
-        return file.getBoolean("giveGemPermanentEffectOnLvl3");
+    public boolean giveGemPermanentEffectOnLvlX() {
+        return file.getBoolean("giveGemPermanentEffectOnLvlX");
     }
 
     public boolean isWorldGuardEnabled() {
@@ -204,5 +207,13 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public boolean useNewAllowOnlyOneGemAlgorithm() {
         return file.getBoolean("useNewAllowOnlyOneGemAlgorithm");
+    }
+
+    public boolean unlockShiftAbilityOnLevelX() {
+        return file.getBoolean("unlockShiftAbilityOnLevelX");
+    }
+
+    public int unlockNewAbilitiesOnLevelX() {
+        return file.getInt("unlockNewAbilitiesOnLevelX");
     }
 }

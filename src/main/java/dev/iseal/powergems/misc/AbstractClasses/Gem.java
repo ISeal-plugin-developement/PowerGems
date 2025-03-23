@@ -49,7 +49,9 @@ public abstract class Gem {
             plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
-        if (plr.isSneaking()) {
+        if (plr.isSneaking()
+                && gcm.unlockShiftAbilityOnLevelX()
+                && level >= gcm.unlockNewAbilitiesOnLevelX()) {
             if (checkIfCooldown("shift", plr)) {
                 return;
             }
