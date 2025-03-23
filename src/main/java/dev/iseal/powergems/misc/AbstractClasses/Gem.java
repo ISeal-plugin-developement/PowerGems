@@ -43,7 +43,6 @@ public abstract class Gem {
             gm.attemptFixGem(item);
         }
 
-        level = gm.getLevel(item);
         this.plr = plr;
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
             plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
@@ -87,7 +86,7 @@ public abstract class Gem {
 
     protected abstract void shiftClick(Player plr);
 
-    public abstract PotionEffectType getEffect();
+    public abstract PotionEffectType getDefaultEffectType();
 
     public Particle particle() {
         if (particle == null) {
@@ -98,9 +97,5 @@ public abstract class Gem {
 
     public String getName() {
         return name;
-    }
-
-    public int getLevel() {
-        return level;
     }
 }

@@ -146,7 +146,7 @@ public class SandGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FAST_DIGGING;
     }
 }

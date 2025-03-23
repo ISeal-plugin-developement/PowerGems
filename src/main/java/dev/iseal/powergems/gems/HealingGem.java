@@ -40,7 +40,7 @@ public class HealingGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.REGENERATION;
     }
 }

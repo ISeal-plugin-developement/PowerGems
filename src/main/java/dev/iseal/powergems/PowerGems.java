@@ -78,7 +78,7 @@ public class PowerGems extends JavaPlugin {
             new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
 
         if(gcm.giveGemPermanentEffectOnLvlX())
-            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 100L);
+            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 80L);
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);

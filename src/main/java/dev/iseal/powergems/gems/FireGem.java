@@ -85,7 +85,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FIRE_RESISTANCE;
     }
 }

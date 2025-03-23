@@ -71,7 +71,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SPEED;
     }
 }

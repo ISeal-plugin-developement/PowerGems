@@ -113,7 +113,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.DAMAGE_RESISTANCE;
     }
 

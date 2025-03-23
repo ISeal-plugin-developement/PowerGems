@@ -108,7 +108,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SLOW_FALLING;
     }
 }

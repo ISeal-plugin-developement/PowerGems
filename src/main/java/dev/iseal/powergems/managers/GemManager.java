@@ -338,7 +338,6 @@ public class GemManager implements Dumpable {
         if (gemCache.containsKey(plr.getUniqueId()) && gemCache.get(plr.getUniqueId()).isValid()) {
             return gemCache.get(plr.getUniqueId()).getOwnedGems();
         }
-        System.out.println("Cache miss");
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));

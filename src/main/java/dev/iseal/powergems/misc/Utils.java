@@ -230,4 +230,18 @@ public class Utils {
         player.addPotionEffect(new PotionEffect(type, duration+currentDuration, Math.max(amplifier, currentAmplifier)));
     }
 
+    public void addPreciseEffectIgnoringDuration(Player player, PotionEffectType type, int duration, int amplifier) {
+        PotionEffect currentEffect = player.getPotionEffect(type);
+
+        if (currentEffect == null) {
+            player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+            return;
+        }
+
+        int currentAmplifier = currentEffect.getAmplifier();
+
+        player.removePotionEffect(type);
+        player.addPotionEffect(new PotionEffect(type, duration, Math.max(amplifier, currentAmplifier)));
+    }
+
 }

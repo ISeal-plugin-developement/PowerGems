@@ -166,7 +166,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
 
     public boolean giveGemPermanentEffectOnLvlX() {
-        return file.getBoolean("giveGemPermanentEffectOnLvlX");
+        return file.getBoolean("giveGemPermanentEffectOnLevelX");
     }
 
     public boolean isWorldGuardEnabled() {

@@ -91,6 +91,8 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
             return possibleTabCompletions.stream()
                     .filter(str -> str.toLowerCase().contains(args[0].toLowerCase()))
                     .collect(Collectors.toList());
+        } else if (args.length == 2) {
+            return List.of("<level>");
         } else if (args.length > 2) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
