@@ -69,7 +69,7 @@ body:
   - type: input
     id: dump
     attributes:
-      label: Output of /d dump
+      label: Output of /pgdb dump
       description: in a [gist](https://gist.github.com/)
     validations:
       required: false
