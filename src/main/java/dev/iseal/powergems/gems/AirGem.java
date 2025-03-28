@@ -31,7 +31,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         Vector playerDirection = playerLocation.getDirection();
         double range = 20.0 * (level / 2.0 + 1.0);
@@ -76,7 +76,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
             Location playerLocation = plr.getLocation();
             double radius = 10.0 * (level / 2D); // Radius of effect
             double power = 2.5 + level; // Strength of the burst
@@ -94,7 +94,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         double distance = 6 * (level / 2.0);
         Location location = plr.getLocation();
         Vector direction = location.getDirection().normalize();

@@ -2,8 +2,6 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.GemManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,10 +9,8 @@ import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import java.util.ArrayList;
 
 public class WaterGem extends Gem {
 
@@ -29,7 +25,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         if (plr.getEyeLocation().getBlock().getType() != Material.WATER
                 || plr.getLocation().getBlock().getType() != Material.WATER)
             return;
@@ -39,7 +35,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Location loc = plr.getLocation();
         loc.setY(loc.getY() - 1);
         int halfRadius = level * 2;
@@ -59,7 +55,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         // Get the player's position
         Location playerPos = plr.getLocation();
         int halfRadius = 3 + level / 2;

@@ -38,7 +38,7 @@ public class SandGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         // Perform a raycast to find the target block
         Location eyeLocation = plr.getEyeLocation().clone();
         Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
@@ -66,7 +66,7 @@ public class SandGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         // Perform a raycast to find the target block
         Location eyeLocation = plr.getEyeLocation().clone();
         Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
@@ -106,7 +106,7 @@ public class SandGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         if (sm.sandMoveListen.hasToRemoveFrom(plr.getUniqueId())) {
             plr.sendMessage(I18N.getTranslation("ALREADY_HAS_TRAP_ACTIVE"));
             return;

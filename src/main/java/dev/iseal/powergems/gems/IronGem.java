@@ -4,8 +4,6 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
@@ -19,11 +17,10 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import java.util.ArrayList;
+
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -48,7 +45,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         plr.getWorld().spawnParticle(Particle.CRIT, plr.getLocation().add(0, 1, 0), 20);
         plr.setAbsorptionAmount(2 * level);
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
@@ -70,7 +67,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Vector direction = plr.getEyeLocation().getDirection();
         for (int i = 0; i < 20 + (level * 2); i++) {
             Vector coneDirection = direction.clone().rotateAroundY(i * 20);
@@ -92,7 +89,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         try {

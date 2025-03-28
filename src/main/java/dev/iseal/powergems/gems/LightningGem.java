@@ -1,8 +1,6 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -14,10 +12,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import java.util.ArrayList;
 
 public class LightningGem extends Gem {
 
@@ -32,7 +28,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
         if (possibleTarget == null) {
             plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_BLOCK"));
@@ -49,7 +45,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         plr.setVelocity(playerLocation.getDirection().multiply(5));
@@ -57,7 +53,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);

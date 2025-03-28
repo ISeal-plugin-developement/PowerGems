@@ -39,7 +39,7 @@ public class IceGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         Location l = plr.getEyeLocation();
         FallingBlock fb = l.getWorld().spawnFallingBlock(l, Material.ICE.createBlockData());
         fb.setHurtEntities(true);
@@ -50,7 +50,7 @@ public class IceGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         int distance = 15 + level * 5;
         LivingEntity ent = GlobalUtils.raycastInaccurate(plr, distance);
         if (ent == null) {
@@ -63,7 +63,7 @@ public class IceGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         Location l = plr.getLocation();
         World w = plr.getWorld();
         
