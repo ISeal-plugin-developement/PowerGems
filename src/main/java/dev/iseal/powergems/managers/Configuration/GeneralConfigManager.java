@@ -92,11 +92,17 @@ public class GeneralConfigManager extends AbstractConfigManager {
         
         file.setDefault("#giveGemOnFirstLogin", "Give a random gem to players when they first join the server");
         file.setDefault("giveGemOnFirstLogin", true);
+<<<<<<< HEAD
         
         file.setDefault("#giveGemPermanentEffectOnLvl3", "Level 3+ gems provide passive effects without activation");
         file.setDefault("giveGemPermanentEffectOnLvl3", false);
         
         file.setDefault("#isWorldGuardSupportEnabled", "Enable integration with WorldGuard");
+=======
+        file.setDefault("unlockNewAbilitiesOnLevelX", 3);
+        file.setDefault("giveGemPermanentEffectOnLevelX", true);
+        file.setDefault("unlockShiftAbilityOnLevelX", false);
+>>>>>>> 8bedf562cce08fed7e5d5f10fb00550cd5ef0461
         file.setDefault("isWorldGuardSupportEnabled", true);
         
         file.setDefault("#keepGemsOnDeath", "Players keep their gems when they die");
@@ -125,6 +131,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         
         file.setDefault("#useNewAllowOnlyOneGemAlgorithm", "Use improved detection algorithm for the 'allowOnlyOneGem' feature");
         file.setDefault("useNewAllowOnlyOneGemAlgorithm", true);
+
     }
 
     @Override
@@ -231,8 +238,8 @@ public class GeneralConfigManager extends AbstractConfigManager {
         return file.getBoolean("giveGemOnFirstLogin");
     }
 
-    public boolean giveGemPermanentEffectOnLvl3() {
-        return file.getBoolean("giveGemPermanentEffectOnLvl3");
+    public boolean giveGemPermanentEffectOnLvlX() {
+        return file.getBoolean("giveGemPermanentEffectOnLevelX");
     }
 
     public boolean isWorldGuardEnabled() {
@@ -273,5 +280,13 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public boolean useNewAllowOnlyOneGemAlgorithm() {
         return file.getBoolean("useNewAllowOnlyOneGemAlgorithm");
+    }
+
+    public boolean unlockShiftAbilityOnLevelX() {
+        return file.getBoolean("unlockShiftAbilityOnLevelX");
+    }
+
+    public int unlockNewAbilitiesOnLevelX() {
+        return file.getInt("unlockNewAbilitiesOnLevelX");
     }
 }

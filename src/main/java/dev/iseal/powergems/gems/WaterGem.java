@@ -25,7 +25,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         if (plr.getEyeLocation().getBlock().getType() != Material.WATER
                 || plr.getLocation().getBlock().getType() != Material.WATER)
             return;
@@ -35,7 +35,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Location loc = plr.getLocation();
         loc.setY(loc.getY() - 1);
         int halfRadius = level * 2;
@@ -55,7 +55,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         // Get the player's position
         Location playerPos = plr.getLocation();
         int halfRadius = 3 + level / 2;
@@ -89,7 +89,7 @@ public class WaterGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.CONDUIT_POWER;
     }
 }

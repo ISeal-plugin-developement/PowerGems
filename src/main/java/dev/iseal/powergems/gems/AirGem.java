@@ -40,11 +40,13 @@ public class AirGem extends Gem {
 
     @Override
     protected void rightClick(Player plr) {
-        double maxDistance = 20.0 * (level / 2.0 + 1.0);
+        Location playerLocation = plr.getLocation();
+        Vector playerDirection = playerLocation.getDirection();
+        double range = 20.0 * (level / 2.0 + 1.0);
+        double pullStrength = 0.1 + (level * 0.05); // Adjust based on gem level
 
-        List<Entity> nearbyEntities = plr.getNearbyEntities(maxDistance, maxDistance, maxDistance);
-        LivingEntity lookingAt = null;
-        double closestDistance = maxDistance;
+        // Start with 5 seconds and add 1 second per level
+        int pullDuration = 100 + ((level - 1) * 20);
 
         for (Entity entity : nearbyEntities) {
             if (!(entity instanceof LivingEntity) || entity.getUniqueId().equals(plr.getUniqueId())) {
@@ -95,9 +97,9 @@ public class AirGem extends Gem {
 
     @Override
     protected void leftClick(Player plr) {
-        Location playerLocation = plr.getLocation();
-        double radius = 10.0 * (level / 2D); // Radius of effect
-        double power = 2.5 + level; // Strength of the burst
+            Location playerLocation = plr.getLocation();
+            double radius = 10.0 * (level / 2D); // Radius of effect
+            double power = 2.5 + level; // Strength of the burst
 
         List<LivingEntity> nearbyEntities = plr.getWorld().getNearbyEntities(playerLocation, radius, radius, radius).stream()
                 .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
@@ -114,7 +116,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         double distance = 6 * (level / 2.0);
         Location location = plr.getLocation();
         Vector direction = location.getDirection().normalize();
@@ -128,7 +130,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SLOW_FALLING;
     }
 }

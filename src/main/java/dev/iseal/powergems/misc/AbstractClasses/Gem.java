@@ -27,7 +27,6 @@ public abstract class Gem {
     protected CooldownManager cm = sm.cooldownManager;
     protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-    protected int level;
     protected Particle particle;
     protected String name;
 
@@ -43,29 +42,31 @@ public abstract class Gem {
             gm.attemptFixGem(item);
         }
 
-        level = gm.getLevel(item);
         this.plr = plr;
+        int level = gm.getLevel(item);
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
             plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
-        if (plr.isSneaking()) {
+        if (plr.isSneaking()
+                && gcm.unlockShiftAbilityOnLevelX()
+                && level >= gcm.unlockNewAbilitiesOnLevelX()) {
             if (checkIfCooldown("shift", plr)) {
                 return;
             }
-            shiftClick(plr);
+            shiftClick(plr, level);
             cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             if (checkIfCooldown("left", plr)) {
                 return;
             }
-            leftClick(plr);
+            leftClick(plr, level);
             cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             if (checkIfCooldown("right", plr)) {
                 return;
             }
-            rightClick(plr);
+            rightClick(plr, level);
             cm.setRightClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Right"), caller);
         }
     }
@@ -79,13 +80,13 @@ public abstract class Gem {
         };
     }
 
-    protected abstract void rightClick(Player plr);
+    protected abstract void rightClick(Player plr, int level);
 
-    protected abstract void leftClick(Player plr);
+    protected abstract void leftClick(Player plr, int level);
 
-    protected abstract void shiftClick(Player plr);
+    protected abstract void shiftClick(Player plr, int level);
 
-    public abstract PotionEffectType getEffect();
+    public abstract PotionEffectType getDefaultEffectType();
 
     public Particle particle() {
         if (particle == null) {
@@ -96,9 +97,5 @@ public abstract class Gem {
 
     public String getName() {
         return name;
-    }
-
-    public int getLevel() {
-        return level;
     }
 }

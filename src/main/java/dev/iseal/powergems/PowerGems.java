@@ -36,7 +36,7 @@ public class PowerGems extends JavaPlugin {
     private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.1.0");
+        dependencies.put("SealLib", "1.1.1.3");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
@@ -45,22 +45,9 @@ public class PowerGems extends JavaPlugin {
     public void onEnable() {
         l.info("Initializing plugin");
         plugin = this;
-        for (Map.Entry<String, String> entry : dependencies.entrySet()) {
-            if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {
-                l.severe("The plugin " + entry.getKey() + " is required for this plugin to work. Please install it.");
-                l.severe("PowerGems will shut down now.");
-                errorOnDependencies = true;
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-            if (!Bukkit.getPluginManager().getPlugin(entry.getKey()).getDescription().getVersion().equals(entry.getValue())) {
-                l.severe("The plugin " + entry.getKey() + " is using the wrong version! Please install version " + entry.getValue());
-                l.severe("PowerGems will shut down now.");
-                errorOnDependencies = true;
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+
+        checkHardDependencies();
+
         sm = SingletonManager.getInstance();
         sm.init();
         if (!getDataFolder().exists())
@@ -90,8 +77,8 @@ public class PowerGems extends JavaPlugin {
         if (gcm.allowCosmeticParticleEffects())
             new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
 
-        if(gcm.giveGemPermanentEffectOnLvl3())
-            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 100L);
+        if(gcm.giveGemPermanentEffectOnLvlX())
+            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 80L);
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
@@ -133,8 +120,6 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
-        // TODO: implement this
-        //Bukkit.getServer().getPluginCommand("menu").setExecutor(new OpenMainMenuCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
@@ -231,4 +216,21 @@ public class PowerGems extends JavaPlugin {
         gemLevelDistributionData.put(playerUUID, usageInfos);
     }
      */
+
+    private void checkHardDependencies() {
+        for (Map.Entry<String, String> entry : dependencies.entrySet()) {
+            if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {
+                l.severe("The plugin " + entry.getKey() + " (version "+entry.getValue()+") is required for this plugin to work. Please install it.");
+                l.severe("PowerGems will shut down now.");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+            if (!Bukkit.getPluginManager().getPlugin(entry.getKey()).getDescription().getVersion().equals(entry.getValue())) {
+                l.severe("The plugin " + entry.getKey() + " is using the wrong version! Please install version " + entry.getValue());
+                l.severe("PowerGems will shut down now.");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
+    }
 }

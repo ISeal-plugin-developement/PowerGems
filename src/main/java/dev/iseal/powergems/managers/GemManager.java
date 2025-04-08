@@ -334,7 +334,7 @@ public class GemManager implements Dumpable {
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
         // isValid() checks if the cache is expired or if something became null - bukkit be weird fr fr
-        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isValid()) {
+        if (gemCache.containsKey(plr.getUniqueId()) && gemCache.get(plr.getUniqueId()).isValid()) {
             return gemCache.get(plr.getUniqueId()).getOwnedGems();
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);

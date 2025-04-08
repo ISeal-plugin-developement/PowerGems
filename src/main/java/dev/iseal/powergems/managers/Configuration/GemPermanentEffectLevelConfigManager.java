@@ -78,10 +78,10 @@ public class GemPermanentEffectLevelConfigManager extends AbstractConfigManager 
             case 10 -> 1;
             default -> 1;
         };
-        file.set("Gem" + GemManager.lookUpName(i) + "EffectLevel", setLevel);
+        file.setDefault(GemManager.lookUpName(i) + "GemEffectLevel", setLevel);
     }
 
-    public int getLevel(int gemID) {
-        return file.getInt("Gem" + gemID + "EffectLevel");
+    public int getLevel(String gemName) {
+        return file.getInt(gemName + "GemEffectLevel");
     }
 }

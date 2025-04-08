@@ -120,6 +120,19 @@ public class GemReflectionManager implements Dumpable {
         return true;
     }
 
+    /**
+     * Gets the instance of a gem by its name, or null if it does not exist
+     *
+     * @param gemName The name of the gem
+     * @return The instance of the gem, or null if it does not exist
+     */
+    public Gem getSingletonGemInstance(String gemName) {
+        return registeredGems.values().stream()
+                .filter( gem -> gemName.equals(gem.getName()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Particle runParticleCall(ItemStack item, Player plr) {
         if (!gm.isGem(item)) {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);

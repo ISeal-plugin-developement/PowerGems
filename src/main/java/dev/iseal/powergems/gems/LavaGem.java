@@ -33,7 +33,7 @@ public class LavaGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         int radius = 5;
         int times = (level / 2) + 1;
 
@@ -59,12 +59,12 @@ public class LavaGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 0));
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
         blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
         blaze.setCustomNameVisible(true);
@@ -73,7 +73,7 @@ public class LavaGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FIRE_RESISTANCE;
     }
 }

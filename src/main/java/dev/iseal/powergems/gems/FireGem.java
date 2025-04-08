@@ -31,7 +31,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = plr.getWorld();
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1));
@@ -47,7 +47,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = plr.getWorld();
         plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 5));
@@ -62,7 +62,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
             plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
             return;
@@ -85,7 +85,7 @@ public class FireGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FIRE_RESISTANCE;
     }
 }

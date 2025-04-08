@@ -20,6 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8bedf562cce08fed7e5d5f10fb00550cd5ef0461
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -44,7 +48,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         plr.getWorld().spawnParticle(Particle.CRIT, plr.getLocation().add(0, 1, 0), 20);
         plr.setAbsorptionAmount(2 * level);
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
@@ -66,7 +70,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Vector direction = plr.getEyeLocation().getDirection();
         for (int i = 0; i < 20 + (level * 2); i++) {
             Vector coneDirection = direction.clone().rotateAroundY(i * 20);
@@ -88,7 +92,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         try {
@@ -109,7 +113,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.DAMAGE_RESISTANCE;
     }
 

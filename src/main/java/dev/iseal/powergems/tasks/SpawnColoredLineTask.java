@@ -128,7 +128,9 @@ public class SpawnColoredLineTask extends BukkitRunnable {
             dustOptions,
             true     
         );
-        lineConsumer.accept(currentLineLocation);
+        if (lineConsumer != null) {
+            lineConsumer.accept(currentLineLocation);
+        }
     }
     
     private void spawnCircle() {

@@ -14,6 +14,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8bedf562cce08fed7e5d5f10fb00550cd5ef0461
 public class LightningGem extends Gem {
 
     public LightningGem() {
@@ -27,7 +31,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
         if (possibleTarget == null) {
             plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_BLOCK"));
@@ -44,7 +48,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         plr.setVelocity(playerLocation.getDirection().multiply(5));
@@ -52,7 +56,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
@@ -66,7 +70,7 @@ public class LightningGem extends Gem {
     }
 
     @Override
-    public PotionEffectType getEffect() {
+    public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SPEED;
     }
 }

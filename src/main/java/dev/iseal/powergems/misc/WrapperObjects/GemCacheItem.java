@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GemCacheItem {
     private final ArrayList<ItemStack> ownedGems;
@@ -26,13 +27,14 @@ public class GemCacheItem {
     }
 
     private void checkDirty() {
-        dirty = GlobalUtils.areListsEqual(
+        dirty = !GlobalUtils.areListsSimilar(
                 ownedGems.stream()
                         .filter(Objects::nonNull)
                         .filter(ItemStack::hasItemMeta)
                         .filter(item -> GemManager.getInstance().isGem(item))
                         .toList(),
-                ownedGems.stream().toList()
+                ownedGems.stream()
+                        .toList()
         );
     }
 

@@ -31,7 +31,7 @@ public class GemParticleConfigManager extends AbstractConfigManager {
     }
 
     private void createDefaultParticleSettings(int i) {
-        if (file.contains(GemManager.lookUpName(i) + "Particle")) return;
+        if (file.contains(GemManager.lookUpName(i) + "GemParticle")) return;
         if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_PARTICLE_SETTINGS");
         Particle setParticle = switch (i) {
             case 1 -> Particle.CLOUD;
@@ -46,14 +46,14 @@ public class GemParticleConfigManager extends AbstractConfigManager {
             case 10 -> Particle.DRIP_WATER;
             default -> Particle.VILLAGER_ANGRY;
         };
-        file.set("Gem" + GemManager.lookUpName(i) + "Particle", setParticle.name());
+        file.set(GemManager.lookUpName(i) + "GemParticle", setParticle.name());
     }
 
     public Particle getParticle(int gemID) {
         if (CACHE.containsKey(gemID)) return CACHE.get(gemID);
-        CACHE.put(gemID,Enums.getIfPresent(Particle.class, file.getString("Gem" + GemManager.lookUpName(gemID) + "Particle"))
+        CACHE.put(gemID,Enums.getIfPresent(Particle.class, file.getString(GemManager.lookUpName(gemID) + "GemParticle"))
                         .or(() -> {
-                            ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid particle type: " + file.getString("Gem" + GemManager.lookUpName(gemID) + "Particle")), Level.WARNING, "GET_PARTICLE", CACHE.toString());
+                            ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid particle type: " + file.getString(GemManager.lookUpName(gemID) + "GemParticle")), Level.WARNING, "GET_PARTICLE", CACHE.toString());
                             return Particle.DAMAGE_INDICATOR;
                         })
         );
