@@ -98,12 +98,10 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 lineLocations.forEach((loc) -> {
                     currentLineLocation = loc;
                     spawnLine();
-                    lineConsumer.accept(loc);
                 });
                 circleLocations.forEach((loc) -> {
                     currentCircleLocation = loc;
                     spawnCircle();
-                    circleConsumer.accept(loc);
                 });
                 currentLineLocation = oldLineLocation;
                 currentCircleLocation = oldCircleLocation;

@@ -9,6 +9,8 @@ import org.bukkit.inventory.CraftingInventory;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 
+import java.util.Arrays;
+
 public class CraftEventListener implements Listener {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
@@ -16,9 +18,9 @@ public class CraftEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         CraftingInventory inventory = event.getInventory();
-        
-        if (inventory.getMatrix() != null && 
-            java.util.Arrays.stream(inventory.getMatrix())
+
+        if (inventory.getMatrix() != null &&
+            Arrays.stream(inventory.getMatrix())
                 .filter(item -> item != null)
                 .anyMatch(gemManager::isGem)) {
             inventory.setResult(null);

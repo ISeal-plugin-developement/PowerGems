@@ -190,7 +190,7 @@ public class RecipeManager implements Listener {
                 }
 
                 if (index == -1) {
-                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!?!?");
+                    throw new IllegalArgumentException("Player has multiple gems but oldestGemCreationTime == -1 ???!?!?!?");
                 }
                 if (index == -2) {
                     //its offhand
