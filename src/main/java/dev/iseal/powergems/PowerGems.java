@@ -35,7 +35,7 @@ public class PowerGems extends JavaPlugin {
     private final Logger l = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.2.0");
+        dependencies.put("SealLib", "1.1.2.1");
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
