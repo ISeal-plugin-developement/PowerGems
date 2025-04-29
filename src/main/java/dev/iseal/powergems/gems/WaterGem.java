@@ -59,7 +59,7 @@ public class WaterGem extends Gem {
     protected void shiftClick(Player plr, int level) {
         //Disable shift click in the nether
         if(plr.getWorld().getEnvironment() == World.Environment.NETHER) {
-            plr.sendMessage(I18N.translate("CANT_USE_GEM_IN_NETHER"));
+            plr.sendMessage(I18N.translate("WATER_GEM_SHIFT_DISABLED_NETHER"));
             return;
         }
         // Get the player's position
