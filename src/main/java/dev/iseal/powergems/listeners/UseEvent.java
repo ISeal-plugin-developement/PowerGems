@@ -54,7 +54,7 @@ public class UseEvent implements Listener {
     private void handlePower(Player p, Action a, ItemStack item) {
         if (gm.getName(item).equals("Water")) {
             if (p.getWorld().getEnvironment() == World.Environment.NETHER) {
-                p.sendMessage(I18N.translate("GEM_DISABLED_IN_NETHER"));
+                p.sendMessage(I18N.translate("GEM_DISABLED"));
             }
             return;
         }
