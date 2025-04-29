@@ -2,6 +2,7 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -56,6 +57,10 @@ public class WaterGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
+        if(plr.getWorld().getEnvironment() == World.Environment.NETHER) {
+            plr.sendMessage(I18N.translate("CANT_USE_GEM_IN_NETHER"));
+            return;
+        }
         // Get the player's position
         Location playerPos = plr.getLocation();
         int halfRadius = 3 + level / 2;
