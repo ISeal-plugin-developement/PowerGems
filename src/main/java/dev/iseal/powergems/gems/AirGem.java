@@ -16,6 +16,9 @@ import org.bukkit.util.Vector;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
+
+import java.util.ArrayList;
+
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -35,7 +38,7 @@ public class AirGem extends Gem {
         Location playerLocation = plr.getLocation();
         Vector playerDirection = playerLocation.getDirection();
         double range = 20.0 * (level / 2.0 + 1.0);
-        double pullStrength = 0.1 + (level * 0.05); // Adjust based on gem level
+        double pullStrength = 0.1 + (level * 0.05);
 
         // Start with 5 seconds and add 1 second per level
         int pullDuration = 100 + ((level - 1) * 20);
@@ -108,7 +111,26 @@ public class AirGem extends Gem {
     }
 
     @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Creates a tether of wind between the player and a target player, pulling the target closer.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Creates a cloud of smoke, granting temporary invisibility and propelling the player forward.");
+        lore.add(ChatColor.WHITE
+                + "Left click: Unleashes a burst of wind, launching nearby entities into the air and dealing damage.");
+        return lore;
+    }
+
+    @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SLOW_FALLING;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
     }
 }

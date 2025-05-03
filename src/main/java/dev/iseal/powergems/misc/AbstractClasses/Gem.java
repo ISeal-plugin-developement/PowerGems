@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public abstract class Gem {
@@ -93,7 +94,11 @@ public abstract class Gem {
 
     protected abstract void shiftClick(Player plr, int level);
 
+    public abstract ArrayList<String> getDefaultLore();
+
     public abstract PotionEffectType getDefaultEffectType();
+
+    public abstract int getDefaultEffectLevel();
 
     public Particle particle() {
         if (particle == null) {

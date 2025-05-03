@@ -2,6 +2,7 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.gems.powerClasses.StrenghArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StrengthGem extends Gem {
@@ -56,5 +58,21 @@ public class StrengthGem extends Gem {
     @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.INCREASE_DAMAGE;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Saturation, Strength and Resistance (all lvl 2)");
+        lore.add(ChatColor.WHITE + "Shift click: An arena that keeps anyone from entering, useful to heal");
+        lore.add(ChatColor.WHITE + "Left click: A shockwave that sends everyone near flying and damages them");
+        return lore;
     }
 }

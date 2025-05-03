@@ -1,7 +1,9 @@
 package dev.iseal.powergems.gems;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -100,6 +102,22 @@ public class IceGem extends Gem {
         return PotionEffectType.HEAL;
     }
 
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Throw an ice block, dealing damage to whoever gets hit");
+        lore.add(ChatColor.WHITE + "Shift click: Spawns snow golems to fight for you");
+        lore.add(ChatColor.WHITE + "Left click: Freezes the player you aim giving him slowness");
+        return lore;
+    }
+
     private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
         return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
             .filter(entity -> entity instanceof Player)  // Filter for players
@@ -111,3 +129,4 @@ public class IceGem extends Gem {
             .orElse(null);
     }
 }
+

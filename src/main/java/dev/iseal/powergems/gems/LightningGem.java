@@ -2,6 +2,7 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -14,6 +15,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
 
 public class LightningGem extends Gem {
 
@@ -69,5 +72,23 @@ public class LightningGem extends Gem {
     @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SPEED;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Strikes lightning at the target location and nearby entities, damaging them.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Emits a thunder sound effect and applies a glowing potion effect to nearby entities, excluding the player.");
+        lore.add(ChatColor.WHITE + "Left click: Launches the player forward in the direction rail.");
+        return lore;
     }
 }

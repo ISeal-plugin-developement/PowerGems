@@ -1,9 +1,11 @@
 package dev.iseal.powergems.gems;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -149,4 +151,23 @@ public class SandGem extends Gem {
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FAST_DIGGING;
     }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Weakens the target player, reducing their strength temporarily.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Engulfs the target player in darkness, impairing their vision and movement.");
+        lore.add(ChatColor.WHITE + "Left click: Creates a sand block temporarily that slows enemies passing on it.");
+        return lore;
+    }
 }
+

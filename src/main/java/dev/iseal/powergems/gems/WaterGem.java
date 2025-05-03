@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+
 public class WaterGem extends Gem {
 
     public WaterGem() {
@@ -89,7 +91,25 @@ public class WaterGem extends Gem {
     }
 
     @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Propel yourself forward in water, creating bubbles.");
+        lore.add(ChatColor.WHITE + "Shift click: Create a temporary water cube around you, granting Dolphin's Grace.");
+        lore.add(ChatColor.WHITE + "Left click: Moisturize farmland blocks around you.");
+        lore.add(ChatColor.BLUE + "Passive: Power up yourself with water");
+        return lore;
+    }
+
+    @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.CONDUIT_POWER;
     }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
 }
+

@@ -1,6 +1,7 @@
 package dev.iseal.powergems.managers.Configuration;
 
 import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
@@ -25,22 +26,12 @@ public class GemPermanentEffectLevelConfigManager extends AbstractConfigManager 
     }
 
     private void createDefaultLevelSettings(int i) {
-        if (file.contains(GemManager.lookUpName(i) + "EffectLevel")) return;
+        if (file.contains(GemManager.lookUpName(i) + "GemEffectLevel")) return;
         if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_LEVEL_SETTINGS");
-        int setLevel = switch (i) {
-            case 1 -> 1;
-            case 2 -> 1;
-            case 3 -> 1;
-            case 4 -> 1;
-            case 5 -> 1;
-            case 6 -> 1;
-            case 7 -> 1;
-            case 8 -> 1;
-            case 9 -> 1;
-            case 10 -> 1;
-            default -> 1;
-        };
-        file.setDefault(GemManager.lookUpName(i) + "GemEffectLevel", setLevel);
+        file.setDefault(
+                GemManager.lookUpName(i) + "GemEffectLevel",
+                GemReflectionManager.getInstance().getSingletonGemInstance(GemManager.lookUpName(i)).getDefaultEffectLevel()
+        );
     }
 
     public int getLevel(String gemName) {

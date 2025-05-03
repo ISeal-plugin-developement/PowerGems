@@ -242,7 +242,7 @@ public class GemManager implements Dumpable {
         ArrayList<String> lore = new ArrayList<>();
         meta.setLore(lore);
         lore.addAll(glcm.getLore(gemNumber));
-        // add level as first line of lore
+        // replace %level% with the actual level
         lore.forEach(line -> {
             if (line.contains("%level%"))
                 lore.set(lore.indexOf(line), line.replace("%level%", gemLevel + ""));
