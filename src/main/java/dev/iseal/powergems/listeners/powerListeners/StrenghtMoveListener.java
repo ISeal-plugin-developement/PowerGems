@@ -14,7 +14,7 @@ public class StrenghtMoveListener implements Listener {
     private LinkedList<Location> startingLocations = new LinkedList<>();
 
     @EventHandler
-    private void onPlayerMove(PlayerMoveEvent event) {
+    private void onPlayerMove(PlayerMoveEvent event) { //NOPMD - This is a listener.
         for (Location startingLocation : startingLocations) {
             Player player = event.getPlayer();
             Location from = event.getFrom();

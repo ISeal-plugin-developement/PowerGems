@@ -1,12 +1,10 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
 import dev.iseal.powergems.PowerGems;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 public class AirGemPull extends BukkitRunnable{

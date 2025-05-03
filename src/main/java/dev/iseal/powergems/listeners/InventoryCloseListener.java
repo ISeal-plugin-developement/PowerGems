@@ -64,7 +64,7 @@ public class InventoryCloseListener implements Listener {
         }
     }
 
-    @Deprecated(since = "3.3.1.0", forRemoval = true)
+    @Deprecated(since = "3.3.1.0", forRemoval = true) //NOPMD - It's a version not an IP
     private void checkIfMultipleGems(Player plr) {
         if (!PowerGems.config.getBoolean("allowOnlyOneGem")) {
             return;

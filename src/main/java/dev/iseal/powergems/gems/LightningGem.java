@@ -61,10 +61,8 @@ public class LightningGem extends Gem {
         World world = playerLocation.getWorld();
         world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
         for (Entity e : world.getNearbyEntities(playerLocation, 5, 5, 5)) {
-            if (e instanceof LivingEntity) {
-                if (e != plr) {
-                    ((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1200, 0));
-                }
+            if (e instanceof LivingEntity && e != plr) {
+                ((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1200, 0));
             }
         }
     }

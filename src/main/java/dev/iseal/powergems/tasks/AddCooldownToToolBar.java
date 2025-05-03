@@ -32,7 +32,7 @@ public class AddCooldownToToolBar extends BukkitRunnable {
                     new TextComponent(cm.getFormattedTimer(plr, clazz, "left") + ChatColor.GREEN + " | "
                             + cm.getFormattedTimer(plr, clazz, "right") + ChatColor.GREEN +
                             // only show shift ability cooldown if it is unlocked
-                            ((!unlockShiftAbilityOnLevelX || level >= unlockNewAbilitiesOnLevelX) ? " | " + cm.getFormattedTimer(plr, clazz, "shift") : "")
+                            (!unlockShiftAbilityOnLevelX || level >= unlockNewAbilitiesOnLevelX ? " | " + cm.getFormattedTimer(plr, clazz, "shift") : "")
                     )
             );
         }

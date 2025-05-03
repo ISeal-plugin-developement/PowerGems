@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Interfaces.Dumpable;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -88,9 +87,9 @@ public class GemManager implements Dumpable {
         gemPowerKey = nkm.getKey("gem_power");
         gemLevelKey = nkm.getKey("gem_level");
         gemCreationTimeKey = nkm.getKey("gem_creation_time");
-        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach((o -> {
+        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach(o -> {
             if (o instanceof ChatColor) possibleColors.add((ChatColor) o);
-        }));
+        });
         gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
         agcm = cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
         gmcm = cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
@@ -419,7 +418,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getName(gem1).equals((gem2));
+        boolean powerEqual = getName(gem1).equals(gem2);
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }

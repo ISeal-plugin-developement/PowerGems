@@ -4,11 +4,8 @@ import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class GemLoreConfigManager extends AbstractConfigManager {
 

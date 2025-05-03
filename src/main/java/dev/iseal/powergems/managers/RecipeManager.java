@@ -184,7 +184,8 @@ public class RecipeManager implements Listener {
                     gemsFound++;
                 }
 
-                if (gemsFound > 2) {
+                if (gemsFound > 2) { // NOPMD - This is not implemented yet.
+                    throw new UnsupportedOperationException("Player has more than 2 gems in inventory and offhand, but allowOnlyOneGem is set to true. This should not happen, so the case has not been implemented yet.");
                     // how do i deal with this
                     //TODO: implement a way to allow only 1 actual gem. hard to trigger unless server changed config recently.
                 }

@@ -47,7 +47,7 @@ public class IceGem extends Gem {
         fb.setHurtEntities(true);
         fb.setDamagePerBlock(level);
         fb.setVelocity(plr.getLocation().getDirection());
-        fb.getVelocity().multiply((level * 5) + 1);
+        fb.getVelocity().multiply(level * 5 + 1);
         fbhl.addEntityUUID(fb.getUniqueId());
     }
 

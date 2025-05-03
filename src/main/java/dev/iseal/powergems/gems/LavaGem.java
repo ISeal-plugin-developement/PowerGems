@@ -36,7 +36,7 @@ public class LavaGem extends Gem {
     @Override
     protected void rightClick(Player plr, int level) {
         int radius = 5;
-        int times = (level / 2) + 1;
+        int times = level / 2 + 1;
 
         while (times != 0) {
             ArrayList<Block> blocks = u.getSquareOutlineAirBlocks(plr, radius);
@@ -46,14 +46,10 @@ public class LavaGem extends Gem {
             });
 
             // Set the blocks to air
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    blocks.forEach(nullBlock -> {
-                        nullBlock.setType(Material.AIR);
-                    });
-                }
-            }, 600 + (times * 20));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () ->
+                    blocks.forEach(nullBlock ->
+                            nullBlock.setType(Material.AIR)
+                    ), 600 + (times * 20L));
             times--;
             radius = radius + 3;
         }
