@@ -3,5 +3,3 @@ This project is licensed under the Creative Commons Attribution-ShareAlike 4.0 (
 Master = dev branch, unstable.
 
 Stable = latest release
-
-this is a test.
