@@ -45,7 +45,12 @@ public class PowerGems extends JavaPlugin {
         l.info("Initializing plugin");
         plugin = this;
 
-        checkHardDependencies();
+        if (System.getenv().containsKey("POWERGEMS_DISABLE_DEPENDENCY_CHECK") && System.getenv("POWERGEMS_DISABLE_DEPENDENCY_CHECK").equalsIgnoreCase("true")) {
+            l.warning("Ignoring SealLib dependency due to environment variable.");
+            return;
+        } else {
+            checkHardDependencies();
+        }
 
         sm = SingletonManager.getInstance();
         sm.init();
