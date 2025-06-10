@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.managers.ConfigManager;
-import dev.iseal.sealLib.Interfaces.Dumpable;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
 
 public abstract class AbstractConfigManager implements Dumpable {
 

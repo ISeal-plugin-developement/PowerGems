@@ -110,7 +110,7 @@ public class SandGem extends Gem {
     @Override
     protected void shiftClick(Player plr, int level) {
         if (sm.sandMoveListen.hasToRemoveFrom(plr.getUniqueId())) {
-            plr.sendMessage(I18N.getTranslation("ALREADY_HAS_TRAP_ACTIVE"));
+            plr.sendMessage(I18N.translate("ALREADY_HAS_TRAP_ACTIVE"));
             return;
         }
 

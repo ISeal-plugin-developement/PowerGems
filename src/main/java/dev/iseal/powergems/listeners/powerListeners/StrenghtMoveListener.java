@@ -31,7 +31,7 @@ public class StrenghtMoveListener implements Listener {
                 } else {
                     event.setCancelled(true);
                     player.teleport(from);
-                    player.sendMessage(I18N.getTranslation("CANNOT_ENTER_ARENA"));
+                    player.sendMessage(I18N.translate("CANNOT_ENTER_ARENA"));
                     return;
                 }
             }

@@ -2,9 +2,9 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.sealLib.Interfaces.Dumpable;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import dev.iseal.sealLib.Utils.GlobalUtils;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

@@ -46,7 +46,7 @@ public abstract class Gem {
         this.plr = plr;
         int level = gm.getLevel(item);
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
-            plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
+            plr.sendMessage(I18N.translate("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
         // check if sneaking, or else pass to other checks
