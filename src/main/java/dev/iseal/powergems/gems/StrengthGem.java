@@ -57,7 +57,7 @@ public class StrengthGem extends Gem {
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.INCREASE_DAMAGE;
+        return PotionEffectType.FAST_DIGGING;
     }
 
     @Override
