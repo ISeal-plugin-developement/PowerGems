@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 import dev.iseal.powergems.managers.GemManager;
@@ -19,11 +20,13 @@ public class InventoryMoveEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryMove(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) {   
+        if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        
-        Player player = (Player) event.getWhoClicked();
+        if(event.getInventory().getType() == InventoryType.WORKBENCH) {
+            return; //Exempt the crafting table so players can craft gems
+        }
+
         ItemStack clickedItem = event.getCurrentItem();
 
         if(player.getGameMode() == GameMode.CREATIVE || player.hasPermission("powergems.*")) {

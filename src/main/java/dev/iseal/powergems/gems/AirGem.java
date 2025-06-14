@@ -72,7 +72,7 @@ public class AirGem extends Gem {
                         targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
                         targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
 
-                        // Send message about being trapped in air pull
+                        // Send a message about being trapped in air pull
                         targetPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
                     }
                 });
