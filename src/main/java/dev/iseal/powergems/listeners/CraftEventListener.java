@@ -10,6 +10,7 @@ import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class CraftEventListener implements Listener {
 
@@ -21,7 +22,7 @@ public class CraftEventListener implements Listener {
 
         if (inventory.getMatrix() != null &&
             Arrays.stream(inventory.getMatrix())
-                .filter(item -> item != null)
+                .filter(Objects::nonNull)
                 .anyMatch(gemManager::isGem)) {
             inventory.setResult(null);
         }

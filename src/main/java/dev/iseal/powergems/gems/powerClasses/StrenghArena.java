@@ -29,13 +29,13 @@ public class StrenghArena implements Listener {
 
     public void start() {
         Vector center = StartingLocation.toVector();
-        sm.strenghtMoveListen.addStartingLocation(StartingLocation);
+        sm.strengthMoveListen.addStartingLocation(StartingLocation);
         new BukkitRunnable() {
             int currentTime = 0;
 
             public void run() {
                 if (currentTime >= 20) {
-                    sm.strenghtMoveListen.removeStartingLocation(StartingLocation);
+                    sm.strengthMoveListen.removeStartingLocation(StartingLocation);
                     cancel();
                     return;
                 }
