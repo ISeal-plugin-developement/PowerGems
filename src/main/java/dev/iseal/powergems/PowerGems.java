@@ -8,6 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -20,7 +23,6 @@ import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.tasks.*;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
@@ -37,7 +39,7 @@ public class PowerGems extends JavaPlugin {
     {
         dependencies.put("SealLib", "1.1.2.1"); //NOPMD - This is not an IP.
     }
-    
+
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
 
     @Override
