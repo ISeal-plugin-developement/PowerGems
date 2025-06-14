@@ -3,6 +3,7 @@ package dev.iseal.powergems.gems;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,7 +26,6 @@ import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.GlobalUtils;
 
 public class IceGem extends Gem {
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
@@ -54,9 +54,9 @@ public class IceGem extends Gem {
     @Override
     protected void leftClick(Player plr, int level) {
         int distance = 15 + level * 5;
-        LivingEntity ent = GlobalUtils.raycastInaccurate(plr, distance);
+        LivingEntity ent = SpigotGlobalUtils.raycastInaccurate(plr, distance);
         if (ent == null) {
-            plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_PLAYER"));
+            plr.sendMessage(I18N.translate("MUST_LOOK_AT_PLAYER"));
             return;
         }
 
@@ -77,7 +77,7 @@ public class IceGem extends Gem {
             Snowman golem = (Snowman) w.spawnEntity(l, EntityType.SNOWMAN);
             
             // Configure snowman properties
-            golem.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            golem.setCustomName(I18N.translate("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
             golem.setCustomNameVisible(true);
             golem.setHealth(Math.min(i + 2, 4.0));
             golem.setDerp(true);  // More accurate throwing

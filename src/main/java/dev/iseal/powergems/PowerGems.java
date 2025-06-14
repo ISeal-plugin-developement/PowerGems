@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +24,6 @@ import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.tasks.*;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
@@ -45,7 +45,11 @@ public class PowerGems extends JavaPlugin {
         l.info("Initializing plugin");
         plugin = this;
 
-        checkHardDependencies();
+        if (System.getenv().containsKey("POWERGEMS_DISABLE_DEPENDENCY_CHECK") && System.getenv("POWERGEMS_DISABLE_DEPENDENCY_CHECK").equalsIgnoreCase("true")) {
+            l.warning("Ignoring SealLib dependency due to environment variable.");
+        } else {
+            checkHardDependencies();
+        }
 
         sm = SingletonManager.getInstance();
         sm.init();

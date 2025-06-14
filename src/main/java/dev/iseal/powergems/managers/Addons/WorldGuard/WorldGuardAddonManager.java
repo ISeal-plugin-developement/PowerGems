@@ -11,7 +11,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

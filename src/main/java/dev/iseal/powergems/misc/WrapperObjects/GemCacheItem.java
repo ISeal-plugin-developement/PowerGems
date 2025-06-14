@@ -2,7 +2,7 @@ package dev.iseal.powergems.misc.WrapperObjects;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.Utils.GlobalUtils;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

@@ -26,7 +26,7 @@ public class KillEventListener implements Listener {
         this.gemManager = sm.gemManager;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerKill(PlayerDeathEvent event) {
         Player killer = event.getEntity().getKiller();
         if (killer == null) return;

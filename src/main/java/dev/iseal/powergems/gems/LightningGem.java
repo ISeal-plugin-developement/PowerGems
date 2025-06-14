@@ -34,7 +34,7 @@ public class LightningGem extends Gem {
     protected void rightClick(Player plr, int level) {
         Block possibleTarget = plr.getTargetBlock(null, 90);
         if (possibleTarget == null) {
-            plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_BLOCK"));
+            plr.sendMessage(I18N.translate("MUST_LOOK_AT_BLOCK"));
             return;
         }
         Location targetLocation = possibleTarget.getLocation();

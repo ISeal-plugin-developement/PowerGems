@@ -4,7 +4,7 @@ import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

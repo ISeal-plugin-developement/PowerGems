@@ -38,7 +38,7 @@ public class FireballPowerDecay extends BukkitRunnable {
         if (currentPower <= 0) {
             tdm.chargingFireball.remove(plr);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(I18N.getTranslation("FIREBALL_FAIL_LAUNCH"))
+                new TextComponent(I18N.translate("FIREBALL_FAIL_LAUNCH"))
             );
             this.cancel();
             return;
@@ -48,7 +48,7 @@ public class FireballPowerDecay extends BukkitRunnable {
             spawnFireball();
             tdm.chargingFireball.remove(plr);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(I18N.getTranslation("FIREBALL_LAUNCHED"))
+                new TextComponent(I18N.translate("FIREBALL_LAUNCHED"))
             );
             this.cancel();
             return;
