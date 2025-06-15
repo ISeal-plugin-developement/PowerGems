@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 public class StrenghtMoveListener implements Listener {
     private final double radius = 5.0;
-    private LinkedList<Location> startingLocations = new LinkedList<>();
+    private final LinkedList<Location> startingLocations = new LinkedList<>();
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) { //NOPMD - This is a listener.
@@ -45,8 +45,6 @@ public class StrenghtMoveListener implements Listener {
     }
 
     public void removeStartingLocation(Location l) {
-        if (startingLocations.contains(l)) {
-            startingLocations.remove(l);
-        }
+        startingLocations.remove(l);
     }
 }

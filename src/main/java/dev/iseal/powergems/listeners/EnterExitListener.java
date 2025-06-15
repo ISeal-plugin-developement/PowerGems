@@ -47,9 +47,7 @@ public class EnterExitListener implements Listener {
     }
 
     private void addDelay(Player plr) {
-        if (tdm.cantUseGems.containsKey(plr)) {
-            tdm.cantUseGems.remove(plr);
-        }
+        tdm.cantUseGems.remove(plr);
         // add delay
         tdm.cantUseGems.put(plr, System.currentTimeMillis() + delay);
         LinkedList<ItemStack> gems = new LinkedList<>();
