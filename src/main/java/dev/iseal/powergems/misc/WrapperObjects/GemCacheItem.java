@@ -2,12 +2,11 @@ package dev.iseal.powergems.misc.WrapperObjects;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.Utils.GlobalUtils;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class GemCacheItem {
     private final ArrayList<ItemStack> ownedGems;

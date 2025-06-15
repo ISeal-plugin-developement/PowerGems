@@ -1,13 +1,11 @@
 package dev.iseal.powergems.managers.Configuration;
 
 import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class GemLoreConfigManager extends AbstractConfigManager {
 
@@ -34,6 +32,11 @@ public class GemLoreConfigManager extends AbstractConfigManager {
     public void createDefaultLore(String gemName) {
         if (file.contains("Gem" + gemName + "Lore"))
             return;
+        file.set(
+                "Gem"+gemName+"Lore",
+                GemReflectionManager.getInstance().getSingletonGemInstance(gemName).getDefaultLore()
+        );
+        /*
         ArrayList<String> lore = new ArrayList<>();
         lore.add(ChatColor.GREEN + "Level %level%");
         lore.add(ChatColor.GREEN + "Abilities");
@@ -107,6 +110,8 @@ public class GemLoreConfigManager extends AbstractConfigManager {
             break;
         }
         file.set("Gem" + gemName + "Lore", lore);
+         */
+
     }
 
     public ArrayList<String> getLore(int gemNumber) {

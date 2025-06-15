@@ -1,11 +1,14 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
 
 public class HealingGem extends Gem {
 
@@ -21,7 +24,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, level - 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 9));
     }
 
     @Override
@@ -38,5 +41,21 @@ public class HealingGem extends Gem {
     @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.REGENERATION;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Parry");
+        lore.add(ChatColor.WHITE + "Shift click: Instant heal");
+        lore.add(ChatColor.WHITE + "Left click: 1 minute of regeneration 2");
+        return lore;
     }
 }

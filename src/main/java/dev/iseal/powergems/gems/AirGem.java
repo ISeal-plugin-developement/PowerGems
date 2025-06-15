@@ -22,8 +22,7 @@ import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-
+import dev.iseal.powergems.misc.Utils;
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -43,56 +42,44 @@ public class AirGem extends Gem {
         Location playerLocation = plr.getLocation();
         Vector playerDirection = playerLocation.getDirection();
         double range = 20.0 * (level / 2.0 + 1.0);
-        double pullStrength = 0.1 + (level * 0.05); // Adjust based on gem level
+        double pullStrength = 0.1 + (level * 0.05);
 
         // Start with 5 seconds and add 1 second per level
         int pullDuration = 100 + ((level - 1) * 20);
 
-        for (Entity entity : nearbyEntities) {
-            if (!(entity instanceof LivingEntity) || entity.getUniqueId().equals(plr.getUniqueId())) {
-                continue;
-            }
+        plr.getWorld().getNearbyEntities(playerLocation, range, range, range).stream()
+                .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
+                .filter(entity -> {
+                    // Check if entity is in front of player
+                    Vector directionToEntity = entity.getLocation().toVector().subtract(playerLocation.toVector());
+                    double dot = directionToEntity.normalize().dot(playerDirection);
+                    return dot > 0.5; // ~60 degree cone
+                })
+                .forEach(entity -> {
+                    // Create particle beam from player to entity
+                    utils.spawnLineParticles(
+                            plr.getEyeLocation(),
+                            entity.getLocation(),
+                            200, 200, 255, // Light blue
+                            0.3D,
+                            null,
+                            2
+                    );
 
-            if (!plr.hasLineOfSight(entity)) {
-                continue;
-            }
+                    // Create puller with duration parameter
+                    AirGemPull puller = new AirGemPull(entity, plr, pullStrength, pullDuration);
+                    puller.start();
 
-            double distance = plr.getLocation().distance(entity.getLocation());
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                lookingAt = (LivingEntity) entity;
-            }
-        }
+                    // Apply additional effects to players
+                    if (entity instanceof Player targetPlayer) {
+                        targetPlayer.damage(2.0 + level, plr);
+                        targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
+                        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
 
-        // If an entity is in line of sight, pull it
-        if (lookingAt != null) {
-            Location targetLoc = lookingAt.getLocation();
-            utils.spawnLineParticles(
-                    plr.getEyeLocation(),
-                    targetLoc,
-                    200, 200, 255,
-                    0.3D,
-                    null,
-                    2
-            );
-            AirGemPull puller = new AirGemPull(lookingAt, plr, 0.1 + (level * 0.05), 100 + ((level - 1) * 20), level);
-            puller.start();
-            if (lookingAt instanceof Player tPlayer) {
-                tPlayer.damage(2.0 + level, plr);
-                tPlayer.playSound(tPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
-                tPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100 + ((level - 1) * 20), 1));
-                tPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
-            }
-
-            double range = 5.0;
-            List<LivingEntity> others = targetLoc.getWorld().getNearbyEntities(targetLoc, range, range, range).stream()
-                    .filter(e -> e instanceof LivingEntity && !e.getUniqueId().equals(plr.getUniqueId()))
-                    .map(e -> (LivingEntity) e)
-                    .toList();
-            for (LivingEntity ent : others) {
-                ent.sendMessage(I18N.translate("NEAR_PULL_EFFECT"));
-            }
-        }
+                        // Send message about being trapped in air pull
+                        targetPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
+                    }
+                });
     }
 
     @Override
@@ -130,7 +117,26 @@ public class AirGem extends Gem {
     }
 
     @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Creates a tether of wind between the player and a target player, pulling the target closer.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Creates a cloud of smoke, granting temporary invisibility and propelling the player forward.");
+        lore.add(ChatColor.WHITE
+                + "Left click: Unleashes a burst of wind, launching nearby entities into the air and dealing damage.");
+        return lore;
+    }
+
+    @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.SLOW_FALLING;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
     }
 }

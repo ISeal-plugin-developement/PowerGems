@@ -1,7 +1,10 @@
 package dev.iseal.powergems.gems;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
+import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -23,7 +26,6 @@ import dev.iseal.powergems.listeners.AvoidTargetListener;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.GlobalUtils;
 
 public class IceGem extends Gem {
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
@@ -45,16 +47,16 @@ public class IceGem extends Gem {
         fb.setHurtEntities(true);
         fb.setDamagePerBlock(level);
         fb.setVelocity(plr.getLocation().getDirection());
-        fb.getVelocity().multiply((level * 5) + 1);
+        fb.getVelocity().multiply(level * 5 + 1);
         fbhl.addEntityUUID(fb.getUniqueId());
     }
 
     @Override
     protected void leftClick(Player plr, int level) {
         int distance = 15 + level * 5;
-        LivingEntity ent = GlobalUtils.raycastInaccurate(plr, distance);
+        LivingEntity ent = SpigotGlobalUtils.raycastInaccurate(plr, distance);
         if (ent == null) {
-            plr.sendMessage(I18N.getTranslation("MUST_LOOK_AT_PLAYER"));
+            plr.sendMessage(I18N.translate("MUST_LOOK_AT_PLAYER"));
             return;
         }
 
@@ -75,7 +77,7 @@ public class IceGem extends Gem {
             Snowman golem = (Snowman) w.spawnEntity(l, EntityType.SNOWMAN);
             
             // Configure snowman properties
-            golem.setCustomName(I18N.getTranslation("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            golem.setCustomName(I18N.translate("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
             golem.setCustomNameVisible(true);
             golem.setHealth(Math.min(i + 2, 4.0));
             golem.setDerp(true);  // More accurate throwing
@@ -100,6 +102,22 @@ public class IceGem extends Gem {
         return PotionEffectType.HEAL;
     }
 
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Throw an ice block, dealing damage to whoever gets hit");
+        lore.add(ChatColor.WHITE + "Shift click: Spawns snow golems to fight for you");
+        lore.add(ChatColor.WHITE + "Left click: Freezes the player you aim giving him slowness");
+        return lore;
+    }
+
     private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
         return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
             .filter(entity -> entity instanceof Player)  // Filter for players
@@ -111,3 +129,4 @@ public class IceGem extends Gem {
             .orElse(null);
     }
 }
+

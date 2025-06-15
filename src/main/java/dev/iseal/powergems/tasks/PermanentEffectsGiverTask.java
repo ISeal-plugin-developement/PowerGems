@@ -7,9 +7,7 @@ import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
-import dev.iseal.sealLib.Utils.GlobalUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PermanentEffectsGiverTask extends BukkitRunnable {

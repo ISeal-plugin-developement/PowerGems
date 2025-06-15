@@ -1,13 +1,10 @@
 package dev.iseal.powergems.managers.Configuration;
 
-import com.google.common.base.Enums;
-import dev.iseal.powergems.managers.ConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.bukkit.Particle;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;

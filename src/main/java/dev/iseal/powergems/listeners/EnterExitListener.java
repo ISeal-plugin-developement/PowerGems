@@ -51,7 +51,7 @@ public class EnterExitListener implements Listener {
             tdm.cantUseGems.remove(plr);
         }
         // add delay
-        tdm.cantUseGems.put(plr, (System.currentTimeMillis() + delay));
+        tdm.cantUseGems.put(plr, System.currentTimeMillis() + delay);
         LinkedList<ItemStack> gems = new LinkedList<>();
         for (ItemStack i : plr.getInventory().getContents()) {
             if (gm.isGem(i)) {

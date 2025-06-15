@@ -4,7 +4,7 @@ import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -184,13 +184,14 @@ public class RecipeManager implements Listener {
                     gemsFound++;
                 }
 
-                if (gemsFound > 2) {
+                if (gemsFound > 2) { // NOPMD - This is not implemented yet.
+                    throw new UnsupportedOperationException("Player has more than 2 gems in inventory and offhand, but allowOnlyOneGem is set to true. This should not happen, so the case has not been implemented yet.");
                     // how do i deal with this
                     //TODO: implement a way to allow only 1 actual gem. hard to trigger unless server changed config recently.
                 }
 
                 if (index == -1) {
-                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!?!?");
+                    throw new IllegalArgumentException("Player has multiple gems but oldestGemCreationTime == -1 ???!?!?!?");
                 }
                 if (index == -2) {
                     //its offhand

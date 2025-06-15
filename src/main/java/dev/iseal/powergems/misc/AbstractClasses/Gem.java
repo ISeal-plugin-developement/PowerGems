@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public abstract class Gem {
@@ -45,17 +46,24 @@ public abstract class Gem {
         this.plr = plr;
         int level = gm.getLevel(item);
         if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
-            plr.sendMessage(I18N.getTranslation("CANNOT_USE_GEMS_IN_REGION"));
+            plr.sendMessage(I18N.translate("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
-        if (plr.isSneaking()
-                && gcm.unlockShiftAbilityOnLevelX()
-                && level >= gcm.unlockNewAbilitiesOnLevelX()) {
-            if (checkIfCooldown("shift", plr)) {
+        // check if sneaking, or else pass to other checks
+        if (plr.isSneaking()) {
+            // if sneaking, check if shift ability needs to unlock
+            if (
+                    gcm.unlockShiftAbilityOnLevelX()
+                    && level < gcm.unlockNewAbilitiesOnLevelX()) {
                 return;
             }
-            shiftClick(plr, level);
-            cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
+            // if shift ability is unlocked or not needed, check if shift ability is on cooldown
+                if (checkIfCooldown("shift", plr)) {
+                    return;
+                }
+                // finally, call the shift ability
+                shiftClick(plr, level);
+                cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             if (checkIfCooldown("left", plr)) {
                 return;
@@ -86,7 +94,11 @@ public abstract class Gem {
 
     protected abstract void shiftClick(Player plr, int level);
 
+    public abstract ArrayList<String> getDefaultLore();
+
     public abstract PotionEffectType getDefaultEffectType();
+
+    public abstract int getDefaultEffectLevel();
 
     public Particle particle() {
         if (particle == null) {

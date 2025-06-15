@@ -3,8 +3,8 @@ package dev.iseal.powergems.managers;
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
-import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,26 +38,26 @@ public class CooldownManager implements Dumpable {
 
     public void setRightClickCooldown(Player player, long time, Class<?> fromClass) {
         if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
-            rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+            rightClickCooldowns.add(new CooldownObject(player, fromClass, time * 500 + System.currentTimeMillis()));
             return;
         }
-        rightClickCooldowns.add(new CooldownObject(player, fromClass, (time * 1000) + System.currentTimeMillis()));
+        rightClickCooldowns.add(new CooldownObject(player, fromClass, time * 1000 + System.currentTimeMillis()));
     }
 
     public void setLeftClickCooldown(Player player, long time, Class<?> fromClass) {
         if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
-            leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 500) + System.currentTimeMillis()));
+            leftClickCooldowns.add(new CooldownObject(player, fromClass, time * 500 + System.currentTimeMillis()));
             return;
         }
-        leftClickCooldowns.add(new CooldownObject(player, fromClass, (time * 1000) + System.currentTimeMillis()));
+        leftClickCooldowns.add(new CooldownObject(player, fromClass, time * 1000 + System.currentTimeMillis()));
     }
 
     public void setShiftClickCooldown(Player player, long time, Class<?> caller) {
         if (gcm.isDragonEggHalfCooldown() && player.getInventory().contains(Material.DRAGON_EGG)) {
-            shiftClickCooldowns.add(new CooldownObject(player, caller, (time * 500) + System.currentTimeMillis()));
+            shiftClickCooldowns.add(new CooldownObject(player, caller, time * 500 + System.currentTimeMillis()));
             return;
         }
-        shiftClickCooldowns.add(new CooldownObject(player, caller, (time * 1000) + System.currentTimeMillis()));
+        shiftClickCooldowns.add(new CooldownObject(player, caller, time * 1000 + System.currentTimeMillis()));
     }
 
     public boolean isRightClickOnCooldown(Player player, Class<?> fromClass) {
@@ -74,14 +74,14 @@ public class CooldownManager implements Dumpable {
 
     public long getRightClickCooldown(Player player, Class<?> fromClass) {
         for (CooldownObject co : rightClickCooldowns) {
-            if (co.getPlayer() == player) {
-                if (co.getFromClass() == fromClass) {
-                    if (co.getTime() < System.currentTimeMillis()) {
-                        leftClickCooldowns.remove(co);
-                        continue;
-                    }
-                    return co.getTime();
+            if (co.getPlayer() == player &&
+                    co.getFromClass() == fromClass
+            ) {
+                if (co.getTime() < System.currentTimeMillis()) {
+                    leftClickCooldowns.remove(co);
+                    continue;
                 }
+                return co.getTime();
             }
         }
         return 0;
@@ -89,29 +89,29 @@ public class CooldownManager implements Dumpable {
 
     public long getLeftClickCooldown(Player player, Class<?> fromClass) {
         for (CooldownObject co : leftClickCooldowns) {
-            if (co.getPlayer() == player) {
-                if (co.getFromClass() == fromClass) {
+            if (co.getPlayer() == player &&
+                    co.getFromClass() == fromClass
+            ) {
                     if (co.getTime() < System.currentTimeMillis()) {
                         leftClickCooldowns.remove(co);
                         continue;
                     }
                     return co.getTime();
                 }
-            }
         }
         return 0;
     }
 
     public long getShiftClickCooldown(Player plr, Class<?> caller) {
         for (CooldownObject co : shiftClickCooldowns) {
-            if (co.getPlayer() == plr) {
-                if (co.getFromClass() == caller) {
+            if (co.getPlayer() == plr &&
+                    co.getFromClass() == caller
+            ) {
                     if (co.getTime() < System.currentTimeMillis()) {
                         shiftClickCooldowns.remove(co);
                         continue;
                     }
                     return co.getTime();
-                }
             }
         }
         return 0;

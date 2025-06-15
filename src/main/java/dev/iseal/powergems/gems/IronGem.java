@@ -5,8 +5,9 @@ import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
@@ -23,7 +24,6 @@ import org.bukkit.util.Vector;
 <<<<<<< HEAD
 =======
 
->>>>>>> 8bedf562cce08fed7e5d5f10fb00550cd5ef0461
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -117,6 +117,24 @@ public class IronGem extends Gem {
         return PotionEffectType.DAMAGE_RESISTANCE;
     }
 
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Temporarily grants the player increased absorption and knockback resistance.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Temporarily increases the player's armor and armor toughness.");
+        lore.add(ChatColor.WHITE + "Left click: Fires a barrage of spectral arrows in a circle shape.");
+        return lore;
+    }
+
     public void removeShiftModifiers(Player plr) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
@@ -129,3 +147,4 @@ public class IronGem extends Gem {
         knockbackInstance.removeModifier(knockbackAttribute);
     }
 }
+

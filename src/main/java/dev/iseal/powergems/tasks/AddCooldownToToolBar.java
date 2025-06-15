@@ -1,5 +1,6 @@
 package dev.iseal.powergems.tasks;
 
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,15 +19,22 @@ public class AddCooldownToToolBar extends BukkitRunnable {
     private final GemManager gm = SingletonManager.getInstance().gemManager;
     private final CooldownManager cm = SingletonManager.getInstance().cooldownManager;
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
-
+    private final boolean unlockShiftAbilityOnLevelX = SingletonManager.getInstance().configManager
+            .getRegisteredConfigInstance(GeneralConfigManager.class).unlockShiftAbilityOnLevelX();
+    private final int unlockNewAbilitiesOnLevelX = SingletonManager.getInstance().configManager
+            .getRegisteredConfigInstance(GeneralConfigManager.class).unlockNewAbilitiesOnLevelX();
 
     private void sendCooldownMessage(Player plr, ItemStack item) {
         if (item != null && gm.isGem(item)) {
             Class<?> clazz = gm.getGemClass(item, plr);
+            int level = gm.getLevel(item);
             plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                     new TextComponent(cm.getFormattedTimer(plr, clazz, "left") + ChatColor.GREEN + " | "
-                            + cm.getFormattedTimer(plr, clazz, "right") + ChatColor.GREEN + " | "
-                            + cm.getFormattedTimer(plr, clazz, "shift")));
+                            + cm.getFormattedTimer(plr, clazz, "right") + ChatColor.GREEN +
+                            // only show shift ability cooldown if it is unlocked
+                            (!unlockShiftAbilityOnLevelX || level >= unlockNewAbilitiesOnLevelX ? " | " + cm.getFormattedTimer(plr, clazz, "shift") : "")
+                    )
+            );
         }
     }
 

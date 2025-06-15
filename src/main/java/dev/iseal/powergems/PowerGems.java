@@ -8,6 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,11 +23,9 @@ import dev.iseal.powergems.listeners.*;
 import dev.iseal.powergems.listeners.passivePowerListeners.*;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
 import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.tasks.*;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
 
 public class PowerGems extends JavaPlugin {
 
@@ -33,12 +35,11 @@ public class PowerGems extends JavaPlugin {
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = this.getLogger();
-    private boolean errorOnDependencies = false;
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.1.3");
+        dependencies.put("SealLib", "1.1.3.0"); //NOPMD - This is not an IP.
     }
-    
+
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
 
     @Override
@@ -46,7 +47,11 @@ public class PowerGems extends JavaPlugin {
         l.info("Initializing plugin");
         plugin = this;
 
-        checkHardDependencies();
+        if (System.getenv().containsKey("POWERGEMS_DISABLE_DEPENDENCY_CHECK") && System.getenv("POWERGEMS_DISABLE_DEPENDENCY_CHECK").equalsIgnoreCase("true")) {
+            l.warning("Ignoring SealLib dependency due to environment variable.");
+        } else {
+            checkHardDependencies();
+        }
 
         sm = SingletonManager.getInstance();
         sm.init();
@@ -109,7 +114,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
-        pluginManager.registerEvents(sm.strenghtMoveListen, this);
+        pluginManager.registerEvents(sm.strengthMoveListen, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         l.info(I18N.translate("REGISTERED_LISTENERS"));

@@ -18,6 +18,9 @@ import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
+import java.util.ArrayList;
+import org.bukkit.ChatColor;
+
 public class FireGem extends Gem {
 
     public FireGem() {
@@ -88,4 +91,24 @@ public class FireGem extends Gem {
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FIRE_RESISTANCE;
     }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Creates a fiery aura around the player, granting fire resistance and igniting nearby air blocks.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Triggers a powerful explosion at the player's location, damaging nearby entities and applying fire damage.");
+        lore.add(ChatColor.WHITE
+                + "Left click: Launches a fireball in the direction the player is facing, causing an explosion upon impact.");
+        return lore;
+    }
 }
+

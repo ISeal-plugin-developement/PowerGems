@@ -28,12 +28,12 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] args) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(I18N.getTranslation("NOT_PLAYER"));
+            commandSender.sendMessage(I18N.translate("NOT_PLAYER"));
             return true;
         }
 
         if (!player.hasPermission(command.getPermission())) {
-            player.sendMessage(I18N.getTranslation("NO_PERMISSION"));
+            player.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
 

@@ -1,0 +1,23 @@
+name: Code Quality Check
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run checkstyle
+        run: mvn checkstyle:check
+
+      - name: Run PMD
+        run: mvn pmd:check

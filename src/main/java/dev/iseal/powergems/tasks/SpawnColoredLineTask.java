@@ -46,7 +46,8 @@ public class SpawnColoredLineTask extends BukkitRunnable {
 
     private double lineDistance = 0;
     private Vector lineDirection = new Vector(0, 0, 0);
-    private double circleDistance = 0;
+    private double circleDistance = 0; // NOPMD - Will get implemented later.
+    // TODO: Implement circle distance usage
     private Vector circleDirection = new Vector(0, 0, 0);
 
     private double lineRun = 0;
@@ -98,12 +99,10 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 lineLocations.forEach((loc) -> {
                     currentLineLocation = loc;
                     spawnLine();
-                    lineConsumer.accept(loc);
                 });
                 circleLocations.forEach((loc) -> {
                     currentCircleLocation = loc;
                     spawnCircle();
-                    circleConsumer.accept(loc);
                 });
                 currentLineLocation = oldLineLocation;
                 currentCircleLocation = oldCircleLocation;

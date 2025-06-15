@@ -165,7 +165,7 @@ public class Utils {
         task.lineGreen = green;
         task.lineBlue = blue;
         task.lineInterval = interval;
-        task.lineConsumer = consumer;
+        task.lineConsumer = (consumer == null) ? loc -> {} : consumer;
         task.spawnLines = true;
         task.spawnCircles = false;
         task.repeatAmount = repeatAmount;

@@ -7,6 +7,7 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -35,7 +36,7 @@ public class LavaGem extends Gem {
     @Override
     protected void rightClick(Player plr, int level) {
         int radius = 5;
-        int times = (level / 2) + 1;
+        int times = level / 2 + 1;
 
         while (times != 0) {
             ArrayList<Block> blocks = u.getSquareOutlineAirBlocks(plr, radius);
@@ -45,14 +46,10 @@ public class LavaGem extends Gem {
             });
 
             // Set the blocks to air
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    blocks.forEach(nullBlock -> {
-                        nullBlock.setType(Material.AIR);
-                    });
-                }
-            }, 600 + (times * 20));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () ->
+                    blocks.forEach(nullBlock ->
+                            nullBlock.setType(Material.AIR)
+                    ), 600 + (times * 20L));
             times--;
             radius = radius + 3;
         }
@@ -68,12 +65,28 @@ public class LavaGem extends Gem {
         LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
         blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
         blaze.setCustomNameVisible(true);
-        blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level-1));
+        blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level - 1));
         AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
     }
 
     @Override
     public PotionEffectType getDefaultEffectType() {
         return PotionEffectType.FIRE_RESISTANCE;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE + "Right click: Make a wall of lava");
+        lore.add(ChatColor.WHITE + "Shift click: Spawn a blaze to fight for you");
+        lore.add(ChatColor.WHITE + "Left click: 1 minute of Fire resistance");
+        return lore;
     }
 }
