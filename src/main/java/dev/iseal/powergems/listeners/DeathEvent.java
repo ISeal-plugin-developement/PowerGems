@@ -16,7 +16,7 @@ import java.util.*;
 
 public class DeathEvent implements Listener {
 
-    private Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
+    private final Map<UUID, List<ItemStack>> keepItems = new HashMap<>();
     private final GeneralConfigManager generalConfigManager = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
 

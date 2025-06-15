@@ -41,8 +41,8 @@ public class SpawnColoredLineTask extends BukkitRunnable {
 
     private Location currentLineLocation = null;
     private Location currentCircleLocation = null;
-    private ArrayList<Location> lineLocations = new ArrayList<>();
-    private ArrayList<Location> circleLocations = new ArrayList<>();
+    private final ArrayList<Location> lineLocations = new ArrayList<>();
+    private final ArrayList<Location> circleLocations = new ArrayList<>();
 
     private double lineDistance = 0;
     private Vector lineDirection = new Vector(0, 0, 0);

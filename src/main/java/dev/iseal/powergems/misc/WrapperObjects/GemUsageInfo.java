@@ -2,8 +2,8 @@ package dev.iseal.powergems.misc.WrapperObjects;
 
 public class GemUsageInfo {
 
-    private String gemName;
-    private int level;
+    private final String gemName;
+    private final int level;
 
     public GemUsageInfo(String gemName, int level) {
         this.gemName = gemName;

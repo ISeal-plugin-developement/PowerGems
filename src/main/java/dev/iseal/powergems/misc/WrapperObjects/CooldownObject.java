@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 
 public class CooldownObject {
 
-    private Player plr;
-    private Class<?> fromClass;
-    private long time;
+    private final Player plr;
+    private final Class<?> fromClass;
+    private final long time;
 
     public CooldownObject(Player plr, Class<?> fromClass, long time) {
         this.plr = plr;

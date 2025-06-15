@@ -1,6 +1,6 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.gems.powerClasses.StrenghArena;
+import dev.iseal.powergems.gems.powerClasses.StrengthArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -52,7 +52,7 @@ public class StrengthGem extends Gem {
     @Override
     protected void shiftClick(Player plr, int level) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200+level*20, 2));
-        new StrenghArena(plr).start();
+        new StrengthArena(plr).start();
     }
 
     @Override

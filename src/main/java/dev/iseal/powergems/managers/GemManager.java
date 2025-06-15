@@ -58,16 +58,16 @@ public class GemManager implements Dumpable {
     private GemReflectionManager grm = null;
     private GemLoreConfigManager glcm = null;
     private GemColorConfigManager gccm = null;
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
-    private ArrayList<ChatColor> possibleColors = new ArrayList<>();
+    private final ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
-    private HashMap<String, Gem> gems = new HashMap<>();
+    private final HashMap<String, Gem> gems = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -147,9 +147,7 @@ public class GemManager implements Dumpable {
             return false;
         if (!is.hasItemMeta())
             return false;
-        if (is.getItemMeta().getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN))
-            return true;
-        return false;
+        return is.getItemMeta().getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN);
     }
 
     /**
