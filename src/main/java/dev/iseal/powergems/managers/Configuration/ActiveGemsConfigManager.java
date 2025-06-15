@@ -10,6 +10,10 @@ public class ActiveGemsConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
+        file.setHeader(
+                "This config file manages whether a gem is active or not",
+                "True means the gem is active(disabled)",
+                "False means the gem is inactive(enabled)");    
 
     }
 

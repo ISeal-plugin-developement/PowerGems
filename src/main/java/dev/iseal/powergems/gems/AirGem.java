@@ -1,9 +1,14 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.*;
+import java.util.List;
+
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,12 +18,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
-
-import java.util.ArrayList;
-
 public class AirGem extends Gem {
 
     Utils utils = SingletonManager.getInstance().utils;
@@ -34,7 +38,7 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr, int level) {
+    protected void rightClick(Player plr) {
         Location playerLocation = plr.getLocation();
         Vector playerDirection = playerLocation.getDirection();
         double range = 20.0 * (level / 2.0 + 1.0);
@@ -79,21 +83,23 @@ public class AirGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr, int level) {
+    protected void leftClick(Player plr) {
             Location playerLocation = plr.getLocation();
             double radius = 10.0 * (level / 2D); // Radius of effect
             double power = 2.5 + level; // Strength of the burst
 
-            plr.getWorld().getNearbyEntities(playerLocation, radius, radius, radius)
-                    .stream()
-                    .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
-                    .forEach(entity -> {
-                        entity.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
-                        if (entity instanceof Player player) {
-                            player.damage(power, plr);
-                            player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
-                        }
-                    });
+        List<LivingEntity> nearbyEntities = plr.getWorld().getNearbyEntities(playerLocation, radius, radius, radius).stream()
+                .filter(entity -> entity instanceof LivingEntity && entity.getUniqueId() != plr.getUniqueId())
+                .map(entity -> (LivingEntity) entity)
+                .toList();
+
+        for (LivingEntity entity : nearbyEntities) {
+            entity.setVelocity(entity.getVelocity().add(new Vector(0, power, 0)));
+            if (entity instanceof Player player) {
+                player.damage(power, plr);
+                player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+            }
+        }
     }
 
     @Override

@@ -12,6 +12,11 @@ public class GemColorConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
+        file.setHeader(
+                "This config file manages the colors of the gems",
+                "The default color is GREEN",
+                "Change the colors to whatever you want"
+        );
 
     }
 

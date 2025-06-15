@@ -34,31 +34,31 @@ commands:
     aliases: [pgd, pgdb]
     permission: powergems.debug
 permissions:
-    powergems.getallgems:
-        description: Permission to use /getallgem
-        default: op
-    powergems.givegem:
-        description: Permission to use /givegem
-        default: op
-    powergems.giveallplayersgem:
-        description: Permission to use /giveallgem
-        default: op
-    powergems.checkupdates:
-        description: Permission to use /checkupdates
-        default: op
-    powergems.reloadconfig:
-        description: Permission to use /reloadconfig
-        default: op
-    powergems.debug:
-        description: Permission to use /debug
-        default: op
-    powergems.*:
-        description: Permission to use all PowerGems commands
-        default: op
-        children:
-            powergems.getallgems: true
-            powergems.givegem: true
-            powergems.giveallplayersgem: true
-            powergems.checkupdates: true
-            powergems.reloadconfig: true
-            powergems.debug: true
+  powergems.getallgems:
+    description: Permission to use /getallgem
+    default: op
+  powergems.givegem:
+    description: Permission to use /givegem
+    default: op
+  powergems.giveallplayersgem:
+    description: Permission to use /giveallgem
+    default: op
+  powergems.checkupdates:
+    description: Permission to use /checkupdates
+    default: op
+  powergems.reloadconfig:
+    description: Permission to use /reloadconfig
+    default: op
+  powergems.debug:
+    description: Permission to use /debug
+    default: op
+  powergems.*:
+    description: Permission to use all PowerGems commands
+    default: op
+    children:
+      powergems.getallgems: true
+      powergems.givegem: true
+      powergems.giveallplayersgem: true
+      powergems.checkupdates: true
+      powergems.reloadconfig: true
+      powergems.debug: true

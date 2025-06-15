@@ -11,8 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+<<<<<<< HEAD
+=======
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StrengthGem extends Gem {

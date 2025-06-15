@@ -15,6 +15,10 @@ public class GemLoreConfigManager extends AbstractConfigManager {
 
     @Override
     public void setUpConfig() {
+        file.setHeader(
+                "This config file manages the lore of the gems",
+                "The default lore is the same as the default abilities"
+        );
 
     }
 

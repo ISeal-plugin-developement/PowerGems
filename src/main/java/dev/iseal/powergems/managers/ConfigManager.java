@@ -2,9 +2,10 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.sealUtils.Interfaces.Dumpable;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
-import dev.iseal.sealUtils.utils.GlobalUtils;
+import dev.iseal.sealLib.Interfaces.Dumpable;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealLib.Utils.GlobalUtils;
+import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -129,32 +130,11 @@ public class ConfigManager implements Dumpable {
             registeredConfigurations.add(gemClass);
         }
     }
-
     @Override
     public HashMap<String, Object> dump() {
         HashMap<String, Object> dump = new HashMap<>();
         dump.put("registeredConfigurations", registeredConfigurations);
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
-    }
-
-    public void save() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
-    public void updateCooldown(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
-    }
-
-    public void saveConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
-    }
-
-    public void set(String string, long newCooldown) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 }

@@ -5,8 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.sealUtils.Interfaces.Dumpable;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.sealLib.Interfaces.Dumpable;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;

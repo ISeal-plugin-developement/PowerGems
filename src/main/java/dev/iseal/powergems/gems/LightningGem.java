@@ -16,8 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-
+>>>>>>> 8bedf562cce08fed7e5d5f10fb00550cd5ef0461
 public class LightningGem extends Gem {
 
     public LightningGem() {
@@ -90,3 +89,4 @@ public class LightningGem extends Gem {
         return lore;
     }
 }
+

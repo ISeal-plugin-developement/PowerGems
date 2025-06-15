@@ -21,8 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+<<<<<<< HEAD
+=======
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
