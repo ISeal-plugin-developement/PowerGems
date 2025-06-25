@@ -112,7 +112,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new ServerLoadListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
-        pluginManager.registerEvents(sm.strengthMoveListen, this);
+        pluginManager.registerEvents(sm.strenghtMoveListener, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         l.info(I18N.translate("REGISTERED_LISTENERS"));

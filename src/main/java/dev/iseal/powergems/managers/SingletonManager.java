@@ -22,7 +22,7 @@ public class SingletonManager {
 
     // Classes
     public GemManager gemManager;
-    public StrenghtMoveListener strengthMoveListen;
+    public StrenghtMoveListener strenghtMoveListener;
     public Utils utils;
     public RecipeManager recipeManager;
     public UpdaterManager updaterManager;
@@ -43,7 +43,7 @@ public class SingletonManager {
         sandMoveListen = new SandMoveListener();
         fallingBlockHitListen = new FallingBlockHitListener();
         gemManager = GemManager.getInstance();
-        strengthMoveListen = new StrenghtMoveListener();
+        strenghtMoveListener = new StrenghtMoveListener();
         utils = new Utils();
         recipeManager = RecipeManager.getInstance();
         cooldownManager = CooldownManager.getInstance();
