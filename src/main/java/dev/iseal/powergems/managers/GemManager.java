@@ -338,6 +338,8 @@ public class GemManager implements Dumpable {
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
+        if (isGem(plr.getInventory().getItemInOffHand()))
+            foundGems.add(plr.getInventory().getItemInOffHand());
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
     }

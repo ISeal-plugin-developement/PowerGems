@@ -41,7 +41,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("doGemDecayOnLevel1", false);
         file.setDefault("dragonEggHalfCooldown", true);
         file.setDefault("explosionDamageAllowed", true);
-        file.setDefault("gemCacheExpireTime", 60);
+        file.setDefault("gemCacheExpireTime", 10);
         file.setDefault("gemCreationAttempts", 10);
         file.setDefault("gemsHaveDescriptions", true);
         file.setDefault("giveGemOnFirstLogin", true);

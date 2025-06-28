@@ -74,7 +74,7 @@ public class PowerGems extends JavaPlugin {
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100L, 60L);
+            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 60L);
 
 
         if (gcm.allowCosmeticParticleEffects())
@@ -109,7 +109,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
-        pluginManager.registerEvents(new ServerLoadListener(), this);
+        pluginManager.registerEvents(new ServerStartupListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListener, this);
