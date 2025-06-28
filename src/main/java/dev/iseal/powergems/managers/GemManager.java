@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.ChatColor;
@@ -159,7 +160,7 @@ public class GemManager implements Dumpable {
         if (randomGem == null) {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
-            gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
+            gemMeta.setDisplayName(I18N.translate("RANDOM_GEM_NAME"));
             gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
@@ -213,9 +214,41 @@ public class GemManager implements Dumpable {
             repeating++;
         }
         if (repeating >= gcm.getGemCreationAttempts()) {
-            l.warning(gcm.getPluginPrefix()+"Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
-            l.warning(gcm.getPluginPrefix()+"You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
+            l.warning("Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
+            l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
             return null;
+        }
+        return generateItemStack(random, 1);
+    }
+
+    /**
+     * Creates a random gem with level 1.
+     *
+     * @return An ItemStack representing the created gem.
+     */
+    public ItemStack createGem(String[] excludedTypes) {
+        if (excludedTypes == null || excludedTypes.length == 0) {
+            return createGem();
+        }
+        if (excludedTypes.length >= SingletonManager.TOTAL_GEM_AMOUNT) {
+            l.warning("You have excluded all gems, returning null.");
+            return null;
+        }
+        int random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
+        int repeating = 0;
+        while (true) {
+            String randomGemName = lookUpName(random);
+            boolean isExcluded = Arrays.stream(excludedTypes).anyMatch(type -> type.equals(randomGemName));
+            if (agcm.isGemActive(randomGemName) && !isExcluded) {
+                break;
+            }
+            if (repeating >= gcm.getGemCreationAttempts()) {
+                l.warning("Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
+                l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
+                return null;
+            }
+            random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
+            repeating++;
         }
         return generateItemStack(random, 1);
     }
@@ -337,6 +370,8 @@ public class GemManager implements Dumpable {
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
+        if (isGem(plr.getInventory().getItemInOffHand()))
+            foundGems.add(plr.getInventory().getItemInOffHand());
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
     }
@@ -416,7 +451,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getName(gem1).equals(gem2);
+        boolean powerEqual = getName(gem1).equals(getName(gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }

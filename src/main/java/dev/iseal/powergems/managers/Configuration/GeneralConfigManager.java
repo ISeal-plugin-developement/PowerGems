@@ -18,9 +18,6 @@ public class GeneralConfigManager extends AbstractConfigManager {
     }
 
     public void setUpConfig() {
-        // WARNING: Using PowerGems.file is deprecated and should be replaced with a getter in the respective class. I'm just too lazy to do it.
-        PowerGems.config = file;
-        file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
         file.setDefault("allowCosmeticParticleEffects", true);
         file.setDefault("allowMetrics", true);
         file.setDefault("allowMovingGems", false);
@@ -41,7 +38,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("doGemDecayOnLevel1", false);
         file.setDefault("dragonEggHalfCooldown", true);
         file.setDefault("explosionDamageAllowed", true);
-        file.setDefault("gemCacheExpireTime", 60);
+        file.setDefault("gemCacheExpireTime", 5);
         file.setDefault("gemCreationAttempts", 10);
         file.setDefault("gemsHaveDescriptions", true);
         file.setDefault("giveGemOnFirstLogin", true);
@@ -57,8 +54,6 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("randomizedColors", false);
         file.setDefault("runUpdater", true);
         file.setDefault("upgradeGemOnKill", false);
-        file.setDefault("useNewAllowOnlyOneGemAlgorithm", true);
-
     }
 
     @Override
@@ -185,10 +180,6 @@ public class GeneralConfigManager extends AbstractConfigManager {
         return file.getInt("maxGemLevel");
     }
 
-    public String getPluginPrefix() {
-        return file.getString("pluginPrefix");
-    }
-
     public boolean doGemPowerTampering() {
         return file.getBoolean("preventGemPowerTampering");
     }
@@ -203,10 +194,6 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public boolean upgradeGemOnKill() {
         return file.getBoolean("upgradeGemOnKill");
-    }
-
-    public boolean useNewAllowOnlyOneGemAlgorithm() {
-        return file.getBoolean("useNewAllowOnlyOneGemAlgorithm");
     }
 
     public boolean unlockShiftAbilityOnLevelX() {

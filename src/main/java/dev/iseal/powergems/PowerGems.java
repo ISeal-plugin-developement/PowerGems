@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.sk89q.worldguard.WorldGuard;
-import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.gems.powerClasses.tasks.*;
 import dev.iseal.powergems.listeners.*;
@@ -28,14 +27,13 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 public class PowerGems extends JavaPlugin {
 
     private static JavaPlugin plugin = null;
-    public static Yaml config = null;
     public static boolean isWorldGuardEnabled = false;
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger l = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.3.0"); //NOPMD - This is not an IP.
+        dependencies.put("SealLib", "1.1.3.1"); //NOPMD - This is not an IP.
     }
     
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
@@ -74,7 +72,7 @@ public class PowerGems extends JavaPlugin {
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleEmeraldsTask().runTaskTimer(this, 100L, 60L);
+            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 20L);
 
 
         if (gcm.allowCosmeticParticleEffects())
@@ -109,7 +107,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new InventoryCloseListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
-        pluginManager.registerEvents(new ServerLoadListener(), this);
+        pluginManager.registerEvents(new ServerStartupListener(), this);
         pluginManager.registerEvents(new TradeEventListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListener, this);

@@ -21,9 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -147,67 +145,86 @@ public class RecipeManager implements Listener {
 
     private void tryRandomGemCrafting(InventoryClickEvent e) {
         CraftingInventory ci = (CraftingInventory) e.getInventory();
-        if (ci.getResult() == null) {
-            return;
-        }
-        if (e.getCurrentItem() == null) {
-            return;
-        }
-        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
-            return;
-        }
+        if (ci.getResult() == null) return;
+        if (e.getCurrentItem() == null) return;
+        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) return;
+
         HumanEntity plr = e.getWhoClicked();
-        if (gcm.allowOnlyOneGem() && SingletonManager.getInstance().utils.hasAtLeastXAmountOfGems(plr.getInventory(), 1, plr.getInventory().getItemInOffHand())) {
-            if (gcm.useNewAllowOnlyOneGemAlgorithm()){
-                long oldestGemCreationTime = -1;
-                int oldIndex = -1;
-                int index = -1;
-                int gemsFound = 0;
-                for (ItemStack is : plr.getInventory().getContents()) {
-                    index++;
-                    if (!gemManager.isGem(is)){
-                        continue;
+
+        Runnable replaceRandomGem = () -> {
+            if (e.isShiftClick()) {
+                for (int i = 0; i < plr.getInventory().getSize(); i++) {
+                    ItemStack is = plr.getInventory().getItem(i);
+                    while (is != null && is.isSimilar(gemManager.getRandomGemItem()) && is.getAmount() > 0) {
+                        // Collect owned gem names again to avoid duplicates
+                        List<String> ownedGemNames = new ArrayList<>();
+                        ownedGemNames.addAll(collectOwnedGemNames(plr.getInventory().getContents()));
+                        String[] excludedTypes = ownedGemNames.toArray(new String[0]);
+                        ItemStack newGem = gemManager.createGem(excludedTypes);
+
+                        if (is.getAmount() > 1) {
+                            is.setAmount(is.getAmount() - 1);
+                            plr.getInventory().setItem(i, is);
+                        } else {
+                            plr.getInventory().setItem(i, null);
+                        }
+                        plr.getInventory().addItem(newGem);
+
+                        // Update reference after modification
+                        is = plr.getInventory().getItem(i);
                     }
-                    if (gemManager.getGemCreationTime(is) > oldestGemCreationTime) {
-                        continue;
-                    }
-                    //Gem is older
-                    oldIndex = index;
-                    gemsFound++;
-                    oldestGemCreationTime = gemManager.getGemCreationTime(is);
-                }
-
-                //Also check offhand
-                ItemStack offhand = plr.getInventory().getItemInOffHand();
-                if (gemManager.isGem(offhand) && gemManager.getGemCreationTime(offhand) < oldestGemCreationTime) {
-                    index = -2;
-                    gemsFound++;
-                }
-
-                if (gemsFound > 2) { // NOPMD - This is not implemented yet.
-                    throw new UnsupportedOperationException("Player has more than 2 gems in inventory and offhand, but allowOnlyOneGem is set to true. This should not happen, so the case has not been implemented yet.");
-                    // how do i deal with this
-                    //TODO: implement a way to allow only 1 actual gem. hard to trigger unless server changed config recently.
-                }
-
-                if (index == -1) {
-                    throw new IllegalArgumentException("Player has multiple gems but oldestGemCreationTime == -1 ???!?!?!?");
-                }
-                if (index == -2) {
-                    //its offhand
-                    plr.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-                } else {
-                    plr.getInventory().setItem(oldIndex, new ItemStack(Material.AIR));
                 }
             } else {
-                for (ItemStack is : plr.getInventory().getContents()) {
-                    if (gemManager.isGem(is)) {
-                        plr.getInventory().remove(is);
+                ItemStack current = e.getCurrentItem();
+                while (current != null && current.isSimilar(gemManager.getRandomGemItem()) && current.getAmount() > 0) {
+                    // Collect owned gem names again to avoid duplicates
+
+                    String[] excludedTypes = collectOwnedGemNames(plr.getInventory().getContents()).toArray(new String[0]);
+                    ItemStack newGem = gemManager.createGem(excludedTypes);
+
+                    if (current.getAmount() > 1) {
+                        current.setAmount(current.getAmount() - 1);
+                        e.setCurrentItem(current);
+                    } else {
+                        e.setCurrentItem(null);
+                    }
+                    plr.getInventory().addItem(newGem);
+
+                    current = e.getCurrentItem();
+                }
+            }
+
+            // Clear or decrement the crafting matrix to prevent multiple gems
+            ItemStack[] matrix = ci.getMatrix();
+            for (int j = 0; j < matrix.length; j++) {
+                if (matrix[j] != null) {
+                    matrix[j].setAmount(matrix[j].getAmount() - 1);
+                    if (matrix[j].getAmount() <= 0) {
+                        matrix[j] = null;
                     }
                 }
             }
+            ci.setMatrix(matrix);
+        };
+
+        if (e.isShiftClick()) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), replaceRandomGem, 1L);
+        } else {
+            replaceRandomGem.run();
         }
-        e.setCurrentItem(gemManager.createGem());
+    }
+
+    private List<String> collectOwnedGemNames(ItemStack[] contents) {
+        List<String> ownedGemNames = new ArrayList<>();
+        for (ItemStack is : contents) {
+            if (gemManager.isGem(is)) {
+                String gemName = gemManager.getName(is);
+                if (gemName != null && !ownedGemNames.contains(gemName)) {
+                    ownedGemNames.add(gemName);
+                }
+            }
+        }
+        return ownedGemNames;
     }
 
     private void craftRecipe() {
