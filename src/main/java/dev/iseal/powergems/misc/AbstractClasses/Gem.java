@@ -100,6 +100,8 @@ public abstract class Gem {
 
     public abstract int getDefaultEffectLevel();
 
+    public abstract Particle getDefaultParticle();
+
     public Particle particle() {
         if (particle == null) {
             particle = gpcm.getParticle(GemManager.lookUpID(name));

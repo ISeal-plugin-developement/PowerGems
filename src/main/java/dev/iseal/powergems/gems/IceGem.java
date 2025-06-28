@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -118,6 +119,11 @@ public class IceGem extends Gem {
         return lore;
     }
 
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.SNOW_SHOVEL;
+    }
+
     private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
         return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
             .filter(entity -> entity instanceof Player)  // Filter for players
@@ -129,4 +135,3 @@ public class IceGem extends Gem {
             .orElse(null);
     }
 }
-

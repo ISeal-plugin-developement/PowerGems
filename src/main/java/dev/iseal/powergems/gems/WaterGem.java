@@ -117,5 +117,10 @@ public class WaterGem extends Gem {
     public int getDefaultEffectLevel() {
         return 1;
     }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.WATER_BUBBLE;
+    }
 }
 

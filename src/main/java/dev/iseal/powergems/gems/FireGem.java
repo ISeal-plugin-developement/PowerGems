@@ -110,5 +110,9 @@ public class FireGem extends Gem {
                 + "Left click: Launches a fireball in the direction the player is facing, causing an explosion upon impact.");
         return lore;
     }
-}
 
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.FLAME;
+    }
+}

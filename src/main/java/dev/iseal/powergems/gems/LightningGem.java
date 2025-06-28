@@ -89,4 +89,9 @@ public class LightningGem extends Gem {
         lore.add(ChatColor.WHITE + "Left click: Launches the player forward in the direction rail.");
         return lore;
     }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.ELECTRIC_SPARK;
+    }
 }

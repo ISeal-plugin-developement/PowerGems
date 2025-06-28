@@ -2,6 +2,7 @@ package dev.iseal.powergems.managers.Configuration;
 
 import com.google.common.base.Enums;
 import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
@@ -31,22 +32,13 @@ public class GemParticleConfigManager extends AbstractConfigManager {
     }
 
     private void createDefaultParticleSettings(int i) {
-        if (file.contains(GemManager.lookUpName(i) + "GemParticle")) return;
+        String gemName = GemManager.lookUpName(i);
+        if (file.contains(gemName + "GemParticle")) return;
         if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_PARTICLE_SETTINGS");
-        Particle setParticle = switch (i) {
-            case 1 -> Particle.CLOUD;
-            case 2 -> Particle.LAVA;
-            case 3 -> Particle.HEART;
-            case 4 -> Particle.SNOWFLAKE;
-            case 5 -> Particle.FIREWORKS_SPARK;
-            case 6 -> Particle.DRIP_LAVA;
-            case 7 -> Particle.ELECTRIC_SPARK;
-            case 8 -> Particle.CRIT_MAGIC;
-            case 9 -> Particle.DAMAGE_INDICATOR;
-            case 10 -> Particle.DRIP_WATER;
-            default -> Particle.VILLAGER_ANGRY;
-        };
-        file.set(GemManager.lookUpName(i) + "GemParticle", setParticle.name());
+        file.set(
+                gemName+"GemParticle",
+                GemReflectionManager.getInstance().getSingletonGemInstance(gemName).getDefaultParticle().name()
+        );
     }
 
     public Particle getParticle(int gemID) {

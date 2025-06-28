@@ -2,6 +2,7 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.ChatColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -57,5 +58,10 @@ public class HealingGem extends Gem {
         lore.add(ChatColor.WHITE + "Shift click: Instant heal");
         lore.add(ChatColor.WHITE + "Left click: 1 minute of regeneration 2");
         return lore;
+    }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.HEART;
     }
 }

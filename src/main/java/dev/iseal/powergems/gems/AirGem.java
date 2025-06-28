@@ -133,4 +133,9 @@ public class AirGem extends Gem {
     public int getDefaultEffectLevel() {
         return 1;
     }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.CLOUD;
+    }
 }

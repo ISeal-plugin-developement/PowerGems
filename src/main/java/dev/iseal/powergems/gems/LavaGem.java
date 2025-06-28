@@ -9,6 +9,7 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -88,5 +89,10 @@ public class LavaGem extends Gem {
         lore.add(ChatColor.WHITE + "Shift click: Spawn a blaze to fight for you");
         lore.add(ChatColor.WHITE + "Left click: 1 minute of Fire resistance");
         return lore;
+    }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.LAVA;
     }
 }

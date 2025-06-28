@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -169,5 +170,9 @@ public class SandGem extends Gem {
         lore.add(ChatColor.WHITE + "Left click: Creates a sand block temporarily that slows enemies passing on it.");
         return lore;
     }
-}
 
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.FALLING_DUST;
+    }
+}

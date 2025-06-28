@@ -4,6 +4,7 @@ import dev.iseal.powergems.gems.powerClasses.StrengthArena;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -74,5 +75,10 @@ public class StrengthGem extends Gem {
         lore.add(ChatColor.WHITE + "Shift click: An arena that keeps anyone from entering, useful to heal");
         lore.add(ChatColor.WHITE + "Left click: A shockwave that sends everyone near flying and damages them");
         return lore;
+    }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.CRIT_MAGIC;
     }
 }
