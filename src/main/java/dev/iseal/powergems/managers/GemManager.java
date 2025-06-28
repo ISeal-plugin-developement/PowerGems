@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.ChatColor;
@@ -159,7 +160,7 @@ public class GemManager implements Dumpable {
         if (randomGem == null) {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
-            gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
+            gemMeta.setDisplayName(I18N.translate("RANDOM_GEM_NAME"));
             gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
