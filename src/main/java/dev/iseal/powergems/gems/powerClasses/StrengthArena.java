@@ -14,28 +14,28 @@ public class StrengthArena implements Listener {
     private final SingletonManager sm = SingletonManager.getInstance();
 
     private final Player player;
-    private final Location StartingLocation;
+    private final Location startingLocation;
     private final int radius = 5;
     private final int particleCount = 40;
 
     public StrengthArena(Player player) {
         this.player = player;
         if (player == null) {
-            this.StartingLocation = null;
+            this.startingLocation = null;
         } else {
-            this.StartingLocation = player.getLocation();
+            this.startingLocation = player.getLocation();
         }
     }
 
     public void start() {
-        Vector center = StartingLocation.toVector();
-        sm.strenghtMoveListener.addStartingLocation(StartingLocation);
+        Vector center = startingLocation.toVector();
+        sm.strenghtMoveListener.addStartingLocation(startingLocation);
         new BukkitRunnable() {
             int currentTime = 0;
 
             public void run() {
                 if (currentTime >= 20) {
-                    sm.strenghtMoveListener.removeStartingLocation(StartingLocation);
+                    sm.strenghtMoveListener.removeStartingLocation(startingLocation);
                     cancel();
                     return;
                 }
@@ -44,7 +44,7 @@ public class StrengthArena implements Listener {
                     double x = center.getX() + radius * Math.cos(angle * i);
                     double y = center.getY();
                     double z = center.getZ() + radius * Math.sin(angle * i);
-                    Location particleLocation = new Location(StartingLocation.getWorld(), x, y, z);
+                    Location particleLocation = new Location(startingLocation.getWorld(), x, y, z);
                     player.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLocation, 2);
                 }
                 currentTime++;
