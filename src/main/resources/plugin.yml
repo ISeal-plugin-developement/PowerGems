@@ -65,3 +65,4 @@ permissions:
             powergems.checkupdates: true
             powergems.reloadconfig: true
             powergems.debug: true
+            powergems.movegems: true
