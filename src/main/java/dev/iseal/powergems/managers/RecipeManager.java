@@ -21,12 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -156,18 +151,6 @@ public class RecipeManager implements Listener {
 
         HumanEntity plr = e.getWhoClicked();
 
-        // Collect all gem names in the player's inventory
-        List<String> firstOwnedGemNames = new ArrayList<>();
-        for (ItemStack is : plr.getInventory().getContents()) {
-            if (gemManager.isGem(is)) {
-                String gemName = gemManager.getName(is);
-                if (gemName != null) {
-                    firstOwnedGemNames.add(gemName);
-                }
-            }
-        }
-        String[] firstExcludedTypes = firstOwnedGemNames.toArray(new String[0]);
-
         Runnable replaceRandomGem = () -> {
             if (e.isShiftClick()) {
                 for (int i = 0; i < plr.getInventory().getSize(); i++) {
@@ -195,16 +178,8 @@ public class RecipeManager implements Listener {
                 ItemStack current = e.getCurrentItem();
                 while (current != null && current.isSimilar(gemManager.getRandomGemItem()) && current.getAmount() > 0) {
                     // Collect owned gem names again to avoid duplicates
-                    List<String> ownedGemNames = new ArrayList<>();
-                    for (ItemStack invItem : plr.getInventory().getContents()) {
-                        if (gemManager.isGem(invItem)) {
-                            String gemName = gemManager.getName(invItem);
-                            if (gemName != null) {
-                                ownedGemNames.add(gemName);
-                            }
-                        }
-                    }
-                    String[] excludedTypes = ownedGemNames.toArray(new String[0]);
+
+                    String[] excludedTypes = collectOwnedGemNames(plr.getInventory().getContents()).toArray(new String[0]);
                     ItemStack newGem = gemManager.createGem(excludedTypes);
 
                     if (current.getAmount() > 1) {
@@ -237,6 +212,19 @@ public class RecipeManager implements Listener {
         } else {
             replaceRandomGem.run();
         }
+    }
+
+    private List<String> collectOwnedGemNames(ItemStack[] contents) {
+        List<String> ownedGemNames = new ArrayList<>();
+        for (ItemStack is : contents) {
+            if (gemManager.isGem(is)) {
+                String gemName = gemManager.getName(is);
+                if (gemName != null && !ownedGemNames.contains(gemName)) {
+                    ownedGemNames.add(gemName);
+                }
+            }
+        }
+        return ownedGemNames;
     }
 
     private void craftRecipe() {
