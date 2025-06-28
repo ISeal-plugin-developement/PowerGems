@@ -175,14 +175,7 @@ public class RecipeManager implements Listener {
                     while (is != null && is.isSimilar(gemManager.getRandomGemItem()) && is.getAmount() > 0) {
                         // Collect owned gem names again to avoid duplicates
                         List<String> ownedGemNames = new ArrayList<>();
-                        for (ItemStack invItem : plr.getInventory().getContents()) {
-                            if (gemManager.isGem(invItem)) {
-                                String gemName = gemManager.getName(invItem);
-                                if (gemName != null) {
-                                    ownedGemNames.add(gemName);
-                                }
-                            }
-                        }
+                        ownedGemNames.addAll(collectOwnedGemNames(plr.getInventory().getContents()));
                         String[] excludedTypes = ownedGemNames.toArray(new String[0]);
                         ItemStack newGem = gemManager.createGem(excludedTypes);
 
