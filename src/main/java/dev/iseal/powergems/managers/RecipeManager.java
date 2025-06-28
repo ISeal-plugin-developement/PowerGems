@@ -275,7 +275,7 @@ public class RecipeManager implements Listener {
             ItemStack newStack;
             for (ItemStack i : gemManager.getAllGems().values()) {
                 oldStack = i;
-                for (int level = 2; level <= 5; level++) {
+                for (int level = 2; level <= gcm.getMaxGemLevel(); level++) {
                     newStack = oldStack.clone();
                     ItemMeta im = newStack.getItemMeta();
                     PersistentDataContainer pdc = im.getPersistentDataContainer();
