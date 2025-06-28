@@ -26,7 +26,7 @@ public class WorldGuardAddonManager {
         return instance;
     }
 
-    private WorldGuard worldGuard = WorldGuard.getInstance();
+    private final WorldGuard worldGuard = WorldGuard.getInstance();
     public StateFlag GEMS_ENABLED_FLAG = null;
 
     public void init() {

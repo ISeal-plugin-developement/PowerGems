@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class SandMoveListener implements Listener {
 
-    private HashMap<UUID, Block> slowSandList = new HashMap<>();
+    private final HashMap<UUID, Block> slowSandList = new HashMap<>();
     private final HashMap<UUID, HashMap<Block, Material>> toReplace = new HashMap<>();
 
     @EventHandler

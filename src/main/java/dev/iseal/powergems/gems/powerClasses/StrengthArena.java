@@ -9,16 +9,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class StrenghArena implements Listener {
+public class StrengthArena implements Listener {
 
     private final SingletonManager sm = SingletonManager.getInstance();
 
-    private Player player;
-    private Location StartingLocation;
+    private final Player player;
+    private final Location StartingLocation;
     private final int radius = 5;
     private final int particleCount = 40;
 
-    public StrenghArena(Player player) {
+    public StrengthArena(Player player) {
         this.player = player;
         if (player == null) {
             this.StartingLocation = null;
@@ -28,14 +28,17 @@ public class StrenghArena implements Listener {
     }
 
     public void start() {
+        if (StartingLocation == null) {
+            throw new IllegalStateException("StartingLocation is null. Ensure the player is not null before calling start().");
+        }
         Vector center = StartingLocation.toVector();
-        sm.strenghtMoveListen.addStartingLocation(StartingLocation);
+        sm.strenghtMoveListener.addStartingLocation(StartingLocation);
         new BukkitRunnable() {
             int currentTime = 0;
 
             public void run() {
                 if (currentTime >= 20) {
-                    sm.strenghtMoveListen.removeStartingLocation(StartingLocation);
+                    sm.strenghtMoveListener.removeStartingLocation(StartingLocation);
                     cancel();
                     return;
                 }

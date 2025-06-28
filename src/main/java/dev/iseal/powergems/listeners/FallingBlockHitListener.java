@@ -28,15 +28,11 @@ public class FallingBlockHitListener implements Listener {
 
     public void removeEntityBlock(UUID id) {
         String uuid = id.toString();
-        if (this.entityList.contains(uuid))
-            this.entityList.remove(uuid);
+        this.entityList.remove(uuid);
     }
 
     public boolean containsBlock(UUID id) {
         String uuid = id.toString();
-        if (this.entityList.contains(uuid)) {
-            return true;
-        }
-        return false;
+        return this.entityList.contains(uuid);
     }
 }
