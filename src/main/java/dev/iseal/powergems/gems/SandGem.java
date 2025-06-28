@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,6 +62,8 @@ public class SandGem extends Gem {
                             if (targetPlr.getFoodLevel() > 6)
                                 targetPlr.setFoodLevel(6);
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 1));
+                            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                                CombatLogXAddonManager.getInstance().setInFight(plr, targetPlr);
                         }
                     }
                 },
@@ -91,6 +94,8 @@ public class SandGem extends Gem {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 1));
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
+                            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                                CombatLogXAddonManager.getInstance().setInFight(plr, targetPlr);
                         }
                     }
                 }, //line consumer

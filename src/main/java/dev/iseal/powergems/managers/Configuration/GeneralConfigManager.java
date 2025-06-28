@@ -46,10 +46,10 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("giveGemPermanentEffectOnLevelX", true);
         file.setDefault("unlockShiftAbilityOnLevelX", false);
         file.setDefault("isWorldGuardSupportEnabled", true);
+        file.setDefault("isCombatLogXSupportEnabled", true);
         file.setDefault("keepGemsOnDeath", true);
         file.setDefault("languageCode", "en");
         file.setDefault("maxGemLevel", 5);
-        file.setDefault("pluginPrefix", ChatColor.BLACK + "[" + ChatColor.DARK_RED + "PowerGems" + ChatColor.BLACK + "] ");
         file.setDefault("preventGemPowerTampering", true);
         file.setDefault("randomizedColors", false);
         file.setDefault("runUpdater", true);
@@ -166,6 +166,10 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public boolean isWorldGuardEnabled() {
         return file.getBoolean("isWorldGuardSupportEnabled");
+    }
+
+    public boolean isCombatLogXEnabled() {
+        return file.getBoolean("isCombatLogXSupportEnabled");
     }
 
     public boolean doKeepGemsOnDeath() {

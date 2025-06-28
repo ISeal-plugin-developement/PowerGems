@@ -1,6 +1,7 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
@@ -58,23 +59,31 @@ public abstract class Gem {
                 return;
             }
             // if shift ability is unlocked or not needed, check if shift ability is on cooldown
-                if (checkIfCooldown("shift", plr)) {
-                    return;
-                }
-                // finally, call the shift ability
-                shiftClick(plr, level);
-                cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
+            if (checkIfCooldown("shift", plr)) {
+                return;
+            }
+            // finally, call the shift ability
+            shiftClick(plr, level);
+            // if combatlogx is enabled, set in fight
+            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                CombatLogXAddonManager.getInstance().setInFightAttacker(plr);
+
+            cm.setShiftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Shift"), caller);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             if (checkIfCooldown("left", plr)) {
                 return;
             }
             leftClick(plr, level);
+            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                CombatLogXAddonManager.getInstance().setInFightAttacker(plr);
             cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             if (checkIfCooldown("right", plr)) {
                 return;
             }
             rightClick(plr, level);
+            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                CombatLogXAddonManager.getInstance().setInFightAttacker(plr);
             cm.setRightClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Right"), caller);
         }
     }

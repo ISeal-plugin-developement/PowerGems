@@ -8,11 +8,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.sk89q.worldguard.WorldGuard;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.gems.powerClasses.tasks.*;
 import dev.iseal.powergems.listeners.*;
@@ -122,8 +122,12 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         l.info(I18N.translate("REGISTERED_COMMANDS"));
-        if (isWorldGuardEnabled() && gcm.isWorldGuardEnabled())
+        if (isEnabled("WorldGuard") && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
+
+        if (isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+            CombatLogXAddonManager.getInstance().init();
+
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();
             l.info(I18N.translate("REGISTERING_METRICS"));
@@ -191,14 +195,9 @@ public class PowerGems extends JavaPlugin {
         return attributeUUID;
     }
 
-    public boolean isWorldGuardEnabled() {
-        try {
-            WorldGuard.getInstance();
-            isWorldGuardEnabled = true;
-        } catch (NoClassDefFoundError e) {
-            isWorldGuardEnabled = false;
-        }
-        return isWorldGuardEnabled;
+    public static boolean isEnabled(String pluginName) {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        return pluginManager.isPluginEnabled(pluginName);
     }
 
     /*

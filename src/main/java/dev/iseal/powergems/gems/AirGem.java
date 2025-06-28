@@ -1,6 +1,8 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.*;
 import org.bukkit.entity.AreaEffectCloud;
@@ -72,6 +74,9 @@ public class AirGem extends Gem {
                         targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
                         targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
 
+                        if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                            CombatLogXAddonManager.getInstance().setInFight(plr, targetPlayer);
+
                         // Send message about being trapped in air pull
                         targetPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
                     }
@@ -92,6 +97,8 @@ public class AirGem extends Gem {
                         if (entity instanceof Player player) {
                             player.damage(power, plr);
                             player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                            if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                                CombatLogXAddonManager.getInstance().setInFight(plr, player);
                         }
                     });
     }

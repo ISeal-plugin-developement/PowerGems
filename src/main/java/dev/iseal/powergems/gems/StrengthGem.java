@@ -1,6 +1,8 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.StrengthArena;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,6 +48,8 @@ public class StrengthGem extends Gem {
                 nearbyPlayer.setVelocity(knockbackVector.multiply(power));
                 nearbyPlayer.damage(5);
                 nearbyPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 2));
+                if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                    CombatLogXAddonManager.getInstance().setInFight(plr, nearbyPlayer);
             }
         }
     }

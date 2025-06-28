@@ -5,7 +5,7 @@ api-version: '1.20'
 author: ISeal
 load: STARTUP
 depend: [SealLib]
-softdepend: [WorldGuard]
+softdepend: [WorldGuard, CombatLogX]
 commands:
   getallgems:
     description: Command to give yourself all gem

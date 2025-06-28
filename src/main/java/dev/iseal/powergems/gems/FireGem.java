@@ -1,5 +1,6 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -60,6 +61,10 @@ public class FireGem extends Gem {
             if (entity instanceof LivingEntity) {
                 ((LivingEntity) entity).damage(5 * ((double) level / 2), plr);
                 entity.setFireTicks(100);
+                if (entity instanceof Player attackedPlayer) {
+                    if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                        CombatLogXAddonManager.getInstance().setInFight(plr, attackedPlayer);
+                }
             }
         }
     }
