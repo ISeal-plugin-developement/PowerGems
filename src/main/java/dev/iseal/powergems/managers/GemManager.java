@@ -451,7 +451,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getName(gem1).equals(gem2);
+        boolean powerEqual = getName(gem1).equals(getName(gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }
