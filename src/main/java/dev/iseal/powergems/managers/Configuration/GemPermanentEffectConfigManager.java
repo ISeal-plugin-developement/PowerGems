@@ -43,7 +43,7 @@ public class GemPermanentEffectConfigManager extends AbstractConfigManager {
             CACHE.put(gemName, null);
             return null;
         }
-        CACHE.put(gemName, PotionEffectType.getByName());
+        CACHE.put(gemName, PotionEffectType.getByName(file.getString(gemName + "GemEffect")));
         return CACHE.get(gemName);
     }
 }
