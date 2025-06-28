@@ -8,6 +8,7 @@ import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class GemPermanentEffectConfigManager extends AbstractConfigManager {
@@ -38,7 +39,11 @@ public class GemPermanentEffectConfigManager extends AbstractConfigManager {
 
     public PotionEffectType getType(String gemName) {
         if (CACHE.containsKey(gemName)) return CACHE.get(gemName);
-        CACHE.put(gemName, PotionEffectType.getByName(file.getString(gemName+ "GemEffect")));
+        if (Objects.equals(file.getString(gemName + "GemEffect"), "NONE")) {
+            CACHE.put(gemName, null);
+            return null;
+        }
+        CACHE.put(gemName, PotionEffectType.getByName());
         return CACHE.get(gemName);
     }
 }

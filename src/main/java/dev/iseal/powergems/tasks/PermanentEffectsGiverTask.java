@@ -8,6 +8,7 @@ import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PermanentEffectsGiverTask extends BukkitRunnable {
@@ -29,10 +30,13 @@ public class PermanentEffectsGiverTask extends BukkitRunnable {
                                 return;
                             if (instance.getDefaultEffectType() == null)
                                 return;
+                            PotionEffectType effectType = gpecm.getType(instance.getName());
+                            if (effectType == null)
+                                return;
 
                            utils.addPreciseEffectIgnoringDuration(
                                    plr,
-                                   gpecm.getType(instance.getName()),
+                                   effectType,
                                    100,
                                    gpelcm.getLevel(instance.getName())
                            );
