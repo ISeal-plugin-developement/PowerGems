@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.sk89q.worldguard.WorldGuard;
-import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.commands.*;
 import dev.iseal.powergems.gems.powerClasses.tasks.*;
 import dev.iseal.powergems.listeners.*;
@@ -28,7 +27,6 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 public class PowerGems extends JavaPlugin {
 
     private static JavaPlugin plugin = null;
-    public static Yaml config = null;
     public static boolean isWorldGuardEnabled = false;
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
@@ -74,7 +72,7 @@ public class PowerGems extends JavaPlugin {
         new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 60L);
+            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 20L);
 
 
         if (gcm.allowCosmeticParticleEffects())
