@@ -5,10 +5,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 
-public class ServerLoadListener implements Listener {
+public class ServerStartupListener implements Listener {
 
     @EventHandler
-    public void onLoad(ServerLoadEvent event) {
+    public void onStartup(ServerLoadEvent event) {
         SingletonManager.getInstance().initLater();
     }
 }
