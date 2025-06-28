@@ -28,6 +28,9 @@ public class StrengthArena implements Listener {
     }
 
     public void start() {
+        if (StartingLocation == null) {
+            throw new IllegalStateException("StartingLocation is null. Ensure the player is not null before calling start().");
+        }
         Vector center = StartingLocation.toVector();
         sm.strenghtMoveListener.addStartingLocation(StartingLocation);
         new BukkitRunnable() {
