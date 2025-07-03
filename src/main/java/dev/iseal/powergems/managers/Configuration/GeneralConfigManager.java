@@ -2,7 +2,6 @@ package dev.iseal.powergems.managers.Configuration;
 
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 

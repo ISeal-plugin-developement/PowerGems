@@ -238,7 +238,7 @@ public class GemManager implements Dumpable {
         int repeating = 0;
         while (true) {
             String randomGemName = lookUpName(random);
-            boolean isExcluded = Arrays.stream(excludedTypes).anyMatch(type -> type.equals(randomGemName));
+            boolean isExcluded = Arrays.asList(excludedTypes).contains(randomGemName);
             if (agcm.isGemActive(randomGemName) && !isExcluded) {
                 break;
             }

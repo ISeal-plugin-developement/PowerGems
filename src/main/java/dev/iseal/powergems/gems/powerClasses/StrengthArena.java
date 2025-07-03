@@ -2,11 +2,11 @@ package dev.iseal.powergems.gems.powerClasses;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class StrengthArena implements Listener {
@@ -33,13 +33,13 @@ public class StrengthArena implements Listener {
         }
         Vector center = startingLocation.toVector();
         sm.strenghtMoveListener.addStartingLocation(startingLocation);
-        new BukkitRunnable() {
+
+        new SchedulerWrapper(PowerGems.getPlugin()).runTaskTimerAtLocation(startingLocation, new Runnable() {
             int currentTime = 0;
 
             public void run() {
                 if (currentTime >= 20) {
                     sm.strenghtMoveListener.removeStartingLocation(startingLocation);
-                    cancel();
                     return;
                 }
                 double angle = 2 * Math.PI / particleCount;
@@ -52,6 +52,6 @@ public class StrengthArena implements Listener {
                 }
                 currentTime++;
             }
-        }.runTaskTimer(PowerGems.getPlugin(), 0L, 10L);
+        }, 0L, 10L);
     }
 }

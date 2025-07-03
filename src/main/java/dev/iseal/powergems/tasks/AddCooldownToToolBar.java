@@ -1,18 +1,18 @@
 package dev.iseal.powergems.tasks;
 
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.iseal.powergems.managers.CooldownManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class AddCooldownToToolBar extends BukkitRunnable {
 
@@ -23,24 +23,42 @@ public class AddCooldownToToolBar extends BukkitRunnable {
             .getRegisteredConfigInstance(GeneralConfigManager.class).unlockShiftAbilityOnLevelX();
     private final int unlockNewAbilitiesOnLevelX = SingletonManager.getInstance().configManager
             .getRegisteredConfigInstance(GeneralConfigManager.class).unlockNewAbilitiesOnLevelX();
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     private void sendCooldownMessage(Player plr, ItemStack item) {
         if (item != null && gm.isGem(item)) {
             Class<?> clazz = gm.getGemClass(item, plr);
             int level = gm.getLevel(item);
-            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new TextComponent(cm.getFormattedTimer(plr, clazz, "left") + ChatColor.GREEN + " | "
-                            + cm.getFormattedTimer(plr, clazz, "right") + ChatColor.GREEN +
-                            // only show shift ability cooldown if it is unlocked
-                            (!unlockShiftAbilityOnLevelX || level >= unlockNewAbilitiesOnLevelX ? " | " + cm.getFormattedTimer(plr, clazz, "shift") : "")
-                    )
-            );
+
+            Component leftTimer = cm.getFormattedTimer(plr, clazz, "left");
+            Component rightTimer = cm.getFormattedTimer(plr, clazz, "right");
+
+            Component message;
+
+            if(!unlockShiftAbilityOnLevelX || level >= unlockNewAbilitiesOnLevelX) {
+                Component shiftTimer = cm.getFormattedTimer(plr, clazz, "shift");
+                message = Component.text()
+                        .append(leftTimer)
+                        .append(Component.text(" | ").color(NamedTextColor.WHITE))
+                        .append(shiftTimer)
+                        .append(Component.text(" | ").color(NamedTextColor.WHITE))
+                        .append(rightTimer)
+                        .build();
+            } else {
+                message = Component.text()
+                        .append(leftTimer)
+                        .append(Component.text(" | ").color(NamedTextColor.WHITE))
+                        .append(rightTimer)
+                        .build();
+            }
+
+            plr.sendActionBar(message);
         }
     }
 
     @Override
     public void run() {
-        Bukkit.getServer().getOnlinePlayers().forEach(plr -> {
+        Bukkit.getServer().getOnlinePlayers().forEach(plr -> schedulerWrapper.runTaskForEntity(plr, () -> {
             if (tdm.chargingFireball.containsKey(plr)) {
                 return;
             }
@@ -49,6 +67,6 @@ public class AddCooldownToToolBar extends BukkitRunnable {
 
             sendCooldownMessage(plr, mainHand);
             sendCooldownMessage(plr, offHand);
-        });
+        }));
     }
 }

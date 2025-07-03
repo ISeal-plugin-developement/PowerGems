@@ -9,8 +9,10 @@ import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
+
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import dev.iseal.powergems.commands.*;
@@ -26,17 +28,32 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class PowerGems extends JavaPlugin {
 
-    private static JavaPlugin plugin = null;
-    public static boolean isWorldGuardEnabled = false;
-    private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
+    public static boolean isWorldGuardEnabled = false;
+    public static JavaPlugin plugin = null;
+    private static SingletonManager sm = null;
     private final Logger l = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
+
     {
         dependencies.put("SealLib", "1.1.3.1"); //NOPMD - This is not an IP.
     }
-    
+
     //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
+
+    // getters beyond this point
+    public static JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public static UUID getAttributeUUID() {
+        return attributeUUID;
+    }
+
+    public static boolean isEnabled(String pluginName) {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        return pluginManager.isPluginEnabled(pluginName);
+    }
 
     @Override
     public void onEnable() {
@@ -51,6 +68,7 @@ public class PowerGems extends JavaPlugin {
 
         sm = SingletonManager.getInstance();
         sm.init();
+        SchedulerWrapper schedulerWrapper = sm.schedulerWrapper;
         if (!getDataFolder().exists())
             l.warning("Generating configuration, this WILL spam the console.");
         firstSetup();
@@ -69,17 +87,17 @@ public class PowerGems extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
+        schedulerWrapper.runTaskTimer(new AddCooldownToToolBar(), 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 20L);
-
+            schedulerWrapper.runTaskTimer(new CheckMultipleGemsTask(), 100L, 20L);
 
         if (gcm.allowCosmeticParticleEffects())
-            new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
+            schedulerWrapper.runTaskTimer(new CosmeticParticleEffect(), 0L, gcm.cosmeticParticleEffectInterval());
 
-        if(gcm.giveGemPermanentEffectOnLvlX())
-            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 80L);
+        if (gcm.giveGemPermanentEffectOnLvlX())
+            schedulerWrapper.runTaskTimer(new PermanentEffectsGiverTask(), 100L, 80L);
+
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
@@ -99,7 +117,7 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
         }
-        if(gcm.upgradeGemOnKill()) {
+        if (gcm.upgradeGemOnKill()) {
             pluginManager.registerEvents(new KillEventListener(), this);
         }
         pluginManager.registerEvents(new IceGemGolemAi(), this);
@@ -169,11 +187,6 @@ public class PowerGems extends JavaPlugin {
         getLogger().info("Shutting down!");
     }
 
-    // getters beyond this point
-    public static JavaPlugin getPlugin() {
-        return plugin;
-    }
-
     private void firstSetup() {
         if (getDataFolder().exists()) {
             return;
@@ -189,15 +202,6 @@ public class PowerGems extends JavaPlugin {
             cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Shift");
         });
         l.warning("Finished generating configuration");
-    }
-
-    public static UUID getAttributeUUID() {
-        return attributeUUID;
-    }
-
-    public static boolean isEnabled(String pluginName) {
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        return pluginManager.isPluginEnabled(pluginName);
     }
 
     /*
@@ -220,7 +224,7 @@ public class PowerGems extends JavaPlugin {
     private void checkHardDependencies() {
         for (Map.Entry<String, String> entry : dependencies.entrySet()) {
             if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {
-                l.severe("The plugin " + entry.getKey() + " (version "+entry.getValue()+") is required for this plugin to work. Please install it.");
+                l.severe("The plugin " + entry.getKey() + " (version " + entry.getValue() + ") is required for this plugin to work. Please install it.");
                 l.severe("PowerGems will shut down now.");
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;

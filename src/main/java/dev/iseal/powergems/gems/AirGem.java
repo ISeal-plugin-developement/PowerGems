@@ -3,7 +3,11 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.EntityType;
@@ -22,8 +26,9 @@ import dev.iseal.powergems.misc.Utils;
 import java.util.ArrayList;
 
 public class AirGem extends Gem {
-
-    Utils utils = SingletonManager.getInstance().utils;
+    //TODO: This class requires Folia integration
+    private final Utils utils = SingletonManager.getInstance().utils;
+    private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 
     public AirGem() {
         super("Air");
@@ -72,12 +77,12 @@ public class AirGem extends Gem {
                     if (entity instanceof Player targetPlayer) {
                         targetPlayer.damage(2.0 + level, plr);
                         targetPlayer.playSound(targetPlayer.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 1.0f, 0.5f);
-                        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, pullDuration, 1));
+                        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, pullDuration, 1));
 
                         if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                             CombatLogXAddonManager.getInstance().setInFight(plr, targetPlayer);
 
-                        // Send message about being trapped in air pull
+                        // Send a message about being trapped in air pull
                         targetPlayer.sendMessage(I18N.translate("IN_AIR_PULL"));
                     }
                 });
@@ -111,7 +116,7 @@ public class AirGem extends Gem {
         AreaEffectCloud effect = (AreaEffectCloud) plr.getWorld().spawnEntity(location, EntityType.AREA_EFFECT_CLOUD);
         effect.setDuration(60);
         effect.setRadius(1.0f);
-        effect.setParticle(Particle.SMOKE_LARGE);
+        effect.setParticle(Particle.LARGE_SMOKE);
         effect.setColor(Color.BLACK);
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 100, 0));
         plr.setVelocity(direction.multiply(distance));

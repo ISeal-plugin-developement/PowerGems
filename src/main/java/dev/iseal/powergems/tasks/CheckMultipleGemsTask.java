@@ -2,6 +2,7 @@ package dev.iseal.powergems.tasks;
 
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -11,10 +12,12 @@ import java.util.ArrayList;
 public class CheckMultipleGemsTask extends BukkitRunnable {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @Override
     public void run() {
-        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+        Bukkit.getServer().getOnlinePlayers().forEach(player ->
+                schedulerWrapper.runTaskForEntity(player, () -> {
             ArrayList<ItemStack> gems = gemManager.getPlayerGems(player);
             if (gems.size() > 1) {
                 gems.sort((o1, o2) -> {
@@ -27,6 +30,6 @@ public class CheckMultipleGemsTask extends BukkitRunnable {
                     player.getInventory().remove(gems.get(i));
                 }
             }
-        });
+        }));
     }
 }

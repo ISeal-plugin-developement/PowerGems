@@ -1,6 +1,7 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 9));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, 9));
     }
 
     @Override
@@ -35,7 +36,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 1, level));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 1, level));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
     }
 

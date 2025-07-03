@@ -17,12 +17,12 @@ public class IronProjectileLandListener implements Listener {
     @EventHandler
     public void onProjLand(ProjectileHitEvent e) {
         if (
-                e.getEntity() instanceof Arrow arrow &&
-                        arrow.getPersistentDataContainer() != null &&
-                        arrow.getPersistentDataContainer().has(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN) &&
-                        Objects.equals(arrow.getPersistentDataContainer().get(nkm.getKey("gem_owner"), PersistentDataType.STRING), "Iron")
+                e.getEntity() instanceof Arrow arrow
         ) {
-            arrow.remove();
+            arrow.getPersistentDataContainer();
+            if (arrow.getPersistentDataContainer().has(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN) && Objects.equals(arrow.getPersistentDataContainer().get(nkm.getKey("gem_owner"), PersistentDataType.STRING), "Iron")) {
+                arrow.remove();
+            }
         }
     }
 

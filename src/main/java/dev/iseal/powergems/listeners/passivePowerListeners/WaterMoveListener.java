@@ -2,8 +2,8 @@ package dev.iseal.powergems.listeners.passivePowerListeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class WaterMoveListener implements Listener {
 
     private boolean playerHasAllowedGem(Player plr) {
         return gm.getPlayerGems(plr).stream()
-                .filter(item -> item != null) 
+                .filter(Objects::nonNull)
                 .filter(ItemStack::hasItemMeta) 
                 .anyMatch(item -> {
                     ItemMeta meta = item.getItemMeta();
@@ -71,7 +71,7 @@ public class WaterMoveListener implements Listener {
         hasGemRaining.addAll(Bukkit.getOnlinePlayers().stream()
                 .filter(this::playerHasAllowedGem)
                 .map(Player::getUniqueId)
-                .collect(Collectors.toList()));
+                .toList());
 
         task = new WaterRainingTask();
         task.runTaskTimer(PowerGems.getPlugin(), 0, 100);

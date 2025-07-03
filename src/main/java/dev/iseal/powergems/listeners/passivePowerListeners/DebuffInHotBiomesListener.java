@@ -19,7 +19,7 @@ public class DebuffInHotBiomesListener extends GemSpecificListener {
     public boolean applyEffect(PlayerMoveEvent e, int allowedGemNumber) {
         Player plr = e.getPlayer();
         if (plr.getLocation().getBlock().getTemperature() >= 0.95) {
-            utils.addPreciseEffect(plr, PotionEffectType.SLOW, 60, allowedGemNumber);
+            utils.addPreciseEffect(plr, PotionEffectType.SLOWNESS, 60, allowedGemNumber);
             return true;
         }
         return false;

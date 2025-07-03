@@ -28,7 +28,7 @@ public class UseEvent implements Listener {
         Player player = e.getPlayer();
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-        ItemStack item = null;
+        ItemStack item;
         if (gm.isGem(offHandItem)) {
             item = offHandItem;
         } else if (gm.isGem(mainHandItem)) {

@@ -6,6 +6,8 @@ import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +27,7 @@ public class LavaGem extends Gem {
     public LavaGem() {
         super("Lava");
     }
-
+    //TODO: This class requires Folia integration
     private final Utils u = SingletonManager.getInstance().utils;
 
     @Override
@@ -42,9 +44,7 @@ public class LavaGem extends Gem {
         while (times != 0) {
             ArrayList<Block> blocks = u.getSquareOutlineAirBlocks(plr, radius);
             // Set the blocks to lava
-            blocks.forEach(nullBlock -> {
-                nullBlock.setType(Material.LAVA);
-            });
+            blocks.forEach(nullBlock -> nullBlock.setType(Material.LAVA));
 
             // Set the blocks to air
             Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () ->
@@ -64,9 +64,9 @@ public class LavaGem extends Gem {
     @Override
     protected void shiftClick(Player plr, int level) {
         LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
-        blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
+        blaze.customName(Component.text(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName())));
         blaze.setCustomNameVisible(true);
-        blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level - 1));
+        blaze.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 1200, level - 1));
         AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
     }
 

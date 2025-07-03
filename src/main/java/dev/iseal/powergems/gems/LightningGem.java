@@ -2,11 +2,8 @@ package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class LightningGem extends Gem {
-
+    //TODO: This class requires Folia integration
     public LightningGem() {
         super("Lightning");
     }
@@ -37,6 +34,7 @@ public class LightningGem extends Gem {
             plr.sendMessage(I18N.translate("MUST_LOOK_AT_BLOCK"));
             return;
         }
+        possibleTarget = plr.getTargetBlock(null, 90);
         Location targetLocation = possibleTarget.getLocation();
         World plrWorld = plr.getWorld();
         plrWorld.strikeLightning(targetLocation);
