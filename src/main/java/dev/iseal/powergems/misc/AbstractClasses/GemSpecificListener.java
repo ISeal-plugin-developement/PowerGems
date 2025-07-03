@@ -69,3 +69,4 @@ public abstract class GemSpecificListener implements Listener {
      */
     public abstract boolean applyEffect(PlayerMoveEvent e, int allowedGemNumber);
 }
+

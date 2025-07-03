@@ -1,8 +1,10 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,10 +18,12 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class WaterGem extends Gem {
-
+    //TODO: This class requires Folia integration
     public WaterGem() {
         super("Water");
     }
+
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -64,29 +68,20 @@ public class WaterGem extends Gem {
             plr.sendMessage(I18N.translate("WATER_GEM_SHIFT_DISABLED_NETHER"));
             return;
         }
-        // Get the player's position
-        Location playerPos = plr.getLocation();
-        int halfRadius = 3 + level / 2;
-
-        // Calculate the start and end positions of the cube
-        int startX = playerPos.getBlockX() - halfRadius;
-        int startY = playerPos.getBlockY();
-        int startZ = playerPos.getBlockZ() - halfRadius;
-        int endX = playerPos.getBlockX() + halfRadius;
-        int endY = playerPos.getBlockY() + halfRadius*2;
-        int endZ = playerPos.getBlockZ() + halfRadius;
-
-        // Iterate over the cube
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) {
-                for (int z = startZ; z <= endZ; z++) {
-                    // Set the block to water
-                    Location pos = new Location(plr.getWorld(), x, y, z);
-                    Block block = pos.getBlock();
+        // Get the player's positionLocation playerLocation = plr.getLocation();
+        int radius = 3 + level;
+        Location playerLocation = plr.getLocation();
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                for (int y = -1; y <= 2; y++) {
+                    Location blockLocation = playerLocation.clone().add(x, y, z);
+                    Block block = blockLocation.getBlock();
                     if (!block.isEmpty())
                         continue;
                     block.setType(Material.WATER);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
+
+                    // Use SchedulerWrapper for Folia compatibility - region scheduler since it's location-specific
+                   schedulerWrapper.runTaskLaterAtLocation(blockLocation, () -> {
                         if (block.getType() == Material.WATER)
                             block.setType(Material.AIR);
                     }, 400+level* 40L);
@@ -120,7 +115,6 @@ public class WaterGem extends Gem {
 
     @Override
     public Particle getDefaultParticle() {
-        return Particle.WATER_BUBBLE;
+        return Particle.BUBBLE;
     }
 }
-

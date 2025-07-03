@@ -33,7 +33,7 @@ public class SandMoveListener implements Listener {
                     continue;
                 }
                 if (to.distance(block.getRelative(BlockFace.UP).getLocation()) < 0.9) {
-                    plr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 2));
+                    plr.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 2));
                 }
             }
         }

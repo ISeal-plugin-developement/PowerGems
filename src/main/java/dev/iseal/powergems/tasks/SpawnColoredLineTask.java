@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class SpawnColoredLineTask extends BukkitRunnable {
-
+//TODO: This class requires Folia integration
     // Line colors
     public int lineRed = 255;
     public int lineGreen = 255;
@@ -108,7 +108,13 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 currentCircleLocation = oldCircleLocation;
             }
             if (doneLine && doneCircle) {
-                cancel();
+                try {
+                    if (getTaskId() != -1) {
+                        cancel();
+                    }
+                } catch (IllegalStateException e) {
+                    // Task wasn't scheduled properly, ignore the error
+                }
             }
         }
     }
@@ -119,7 +125,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
             Color.fromRGB(lineRed, lineGreen, lineBlue), 1
         );
         world.spawnParticle(
-            Particle.REDSTONE,
+            Particle.DUST,
             currentLineLocation,
             5,
             0, 0, 0,  
@@ -139,7 +145,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 Location particleLocation = currentCircleLocation.clone().add(x, y, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(circleRed, circleGreen, circleBlue), 1);
                 currentCircleLocation.getWorld().spawnParticle(
-                        Particle.REDSTONE,
+                        Particle.DUST,
                         particleLocation,
                         5,
                         dustOptions);

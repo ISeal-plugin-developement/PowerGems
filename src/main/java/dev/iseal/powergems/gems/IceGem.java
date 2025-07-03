@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -30,7 +27,7 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class IceGem extends Gem {
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
-
+    //TODO: This class requires Folia integration
     public IceGem() {
         super("Ice");
     }
@@ -44,11 +41,12 @@ public class IceGem extends Gem {
     @Override
     protected void rightClick(Player plr, int level) {
         Location l = plr.getEyeLocation();
-        FallingBlock fb = l.getWorld().spawnFallingBlock(l, Material.ICE.createBlockData());
-        fb.setHurtEntities(true);
-        fb.setDamagePerBlock(level);
-        fb.setVelocity(plr.getLocation().getDirection());
-        fb.getVelocity().multiply(level * 5 + 1);
+        FallingBlock fb = l.getWorld().spawn(l, FallingBlock.class, fallingBlock -> {
+            fallingBlock.setBlockData(Material.ICE.createBlockData());
+            fallingBlock.setHurtEntities(true);
+            fallingBlock.setDamagePerBlock(level);
+        });
+        fb.setVelocity(plr.getLocation().getDirection().multiply(level * 5 + 1));
         fbhl.addEntityUUID(fb.getUniqueId());
     }
 
@@ -62,7 +60,7 @@ public class IceGem extends Gem {
         }
 
         ent.setFreezeTicks(100 + (level * 2) * 20);
-        ent.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100 + (level * 2) * 20, level - 1));
+        ent.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100 + (level * 2) * 20, level - 1));
     }
 
     @Override
@@ -75,10 +73,10 @@ public class IceGem extends Gem {
         NamespacedKey damageKey = new NamespacedKey(PowerGems.getPlugin(), "SNOWBALL_DAMAGE");
         
         for (int i = 0; i < level * 2; i++) {
-            Snowman golem = (Snowman) w.spawnEntity(l, EntityType.SNOWMAN);
+            Snowman golem = (Snowman) w.spawnEntity(l, EntityType.SNOW_GOLEM);
             
             // Configure snowman properties
-            golem.setCustomName(I18N.translate("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName()));
+            golem.customName(Component.text(I18N.translate("OWNED_SNOW_GOLEM").replace("{owner}", plr.getName())));
             golem.setCustomNameVisible(true);
             golem.setHealth(Math.min(i + 2, 4.0));
             golem.setDerp(true);  // More accurate throwing
@@ -86,7 +84,7 @@ public class IceGem extends Gem {
             golem.setAware(true);
             
             // Set targeting parameters
-            golem.setTarget(getNearestHostilePlayer(plr, golem, 10.0));
+            golem.setTarget(getNearestHostilePlayer(plr, golem));
             
             // Set PDC data
             PersistentDataContainer pdc = golem.getPersistentDataContainer();
@@ -100,7 +98,7 @@ public class IceGem extends Gem {
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.HEAL;
+        return PotionEffectType.REGENERATION;
     }
 
     @Override
@@ -121,11 +119,10 @@ public class IceGem extends Gem {
 
     @Override
     public Particle getDefaultParticle() {
-        return Particle.SNOW_SHOVEL;
-    }
+        return Particle.ITEM_SNOWBALL;}
 
-    private Player getNearestHostilePlayer(Player owner, Snowman golem, double range) {
-        return golem.getWorld().getNearbyEntities(golem.getLocation(), range, range, range).stream()
+    private Player getNearestHostilePlayer(Player owner, Snowman golem) {
+        return golem.getWorld().getNearbyEntities(golem.getLocation(), 10.0, 10.0, 10.0).stream()
             .filter(entity -> entity instanceof Player)  // Filter for players
             .map(entity -> (Player) entity)             // Cast to Player
             .filter(player -> !player.equals(owner))    // Exclude owner

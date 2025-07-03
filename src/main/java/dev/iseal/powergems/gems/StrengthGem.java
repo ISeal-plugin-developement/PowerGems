@@ -4,6 +4,7 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.StrengthArena;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StrengthGem extends Gem {
-
+    //TODO: This class requires Folia integration
     public StrengthGem() {
         super("Strength");
     }
@@ -32,7 +33,7 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300 + level * 20, 1+level / 2));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 300 + level * 20, 1+level / 2));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 + level * 20, 1 + level / 2));
     }
 
@@ -56,13 +57,13 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200+level*20, 2));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 200+level*20, 2));
         new StrengthArena(plr).start();
     }
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.FAST_DIGGING;
+        return PotionEffectType.HASTE;
     }
 
     @Override
@@ -83,6 +84,6 @@ public class StrengthGem extends Gem {
 
     @Override
     public Particle getDefaultParticle() {
-        return Particle.CRIT_MAGIC;
+        return Particle.ENCHANTED_HIT;
     }
 }

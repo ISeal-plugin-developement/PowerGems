@@ -5,7 +5,9 @@ import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.WrapperObjects.CooldownObject;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -78,7 +80,7 @@ public class CooldownManager implements Dumpable {
                     co.getFromClass() == fromClass
             ) {
                 if (co.getTime() < System.currentTimeMillis()) {
-                    leftClickCooldowns.remove(co);
+                    rightClickCooldowns.remove(co);
                     continue;
                 }
                 return co.getTime();
@@ -117,20 +119,24 @@ public class CooldownManager implements Dumpable {
         return 0;
     }
 
-    public String getFormattedTimer(Player plr, Class<?> caller, String action) {
+    public Component getFormattedTimer(Player plr, Class<?> caller, String action) {
         long cooldownMillis = 0;
-        if (action.equals("left")) {
-            if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis())
-                return I18N.translate("READY");
-            cooldownMillis = getLeftClickCooldown(plr, caller) - System.currentTimeMillis();
-        } else if (action.equals("right")) {
-            if (getRightClickCooldown(plr, caller) < System.currentTimeMillis())
-                return I18N.translate("READY");
-            cooldownMillis = getRightClickCooldown(plr, caller) - System.currentTimeMillis();
-        } else if (action.equals("shift")) {
-            if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis())
-                return I18N.translate("READY");
-            cooldownMillis = getShiftClickCooldown(plr, caller) - System.currentTimeMillis();
+        switch (action) {
+            case "left" -> {
+                if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis())
+                    return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
+                cooldownMillis = getLeftClickCooldown(plr, caller) - System.currentTimeMillis();
+            }
+            case "right" -> {
+                if (getRightClickCooldown(plr, caller) < System.currentTimeMillis())
+                    return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
+                cooldownMillis = getRightClickCooldown(plr, caller) - System.currentTimeMillis();
+            }
+            case "shift" -> {
+                if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis())
+                    return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
+                cooldownMillis = getShiftClickCooldown(plr, caller) - System.currentTimeMillis();
+            }
         }
         long seconds = TimeUnit.MILLISECONDS.toSeconds(cooldownMillis)
                 - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(cooldownMillis));
@@ -141,7 +147,7 @@ public class CooldownManager implements Dumpable {
         } else {
             endTime = String.format("0%d:%d", minutes, seconds);
         }
-        return ChatColor.DARK_RED + endTime;
+        return Component.text(endTime).color(NamedTextColor.DARK_RED);
     }
 
     public long getFullCooldown(int level, String name, String ability) {
@@ -160,10 +166,5 @@ public class CooldownManager implements Dumpable {
         map.put("leftClickCooldowns", leftClickCooldowns);
         map.put("shiftClickCooldowns", shiftClickCooldowns);
         return map;
-    }
-
-    public void reloadFromConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'reloadFromConfig'");
     }
 }

@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
-import org.bukkit.Bukkit;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,13 +28,14 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class SandGem extends Gem {
-
+    //TODO: This class requires Folia integration
     public SandGem() {
         super("Sand");
     }
 
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -43,7 +45,7 @@ public class SandGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        // Perform a raycast to find the target block
+        // Perform a ray cast to find the target block
         Location eyeLocation = plr.getEyeLocation().clone();
         Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
 
@@ -61,7 +63,7 @@ public class SandGem extends Gem {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             if (targetPlr.getFoodLevel() > 6)
                                 targetPlr.setFoodLevel(6);
-                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 1));
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
                             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                                 CombatLogXAddonManager.getInstance().setInFight(plr, targetPlr);
                         }
@@ -73,7 +75,7 @@ public class SandGem extends Gem {
 
     @Override
     protected void leftClick(Player plr, int level) {
-        // Perform a raycast to find the target block
+        // Perform a ray cast to find the target block
         Location eyeLocation = plr.getEyeLocation().clone();
         Location targetLocation = utils.getXBlocksInFrontOfPlayer(plr.getEyeLocation(), plr.getLocation().getDirection(), 100);
 
@@ -93,7 +95,7 @@ public class SandGem extends Gem {
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 1));
-                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
                             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                                 CombatLogXAddonManager.getInstance().setInFight(plr, targetPlr);
                         }
@@ -105,7 +107,7 @@ public class SandGem extends Gem {
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player targetPlr && !entity.getUniqueId().equals(plr.getUniqueId())) {
                             targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 200, 1));
-                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 1));
+                            targetPlr.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 200, 1));
                         }
                     }
                 },
@@ -142,20 +144,16 @@ public class SandGem extends Gem {
             }
         });
 
-        toReplace.forEach((block, material) -> {
-            block.setType(Material.SAND);
-        });
+        toReplace.forEach((block, material) -> block.setType(Material.SAND));
 
         sm.sandMoveListen.addToRemoveList(plr.getUniqueId(), toReplace);
 
-        Bukkit.getScheduler().runTaskLater(PowerGems.getPlugin(), () -> {
-            sm.sandMoveListen.removeFromList(plr.getUniqueId());
-        }, 50L*level);
+        schedulerWrapper.runTaskLaterAtLocation(targetLocation, () -> sm.sandMoveListen.removeFromList(plr.getUniqueId()), 50L*level);
     }
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.FAST_DIGGING;
+        return PotionEffectType.HASTE;
     }
 
     @Override
@@ -178,6 +176,6 @@ public class SandGem extends Gem {
 
     @Override
     public Particle getDefaultParticle() {
-        return Particle.FALLING_DUST;
+        return Particle.CRIT;
     }
 }

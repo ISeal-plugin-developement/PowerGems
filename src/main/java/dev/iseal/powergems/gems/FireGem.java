@@ -1,10 +1,8 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,10 +18,9 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 import java.util.ArrayList;
-import org.bukkit.ChatColor;
 
 public class FireGem extends Gem {
-
+    //TODO: This class requires Folia integration
     public FireGem() {
         super("Fire");
     }
@@ -54,16 +51,15 @@ public class FireGem extends Gem {
     protected void leftClick(Player plr, int level) {
         Location playerLocation = plr.getLocation();
         World world = plr.getWorld();
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 10, 5));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, 5));
         plr.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 600, 1));
         world.createExplosion(playerLocation, level + 1f, true, false);
         for (Entity entity : plr.getNearbyEntities(level+3, level+3, level+3)) {
             if (entity instanceof LivingEntity) {
                 ((LivingEntity) entity).damage(5 * ((double) level / 2), plr);
                 entity.setFireTicks(100);
-                if (entity instanceof Player attackedPlayer) {
-                    if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
-                        CombatLogXAddonManager.getInstance().setInFight(plr, attackedPlayer);
+                if (entity instanceof Player attackedPlayer && PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled()) {
+                    CombatLogXAddonManager.getInstance().setInFight(plr, attackedPlayer);
                 }
             }
         }

@@ -20,10 +20,10 @@ public class CraftEventListener implements Listener {
     public void onPrepareCraft(PrepareItemCraftEvent event) {
         CraftingInventory inventory = event.getInventory();
 
-        if (inventory.getMatrix() != null &&
-            Arrays.stream(inventory.getMatrix())
-                .filter(Objects::nonNull)
-                .anyMatch(gemManager::isGem)) {
+        inventory.getMatrix();
+        if (Arrays.stream(inventory.getMatrix())
+            .filter(Objects::nonNull)
+            .anyMatch(gemManager::isGem)) {
             inventory.setResult(null);
         }
     }

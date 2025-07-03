@@ -2,6 +2,7 @@ package dev.iseal.powergems.listeners;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,7 +21,7 @@ public class TradeEventListener implements Listener {
 
     private boolean hasGemInIngredients(List<ItemStack> ingredients) {
         return ingredients.stream()
-                .filter(item -> item != null)
+                .filter(Objects::nonNull)
                 .anyMatch(gemManager::isGem);
     }
 
