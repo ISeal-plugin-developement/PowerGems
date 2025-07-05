@@ -8,7 +8,7 @@ depend: [SealLib]
 softdepend: [WorldGuard, CombatLogX]
 commands:
   getallgems:
-    description: Command to give yourself all gem
+    description: Command to give yourself all gems
     usage: /getallgems
     permission: powergems.getallgems
   givegem:
