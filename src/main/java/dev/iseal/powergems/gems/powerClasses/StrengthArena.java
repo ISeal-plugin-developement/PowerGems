@@ -1,25 +1,21 @@
 package dev.iseal.powergems.gems.powerClasses;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-public class StrengthArena implements Listener {
+public class StrengthArena {
 
     private final SingletonManager sm = SingletonManager.getInstance();
-
-    private final Player player;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
     private final Location startingLocation;
-    private final int radius = 5;
-    private final int particleCount = 40;
+    private final int radius = 10;
+    private final int particleCount = 50;
 
     public StrengthArena(Player player) {
-        this.player = player;
         if (player == null) {
             this.startingLocation = null;
         } else {
@@ -34,7 +30,7 @@ public class StrengthArena implements Listener {
         Vector center = startingLocation.toVector();
         sm.strenghtMoveListener.addStartingLocation(startingLocation);
 
-        new SchedulerWrapper(PowerGems.getPlugin()).runTaskTimerAtLocation(startingLocation, new Runnable() {
+        schedulerWrapper.scheduleRepeatingTaskAtLocation(startingLocation, new Runnable() {
             int currentTime = 0;
 
             public void run() {
@@ -48,10 +44,10 @@ public class StrengthArena implements Listener {
                     double y = center.getY();
                     double z = center.getZ() + radius * Math.sin(angle * i);
                     Location particleLocation = new Location(startingLocation.getWorld(), x, y, z);
-                    player.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLocation, 2);
+                    startingLocation.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLocation, 2);
                 }
                 currentTime++;
             }
-        }, 0L, 10L);
+        }, 0, 5);
     }
 }

@@ -64,6 +64,7 @@ public class GemManager implements Dumpable {
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
+    //TODO: Replace ChatColor with components
     private final ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();

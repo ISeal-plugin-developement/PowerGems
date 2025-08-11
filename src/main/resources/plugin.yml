@@ -5,7 +5,7 @@ api-version: '1.21'
 author: ISeal
 load: STARTUP
 depend: [SealLib]
-folia-support: true
+folia-supported: true
 softdepend: [WorldGuard, CombatLogX]
 commands:
   getallgems:

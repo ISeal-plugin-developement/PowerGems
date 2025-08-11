@@ -123,19 +123,22 @@ public class CooldownManager implements Dumpable {
         long cooldownMillis = 0;
         switch (action) {
             case "left" -> {
-                if (getLeftClickCooldown(plr, caller) < System.currentTimeMillis())
+                long leftCooldown = getLeftClickCooldown(plr, caller);
+                if (leftCooldown == 0 || leftCooldown < System.currentTimeMillis())
                     return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
-                cooldownMillis = getLeftClickCooldown(plr, caller) - System.currentTimeMillis();
+                cooldownMillis = leftCooldown - System.currentTimeMillis();
             }
             case "right" -> {
-                if (getRightClickCooldown(plr, caller) < System.currentTimeMillis())
+                long rightCooldown = getRightClickCooldown(plr, caller);
+                if (rightCooldown == 0 || rightCooldown < System.currentTimeMillis())
                     return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
-                cooldownMillis = getRightClickCooldown(plr, caller) - System.currentTimeMillis();
+                cooldownMillis = rightCooldown - System.currentTimeMillis();
             }
             case "shift" -> {
-                if (getShiftClickCooldown(plr, caller) < System.currentTimeMillis())
+                long shiftCooldown = getShiftClickCooldown(plr, caller);
+                if (shiftCooldown == 0 || shiftCooldown < System.currentTimeMillis())
                     return LegacyComponentSerializer.legacyAmpersand().deserialize(I18N.translate("READY"));
-                cooldownMillis = getShiftClickCooldown(plr, caller) - System.currentTimeMillis();
+                cooldownMillis = shiftCooldown - System.currentTimeMillis();
             }
         }
         long seconds = TimeUnit.MILLISECONDS.toSeconds(cooldownMillis)

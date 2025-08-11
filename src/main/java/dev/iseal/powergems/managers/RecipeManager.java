@@ -84,7 +84,7 @@ public class RecipeManager implements Listener {
     }
 
     private void tryUpgradeCrafting(InventoryClickEvent e) {
-        schedulerWrapper.runTaskLater(() -> {
+        schedulerWrapper.scheduleDelayedTask(() -> {
             CraftingInventory ci = (CraftingInventory) e.getInventory();
             if (!Objects.equals(ci.getResult(), null))
                 return;
@@ -210,7 +210,7 @@ public class RecipeManager implements Listener {
         };
 
         if (e.isShiftClick()) {
-           schedulerWrapper.runTaskLater(replaceRandomGem, 1L);
+           schedulerWrapper.scheduleDelayedTask(replaceRandomGem, 1L);
         } else {
             replaceRandomGem.run();
         }

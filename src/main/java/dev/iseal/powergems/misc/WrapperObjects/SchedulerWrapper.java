@@ -4,156 +4,174 @@ import com.github.sirblobman.api.folia.details.RunnableTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static dev.iseal.powergems.PowerGems.getPlugin;
-//NOTE: This class has fully AI generated documentation.
 
 /**
- * Wrapper class for scheduling tasks with compatibility between Bukkit and Folia schedulers.
- * Automatically detects if running on Folia and uses appropriate scheduler implementation.
- * <p>
- * Supports:
- * - Global scheduling (for tasks not tied to specific regions/entities)
- * - Region scheduling (for tasks tied to specific world locations)
- * - Entity scheduling (for tasks tied to specific entities)
+ * This class makes it easy to schedule tasks without worrying about which
+ * server implementation you're running on - it automatically detects Folia
+ * and uses the appropriate scheduler.
  */
 public class SchedulerWrapper {
-    public SchedulerWrapper(Plugin plugin) {
-    }
+
+    private static final long MINIMUM_FOLIA_DELAY = 1L;
 
     /**
-     * Checks if the server is running Folia by checking server implementation
-     *
-     * @return true if Folia is detected and active, false otherwise
+     * Detects if we're running on Folia.
      */
-    private boolean checkIsFolia() {
+    private boolean isFoliaServer() {
         try {
             String serverVersion = Bukkit.getServer().getVersion();
             String serverName = Bukkit.getServer().getName();
 
             return serverName.toLowerCase().contains("folia") ||
-                   serverVersion.toLowerCase().contains("folia");
+                    serverVersion.toLowerCase().contains("folia");
         } catch (Exception e) {
             return false;
         }
     }
 
-    // ===== GLOBAL SCHEDULING =====
+    /**
+     * Ensures the delay is compatible with Folia's requirements.
+     * Folia requires delays to be at least 1 tick.
+     */
+    private long ensureFoliaCompatibleDelay(long delay) {
+        return delay <= 0 ? MINIMUM_FOLIA_DELAY : delay;
+    }
 
+    // ========================================
+    // GLOBAL TASKS (Server-wide scheduling)
+    // ========================================
 
     /**
-     * Runs a task after a specified delay on the global scheduler
+     * Schedules a task to run once after a delay.
+     * This task runs globally and isn't tied to any specific location or entity.
      *
-     * @param task  The task to run (Runnable)
-     * @param delay Delay in ticks before execution
+     * @param task         The code to execute
+     * @param delayInTicks How many ticks to wait before running (20 ticks = 1 second)
      */
-    public void runTaskLater(Runnable task, long delay) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            Bukkit.getServer().getGlobalRegionScheduler().runDelayed(getPlugin(), scheduledTask -> task.run(), foliaDelay);
+    public void scheduleDelayedTask(Runnable task, long delayInTicks) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(delayInTicks);
+            Bukkit.getServer().getGlobalRegionScheduler()
+                    .runDelayed(getPlugin(), scheduledTask -> task.run(), safeDelay);
         } else {
+            // Handle BukkitRunnable instances specially for proper task management
             if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskLater(getPlugin(), delay);
+                ((BukkitRunnable) task).runTaskLater(getPlugin(), delayInTicks);
             } else {
-                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delay);
+                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delayInTicks);
             }
         }
     }
 
     /**
-     * Runs a repeating task on the global scheduler
+     * Schedules a task to run repeatedly at fixed intervals.
+     * This task runs globally and isn't tied to any specific location or entity.
      *
-     * @param task   The task to run repeatedly
-     * @param delay  Initial delay in ticks before first execution
-     * @param period Period in ticks between executions
+     * @param task                The code to execute repeatedly
+     * @param initialDelayInTicks How many ticks to wait before the first execution
+     * @param intervalInTicks     How many ticks to wait between each execution
      */
-    public void runTaskTimer(Runnable task, long delay, long period) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            Bukkit.getServer().getGlobalRegionScheduler().runAtFixedRate(getPlugin(), scheduledTask -> task.run(), foliaDelay, period);
+    public void scheduleRepeatingTask(Runnable task, long initialDelayInTicks, long intervalInTicks) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(initialDelayInTicks);
+            Bukkit.getServer().getGlobalRegionScheduler()
+                    .runAtFixedRate(getPlugin(), scheduledTask -> task.run(), safeDelay, intervalInTicks);
         } else {
             if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskTimer(getPlugin(), delay, period);
+                ((BukkitRunnable) task).runTaskTimer(getPlugin(), initialDelayInTicks, intervalInTicks);
             } else {
-                Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, delay, period);
+                Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, initialDelayInTicks, intervalInTicks);
             }
         }
     }
 
     /**
-     * Runs a repeating task on the global scheduler (returns Object)
+     * Schedules a repeating task and returns a handle for cancellation.
+     * Useful when you need to stop the task later.
      *
-     * @param task   The task to run repeatedly
-     * @param delay  Initial delay in ticks before first execution
-     * @param period Period in ticks between executions
-     * @return The scheduled task object
+     * @param task                The code to execute repeatedly
+     * @param initialDelayInTicks How many ticks to wait before the first execution
+     * @param intervalInTicks     How many ticks to wait between each execution
+     * @return A task handle that can be used to cancel the task
      */
-    public Object runTaskTimer(RunnableTask task, long delay, long period) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            return Bukkit.getServer().getGlobalRegionScheduler().runAtFixedRate(getPlugin(), scheduledTask -> task.run(), foliaDelay, period);
+    public Object scheduleRepeatingTaskWithHandle(RunnableTask task, long initialDelayInTicks, long intervalInTicks) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(initialDelayInTicks);
+            return Bukkit.getServer().getGlobalRegionScheduler()
+                    .runAtFixedRate(getPlugin(), scheduledTask -> task.run(), safeDelay, intervalInTicks);
         } else {
-            return Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task::run, delay, period);
+            return Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task::run, initialDelayInTicks, intervalInTicks);
         }
     }
 
-    // ===== REGION SCHEDULING =====
+    // ========================================
+    // LOCATION-BASED TASKS (Region scheduling)
+    // ========================================
 
     /**
-     * Runs a task after a delay in the region containing the specified location
+     * Schedules a task to run in the region containing the specified location.
+     * On Folia, this ensures the task runs in the correct region thread.
+     * On Bukkit, this behaves like a normal delayed task.
      *
-     * @param location The location to determine the region
-     * @param task     The task to run (Runnable)
-     * @param delay    Delay in ticks before execution
+     * @param location     The location that determines which region to run in
+     * @param task         The code to execute
+     * @param delayInTicks How many ticks to wait before running
      */
-    public void runTaskLaterAtLocation(Location location, Runnable task, long delay) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            Bukkit.getServer().getRegionScheduler().runDelayed(getPlugin(), location, scheduledTask -> task.run(), foliaDelay);
+    public void scheduleDelayedTaskAtLocation(Location location, Runnable task, long delayInTicks) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(delayInTicks);
+            Bukkit.getServer().getRegionScheduler()
+                    .runDelayed(getPlugin(), location, scheduledTask -> task.run(), safeDelay);
         } else {
+            // On Bukkit, location doesn't matter for thread safety
             if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskLater(getPlugin(), delay);
+                ((BukkitRunnable) task).runTaskLater(getPlugin(), delayInTicks);
             } else {
-                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delay);
+                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delayInTicks);
             }
         }
     }
 
-
     /**
-     * Runs a repeating task in the region containing the specified location
+     * Schedules a repeating task in the region containing the specified location.
+     * Perfect for tasks that need to interact with blocks or entities at that location.
      *
-     * @param location The location to determine the region
-     * @param task     The task to run repeatedly (Runnable)
-     * @param delay    Initial delay in ticks before first execution
-     * @param period   Period in ticks between executions
+     * @param location            The location that determines which region to run in
+     * @param task                The code to execute repeatedly
+     * @param initialDelayInTicks How many ticks to wait before the first execution
+     * @param intervalInTicks     How many ticks to wait between each execution
      */
-    public void runTaskTimerAtLocation(Location location, Runnable task, long delay, long period) {
-        if (checkIsFolia()) {
-            // Folia doesn't allow delay of 0, so use 1 tick minimum
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            Bukkit.getServer().getRegionScheduler().runAtFixedRate(getPlugin(), location, scheduledTask -> task.run(), foliaDelay, period);
+    public void scheduleRepeatingTaskAtLocation(Location location, Runnable task, long initialDelayInTicks, long intervalInTicks) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(initialDelayInTicks);
+            Bukkit.getServer().getRegionScheduler()
+                    .runAtFixedRate(getPlugin(), location, scheduledTask -> task.run(), safeDelay, intervalInTicks);
         } else {
             if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskTimer(getPlugin(), delay, period);
+                ((BukkitRunnable) task).runTaskTimer(getPlugin(), initialDelayInTicks, intervalInTicks);
             } else {
-                Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, delay, period);
+                Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, initialDelayInTicks, intervalInTicks);
             }
         }
     }
 
-    // ===== ENTITY SCHEDULING =====
+    // ========================================
+    // ENTITY-BASED TASKS (Entity scheduling)
+    // ========================================
 
     /**
-     * Runs a task immediately for the specified entity
+     * Schedules a task to run immediately for a specific entity.
+     * On Folia, this ensures thread safety when interacting with the entity.
      *
-     * @param entity The entity to schedule the task for
-     * @param task   Callback for when entity is retired/removed
+     * @param entity The entity this task is associated with
+     * @param task   The code to execute
      */
-    public void runTaskForEntity(Entity entity, Runnable task) {
-        if (checkIsFolia()) {
+    public void scheduleTaskForEntity(Entity entity, Runnable task) {
+        if (isFoliaServer()) {
+            // The third parameter is the retirement callback - called when entity is removed
             entity.getScheduler().run(getPlugin(), scheduledTask -> task.run(), task);
         } else {
             Bukkit.getServer().getScheduler().runTask(getPlugin(), task);
@@ -161,80 +179,79 @@ public class SchedulerWrapper {
     }
 
     /**
-     * Runs a task immediately for the specified entity
+     * Schedules a task for an entity with a retirement callback.
+     * The retirement callback runs if the entity is removed before the task completes.
      *
-     * @param entity  The entity to schedule the task for
-     * @param task    The task to run (Runnable)
-     * @param retired Callback for when entity is retired/removed
-     * @return The scheduled task object
+     * @param entity          The entity this task is associated with
+     * @param task            The code to execute
+     * @param onEntityRemoved Code to run if the entity is removed/retired
+     * @return A task handle for cancellation
      */
-    public Object runTaskForEntity(Entity entity, Runnable task, Runnable retired) {
-        if (checkIsFolia()) {
-            return entity.getScheduler().run(getPlugin(), scheduledTask -> task.run(), retired);
+    public Object scheduleTaskForEntityWithCleanup(Entity entity, Runnable task, Runnable onEntityRemoved) {
+        if (isFoliaServer()) {
+            return entity.getScheduler().run(getPlugin(), scheduledTask -> task.run(), onEntityRemoved);
         } else {
+            // On Bukkit, entity retirement isn't a concern, so we ignore the callback
             return Bukkit.getServer().getScheduler().runTask(getPlugin(), task);
         }
     }
 
     /**
-     * Runs a task after a delay for the specified entity
+     * Schedules a delayed task for a specific entity.
+     * Perfect for entity-specific effects or behaviors that should happen later.
      *
-     * @param entity  The entity to schedule the task for
-     * @param task    The task to run
-     * @param delay   Delay in ticks before execution
-     * @param retired Callback for when entity is retired/removed
-     * @return The scheduled task object
+     * @param entity          The entity this task is associated with
+     * @param task            The code to execute
+     * @param delayInTicks    How many ticks to wait before running
+     * @param onEntityRemoved Code to run if the entity is removed before the task executes
+     * @return A task handle for cancellation
      */
-    public Object runTaskLaterForEntity(Entity entity, RunnableTask task, long delay, Runnable retired) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            return entity.getScheduler().runDelayed(getPlugin(), scheduledTask -> task.run(), retired, foliaDelay);
+    public Object scheduleDelayedTaskForEntity(Entity entity, RunnableTask task, long delayInTicks, Runnable onEntityRemoved) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(delayInTicks);
+            return entity.getScheduler().runDelayed(getPlugin(), scheduledTask -> task.run(), onEntityRemoved, safeDelay);
         } else {
-            return Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task::run, delay);
+            return Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task::run, delayInTicks);
         }
     }
 
     /**
-     * Runs a task after a delay for the specified entity
+     * Schedules a delayed task for a specific entity (simple version).
      *
-     * @param entity  The entity to schedule the task for
-     * @param task    The task to run (Runnable)
-     * @param delay   Delay in ticks before execution
-     * @param retired Callback for when entity is retired/removed
+     * @param entity          The entity this task is associated with
+     * @param task            The code to execute
+     * @param delayInTicks    How many ticks to wait before running
+     * @param onEntityRemoved Code to run if the entity is removed before the task executes
      */
-    public void runTaskLaterForEntity(Entity entity, Runnable task, long delay, Runnable retired) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            entity.getScheduler().runDelayed(getPlugin(), scheduledTask -> task.run(), retired, foliaDelay);
+    public void scheduleDelayedTaskForEntity(Entity entity, Runnable task, long delayInTicks, Runnable onEntityRemoved) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(delayInTicks);
+            entity.getScheduler().runDelayed(getPlugin(), scheduledTask -> task.run(), onEntityRemoved, safeDelay);
         } else {
             if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskLater(getPlugin(), delay);
+                ((BukkitRunnable) task).runTaskLater(getPlugin(), delayInTicks);
             } else {
-                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delay);
+                Bukkit.getServer().getScheduler().runTaskLater(getPlugin(), task, delayInTicks);
             }
         }
     }
 
-
     /**
-     * Runs a repeating task for the specified entity
+     * Schedules a repeating task for a specific entity.
+     * Great for ongoing entity behaviors like particle effects or status checks.
      *
-     * @param entity  The entity to schedule the task for
-     * @param task    The task to run repeatedly (Runnable)
-     * @param delay   Initial delay in ticks before first execution
-     * @param period  Period in ticks between executions
-     * @param retired Callback for when entity is retired/removed
+     * @param entity              The entity this task is associated with
+     * @param task                The code to execute repeatedly
+     * @param initialDelayInTicks How many ticks to wait before the first execution
+     * @param intervalInTicks     How many ticks to wait between each execution
+     * @param onEntityRemoved     Code to run if the entity is removed
      */
-    public void runTaskTimerForEntity(Entity entity, Runnable task, long delay, long period, Runnable retired) {
-        if (checkIsFolia()) {
-            long foliaDelay = delay <= 0 ? 1 : delay;
-            entity.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> task.run(), retired, foliaDelay, period);
+    public void scheduleRepeatingTaskForEntity(Entity entity, Runnable task, long initialDelayInTicks, long intervalInTicks, Runnable onEntityRemoved) {
+        if (isFoliaServer()) {
+            long safeDelay = ensureFoliaCompatibleDelay(initialDelayInTicks);
+            entity.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> task.run(), onEntityRemoved, safeDelay, intervalInTicks);
         } else {
-            if (task instanceof BukkitRunnable) {
-                ((BukkitRunnable) task).runTaskTimer(getPlugin(), delay, period);
-            } else {
-                Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, delay, period);
-            }
+            Bukkit.getServer().getScheduler().runTaskTimer(getPlugin(), task, initialDelayInTicks, intervalInTicks);
         }
     }
 }

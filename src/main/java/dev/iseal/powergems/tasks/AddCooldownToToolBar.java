@@ -58,15 +58,17 @@ public class AddCooldownToToolBar extends BukkitRunnable {
 
     @Override
     public void run() {
-        Bukkit.getServer().getOnlinePlayers().forEach(plr -> schedulerWrapper.runTaskForEntity(plr, () -> {
-            if (tdm.chargingFireball.containsKey(plr)) {
-                return;
-            }
-            ItemStack mainHand = plr.getInventory().getItemInMainHand();
-            ItemStack offHand = plr.getInventory().getItemInOffHand();
+        Bukkit.getServer().getOnlinePlayers().forEach(player ->
+            schedulerWrapper.scheduleTaskForEntity(player, () -> {
+                if (tdm.chargingFireball.containsKey(player)) {
+                    return;
+                }
+                ItemStack mainHand = player.getInventory().getItemInMainHand();
+                ItemStack offHand = player.getInventory().getItemInOffHand();
 
-            sendCooldownMessage(plr, mainHand);
-            sendCooldownMessage(plr, offHand);
-        }));
+                sendCooldownMessage(player, mainHand);
+                sendCooldownMessage(player, offHand);
+            })
+        );
     }
 }

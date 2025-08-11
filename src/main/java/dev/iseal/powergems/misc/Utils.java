@@ -156,7 +156,7 @@ public class Utils {
         task.spawnCircles = true;
         task.repeatAmount = repeatAmount;
         task.init();
-        schedulerWrapper.runTaskTimerAtLocation(start, task, 0, 1);
+        schedulerWrapper.scheduleRepeatingTaskAtLocation(start, task, 0, 1);
     }
 
     public void spawnLineParticles(Location start, Location target, int red, int green, int blue, double interval, Consumer<Location> consumer, int repeatAmount) {
@@ -173,7 +173,7 @@ public class Utils {
         task.spawnCircles = false;
         task.repeatAmount = repeatAmount;
         task.init();
-        schedulerWrapper.runTaskTimerAtLocation(start, task, 0, 1);
+        schedulerWrapper.scheduleRepeatingTaskAtLocation(start, task, 0, 1);
 
     }
 

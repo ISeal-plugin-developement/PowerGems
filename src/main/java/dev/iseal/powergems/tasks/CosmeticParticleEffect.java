@@ -7,7 +7,6 @@ import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,8 +24,8 @@ public class CosmeticParticleEffect extends BukkitRunnable {
      */
     @Override
     public void run() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            schedulerWrapper.runTaskForEntity(player, () -> {
+        Bukkit.getServer().getOnlinePlayers().forEach(player ->
+            schedulerWrapper.scheduleTaskForEntity(player, () -> {
                 ArrayList<ItemStack> gems = gemManager.getPlayerGems(player);
                 for (ItemStack gem : gems) {
                     Particle particle = gemManager.runParticleCall(gem, player);
@@ -38,7 +37,7 @@ public class CosmeticParticleEffect extends BukkitRunnable {
                         player.getWorld().spawnParticle(particle, loc, 1, 0.001, 0.001, 0.001, 0.001);
                     }
                 }
-            });
-        }
+            })
+        );
     }
 }

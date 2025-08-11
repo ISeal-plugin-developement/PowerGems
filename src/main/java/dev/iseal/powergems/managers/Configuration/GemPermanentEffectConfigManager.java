@@ -5,6 +5,8 @@ import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
+import org.bukkit.Registry;
+import org.bukkit.NamespacedKey;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
@@ -43,7 +45,21 @@ public class GemPermanentEffectConfigManager extends AbstractConfigManager {
             CACHE.put(gemName, null);
             return null;
         }
-        CACHE.put(gemName, PotionEffectType.getByName(file.getString(gemName + "GemEffect")));
-        return CACHE.get(gemName);
+
+        String effectName = file.getString(gemName + "GemEffect");
+        PotionEffectType effectType;
+
+        try {
+            NamespacedKey key = NamespacedKey.minecraft(effectName.toLowerCase());
+            effectType = Registry.EFFECT.get(key);
+            if (effectType == null) {
+                effectType = PotionEffectType.getByName(effectName);
+            }
+        } catch (Exception e) {
+            effectType = PotionEffectType.getByName(effectName);
+        }
+
+        CACHE.put(gemName, effectType);
+        return effectType;
     }
 }

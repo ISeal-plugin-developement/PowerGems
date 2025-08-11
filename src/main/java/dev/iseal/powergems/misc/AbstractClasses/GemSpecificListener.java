@@ -1,16 +1,15 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +22,7 @@ public abstract class GemSpecificListener implements Listener {
     private final List<String> allowedGems;
     private final GemManager gm = SingletonManager.getInstance().gemManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
     private final ArrayBlockingQueue<UUID> activePlayers = new ArrayBlockingQueue<>(5);
 
     public GemSpecificListener(List<String> allowedGems, int effectLength) {
@@ -54,12 +54,10 @@ public abstract class GemSpecificListener implements Listener {
         if (!applyEffect(e, allowedGems))
             return;
         activePlayers.add(plr.getUniqueId());
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                activePlayers.remove(plr.getUniqueId());
-            }
-        }.runTaskLater(PowerGems.getPlugin(), effectLength);
+
+        schedulerWrapper.scheduleDelayedTaskForEntity(plr, () -> {
+            activePlayers.remove(plr.getUniqueId());
+        }, effectLength, null);
     }
 
     /*
@@ -69,4 +67,3 @@ public abstract class GemSpecificListener implements Listener {
      */
     public abstract boolean applyEffect(PlayerMoveEvent e, int allowedGemNumber);
 }
-

@@ -1,8 +1,10 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -13,6 +15,8 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class HealingGem extends Gem {
+
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     public HealingGem() {
         super("Healing");
@@ -26,18 +30,24 @@ public class HealingGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, 9));
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 10, 9));
+        });
     }
 
     @Override
     protected void leftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, level - 1));
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, level - 1));
+        });
     }
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 1, level));
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 1, level));
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 200, level / 2));
+        });
     }
 
     @Override
@@ -53,11 +63,11 @@ public class HealingGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Parry");
-        lore.add(ChatColor.WHITE + "Shift click: Instant heal");
-        lore.add(ChatColor.WHITE + "Left click: 1 minute of regeneration 2");
+        lore.add(Component.text("Level %level%", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Abilities", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Right click: Parry", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Shift click: Instant heal", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Left click: 1 minute of regeneration 2", NamedTextColor.WHITE).toString());
         return lore;
     }
 

@@ -7,11 +7,10 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class SpawnColoredLineTask extends BukkitRunnable {
-//TODO: This class requires Folia integration
+public class SpawnColoredLineTask implements Runnable {
+
     // Line colors
     public int lineRed = 255;
     public int lineGreen = 255;
@@ -54,6 +53,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
     private double circleRun = 0;
 
     private int counter = 0;
+    private boolean cancelled = false;
 
     public void init() {
         if (spawnLines) {
@@ -69,8 +69,18 @@ public class SpawnColoredLineTask extends BukkitRunnable {
         }
     }
 
+    public void cancel() {
+        cancelled = true;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     @Override
     public void run() {
+        if (cancelled) return;
+        
         boolean doneLine = false;
         boolean doneCircle = false;
         for (int i = 0; i < repeatAmount; i++) {
@@ -108,13 +118,8 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 currentCircleLocation = oldCircleLocation;
             }
             if (doneLine && doneCircle) {
-                try {
-                    if (getTaskId() != -1) {
-                        cancel();
-                    }
-                } catch (IllegalStateException e) {
-                    // Task wasn't scheduled properly, ignore the error
-                }
+                cancel();
+                break;
             }
         }
     }
@@ -149,9 +154,8 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                         particleLocation,
                         5,
                         dustOptions);
+                circleConsumer.accept(currentCircleLocation);
             }
         }
-        circleConsumer.accept(currentCircleLocation);
     }
-    
 }

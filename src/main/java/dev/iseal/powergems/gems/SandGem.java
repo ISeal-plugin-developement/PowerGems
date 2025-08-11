@@ -6,8 +6,8 @@ import java.util.List;
 
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -28,7 +28,6 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class SandGem extends Gem {
-    //TODO: This class requires Folia integration
     public SandGem() {
         super("Sand");
     }
@@ -148,7 +147,7 @@ public class SandGem extends Gem {
 
         sm.sandMoveListen.addToRemoveList(plr.getUniqueId(), toReplace);
 
-        schedulerWrapper.runTaskLaterAtLocation(targetLocation, () -> sm.sandMoveListen.removeFromList(plr.getUniqueId()), 50L*level);
+        schedulerWrapper.scheduleDelayedTaskAtLocation(targetLocation, () -> sm.sandMoveListen.removeFromList(plr.getUniqueId()), 50L*level);
     }
 
     @Override
@@ -164,13 +163,11 @@ public class SandGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Weakens the target player, reducing their strength temporarily.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Engulfs the target player in darkness, impairing their vision and movement.");
-        lore.add(ChatColor.WHITE + "Left click: Creates a sand block temporarily that slows enemies passing on it.");
+        lore.add(Component.text("Level %level%", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Abilities", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Right click: Weakens the target player, reducing their strength temporarily.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Shift click: Engulfs the target player in darkness, impairing their vision and movement.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Left click: Creates a sand block temporarily that slows enemies passing on it.", NamedTextColor.WHITE).toString());
         return lore;
     }
 

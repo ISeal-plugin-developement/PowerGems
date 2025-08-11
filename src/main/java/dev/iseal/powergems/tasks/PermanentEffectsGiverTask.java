@@ -24,7 +24,7 @@ public class PermanentEffectsGiverTask extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player ->
-                schedulerWrapper.runTaskForEntity(player, () -> {
+                schedulerWrapper.scheduleTaskForEntity(player, () -> {
                     gemManager.getPlayerGems(player).forEach(
                             gem -> {
                                 Gem instance = gemManager.getGemInstance(gem, player);

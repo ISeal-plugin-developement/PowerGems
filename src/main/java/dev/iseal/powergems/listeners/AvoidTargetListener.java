@@ -11,7 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
-import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class AvoidTargetListener implements Listener {
@@ -28,6 +29,7 @@ public class AvoidTargetListener implements Listener {
     private AvoidTargetListener() {}
 
     private final HashMap<UUID, LivingEntity> avoidTargetList = new HashMap<>();
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @EventHandler
     public void onTarget(EntityTargetLivingEntityEvent e) {
@@ -67,15 +69,14 @@ public class AvoidTargetListener implements Listener {
     public void addToList(Player plr, LivingEntity target, long timeUntilRemoval) {
         avoidTargetList.put(plr.getUniqueId(), target);
         
-        PowerGems.getPlugin().getServer().getScheduler()
-            .runTaskLater(PowerGems.getPlugin(), () -> {
-                if (avoidTargetList.containsKey(plr.getUniqueId())) {
-                    LivingEntity storedTarget = avoidTargetList.get(plr.getUniqueId());
-                    if (!storedTarget.isDead()) {
-                        storedTarget.remove();
-                    }
-                    avoidTargetList.remove(plr.getUniqueId());
+        schedulerWrapper.scheduleDelayedTaskForEntity(plr, () -> {
+            if (avoidTargetList.containsKey(plr.getUniqueId())) {
+                LivingEntity storedTarget = avoidTargetList.get(plr.getUniqueId());
+                if (!storedTarget.isDead()) {
+                    storedTarget.remove();
                 }
-            }, timeUntilRemoval);
+                avoidTargetList.remove(plr.getUniqueId());
+            }
+        }, timeUntilRemoval, null);
     }
 }

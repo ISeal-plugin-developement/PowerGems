@@ -87,16 +87,16 @@ public class PowerGems extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        schedulerWrapper.runTaskTimer(new AddCooldownToToolBar(), 0, 20);
+        schedulerWrapper.scheduleRepeatingTask(new AddCooldownToToolBar(), 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            schedulerWrapper.runTaskTimer(new CheckMultipleGemsTask(), 100L, 20L);
+            schedulerWrapper.scheduleRepeatingTask(new CheckMultipleGemsTask(), 100L, 20L);
 
         if (gcm.allowCosmeticParticleEffects())
-            schedulerWrapper.runTaskTimer(new CosmeticParticleEffect(), 0L, gcm.cosmeticParticleEffectInterval());
+            schedulerWrapper.scheduleRepeatingTask(new CosmeticParticleEffect(), 0L, gcm.cosmeticParticleEffectInterval());
 
         if (gcm.giveGemPermanentEffectOnLvlX())
-            schedulerWrapper.runTaskTimer(new PermanentEffectsGiverTask(), 100L, 80L);
+            schedulerWrapper.scheduleRepeatingTask(new PermanentEffectsGiverTask(), 100L, 80L);
 
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();

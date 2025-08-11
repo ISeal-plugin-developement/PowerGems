@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -20,10 +19,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class IronGem extends Gem {
 
@@ -33,6 +34,7 @@ public class IronGem extends Gem {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     private final AttributeModifier armorModifier = new AttributeModifier(
             new NamespacedKey("powergems", "iron_fortification_armor"),
@@ -71,7 +73,7 @@ public class IronGem extends Gem {
         }
         plr.setVelocity(new Vector(0, 0, 0));
 
-        new SchedulerWrapper(PowerGems.getPlugin()).runTaskLaterForEntity(plr, () -> {
+        schedulerWrapper.scheduleDelayedTaskForEntity(plr, () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
             if (op.isOnline()) {
                 plr.setAbsorptionAmount(0.0);
@@ -120,7 +122,7 @@ public class IronGem extends Gem {
             }
         }
 
-        new SchedulerWrapper(PowerGems.getPlugin()).runTaskLaterForEntity(plr, () -> {
+        schedulerWrapper.scheduleDelayedTaskForEntity(plr, () -> {
             OfflinePlayer op = Bukkit.getOfflinePlayer(plr.getUniqueId());
             if (op.isOnline()) {
                 if (armorAttribute != null) {
@@ -148,13 +150,11 @@ public class IronGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Temporarily grants the player increased absorption and knockback resistance.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Temporarily increases the player's armor and armor toughness.");
-        lore.add(ChatColor.WHITE + "Left click: Fires a barrage of spectral arrows in a circle shape.");
+        lore.add(Component.text("Level %level%", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Abilities", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Right click: Temporarily grants the player increased absorption and knockback resistance.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Shift click: Temporarily increases the player's armor and armor toughness.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Left click: Fires a barrage of spectral arrows in a circle shape.", NamedTextColor.WHITE).toString());
         return lore;
     }
 

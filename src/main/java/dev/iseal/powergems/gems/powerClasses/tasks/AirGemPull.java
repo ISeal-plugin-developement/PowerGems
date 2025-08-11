@@ -1,6 +1,6 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
-import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,6 +14,8 @@ public class AirGemPull {
     private final int pullDuration;
     private int currentDuration = 0;
 
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
+
     public AirGemPull(Entity entity, Player player, double pullStrength, int duration) {
         this.entity = entity;
         this.player = player;
@@ -22,7 +24,7 @@ public class AirGemPull {
     }
 
     public void start() {
-        new SchedulerWrapper(PowerGems.getPlugin()).runTaskTimerForEntity(entity, this::run, 0, 1, null);
+        schedulerWrapper.scheduleRepeatingTaskForEntity(entity, this::run, 0, 1, null);
     }
 
     public void run() {

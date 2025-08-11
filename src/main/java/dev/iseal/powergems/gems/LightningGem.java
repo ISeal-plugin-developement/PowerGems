@@ -1,7 +1,9 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -16,10 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class LightningGem extends Gem {
-    //TODO: This class requires Folia integration
     public LightningGem() {
         super("Lightning");
     }
+
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -29,40 +32,46 @@ public class LightningGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        Block possibleTarget = plr.getTargetBlock(null, 90);
-        if (possibleTarget == null) {
-            plr.sendMessage(I18N.translate("MUST_LOOK_AT_BLOCK"));
-            return;
-        }
-        possibleTarget = plr.getTargetBlock(null, 90);
-        Location targetLocation = possibleTarget.getLocation();
-        World plrWorld = plr.getWorld();
-        plrWorld.strikeLightning(targetLocation);
-        for (Entity e : plrWorld.getNearbyEntities(targetLocation, 5, 5, 5)) {
-            if (e instanceof LivingEntity) {
-                plrWorld.strikeLightning(e.getLocation());
-            }
-        }
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            Block possibleTarget = plr.getTargetBlock(null, 90);
+            Location targetLocation = possibleTarget.getLocation();
+            World plrWorld = plr.getWorld();
+
+            schedulerWrapper.scheduleDelayedTaskAtLocation(targetLocation, () -> {
+                plrWorld.strikeLightning(targetLocation);
+
+                for (Entity e : plrWorld.getNearbyEntities(targetLocation, 5, 5, 5)) {
+                    if (e instanceof LivingEntity) {
+                        plrWorld.strikeLightning(e.getLocation());
+                    }
+                }
+            }, 1L);
+        });
     }
 
     @Override
     protected void leftClick(Player plr, int level) {
-        Location playerLocation = plr.getLocation();
-        World world = playerLocation.getWorld();
-        plr.setVelocity(playerLocation.getDirection().multiply(5));
-        world.spawnParticle(Particle.FLASH, playerLocation, 100, 0, 0, 0, 0.2);
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            Location playerLocation = plr.getLocation();
+            World world = playerLocation.getWorld();
+            plr.setVelocity(playerLocation.getDirection().multiply(5));
+            world.spawnParticle(Particle.FLASH, playerLocation, 100, 0, 0, 0, 0.2);
+        });
     }
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        Location playerLocation = plr.getLocation();
-        World world = playerLocation.getWorld();
-        world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-        for (Entity e : world.getNearbyEntities(playerLocation, 5, 5, 5)) {
-            if (e instanceof LivingEntity && e != plr) {
-                ((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1200, 0));
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            Location playerLocation = plr.getLocation();
+            World world = playerLocation.getWorld();
+            world.playSound(playerLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
+
+            for (Entity e : world.getNearbyEntities(playerLocation, 5, 5, 5)) {
+                if (e instanceof LivingEntity && e != plr) {
+                    ((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 1200, 0));
+                }
             }
-        }
+        });
     }
 
     @Override
@@ -78,13 +87,11 @@ public class LightningGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Strikes lightning at the target location and nearby entities, damaging them.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Emits a thunder sound effect and applies a glowing potion effect to nearby entities, excluding the player.");
-        lore.add(ChatColor.WHITE + "Left click: Launches the player forward in the direction rail.");
+        lore.add(Component.text("Level %level%", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Abilities", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Right click: Strikes lightning at the target location and nearby entities, damaging them.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Shift click: Emits a thunder sound effect and applies a glowing potion effect to nearby entities, excluding the player.", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Left click: Launches the player forward in the direction rail.", NamedTextColor.WHITE).toString());
         return lore;
     }
 

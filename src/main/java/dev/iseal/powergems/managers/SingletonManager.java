@@ -45,7 +45,7 @@ public class SingletonManager {
         tempDataManager = new TempDataManager();
         sandMoveListen = new SandMoveListener();
         fallingBlockHitListen = new FallingBlockHitListener();
-        schedulerWrapper = new SchedulerWrapper(PowerGems.getPlugin());
+        schedulerWrapper = new SchedulerWrapper();
         gemManager = GemManager.getInstance();
         strenghtMoveListener = new StrenghtMoveListener();
         utils = new Utils();
