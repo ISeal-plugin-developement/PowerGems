@@ -1,7 +1,6 @@
 package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.Configuration.*;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
