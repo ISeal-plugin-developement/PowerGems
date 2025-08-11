@@ -5,8 +5,8 @@ import dev.iseal.powergems.managers.GemReflectionManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
-import org.bukkit.Registry;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;

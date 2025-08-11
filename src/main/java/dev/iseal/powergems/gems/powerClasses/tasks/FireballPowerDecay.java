@@ -1,6 +1,10 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Fireball;
@@ -8,11 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.TempDataManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class FireballPowerDecay implements Runnable {
 

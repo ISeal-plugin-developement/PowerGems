@@ -1,9 +1,7 @@
 package dev.iseal.powergems.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,8 +10,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantInventory;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class TradeEventListener implements Listener {
 

@@ -1,17 +1,16 @@
 package dev.iseal.powergems.tasks;
 
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.CooldownManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import dev.iseal.powergems.managers.CooldownManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.TempDataManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class AddCooldownToToolBar extends BukkitRunnable {

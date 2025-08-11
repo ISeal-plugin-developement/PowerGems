@@ -1,6 +1,5 @@
 package dev.iseal.powergems.managers;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.listeners.FallingBlockHitListener;
 import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;

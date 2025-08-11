@@ -1,12 +1,17 @@
 package dev.iseal.powergems.gems;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-
 import dev.iseal.powergems.managers.NamespacedKeyManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
-import org.bukkit.*;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -19,12 +24,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class IronGem extends Gem {
 

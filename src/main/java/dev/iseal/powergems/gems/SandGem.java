@@ -1,11 +1,13 @@
 package dev.iseal.powergems.gems;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -20,21 +22,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.Utils;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class SandGem extends Gem {
-    public SandGem() {
-        super("Sand");
-    }
-
     private final Utils utils = SingletonManager.getInstance().utils;
     private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
     private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
+    public SandGem() {
+        super("Sand");
+    }
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -85,9 +83,9 @@ public class SandGem extends Gem {
                 255, 204, 0, // Semi dark yellow for line
                 204, 153, 0, // Darker yellow for circles
                 0.2, // Line interval
-                5-level/2D, // Circle interval
+                5 - level / 2D, // Circle interval
                 0.2, // Circle particle interval
-                1+level/2D, // Circle radius
+                1 + level / 2D, // Circle radius
                 loc -> {
                     double radius = 1;
                     List<Entity> nearbyEntities = (List<Entity>) loc.getWorld().getNearbyEntities(loc, radius, radius, radius);
@@ -121,7 +119,7 @@ public class SandGem extends Gem {
             return;
         }
 
-        Location targetLocation = plr.getLocation().clone().add(0,-1,0);
+        Location targetLocation = plr.getLocation().clone().add(0, -1, 0);
 
         int tries = 0;
         while (gcm.isBlockedReplacingBlock(targetLocation.getBlock()) && tries < 70) {
@@ -131,11 +129,11 @@ public class SandGem extends Gem {
 
         HashMap<Block, Material> toReplace = new HashMap<>();
 
-        utils.generateSquare(targetLocation, level*2).forEach(block -> {
+        utils.generateSquare(targetLocation, level * 2).forEach(block -> {
             if (!gcm.isBlockedReplacingBlock(block)
                     && block.getRelative(BlockFace.UP).isEmpty()
                     && block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).isEmpty()
-                    && !block.isEmpty() && !block.getRelative(BlockFace.DOWN).isEmpty() ) {
+                    && !block.isEmpty() && !block.getRelative(BlockFace.DOWN).isEmpty()) {
 
                 Material oldMaterial = block.getType(); //Store the old blocks material
                 sm.sandMoveListen.addToList(block, plr.getUniqueId());
@@ -147,7 +145,7 @@ public class SandGem extends Gem {
 
         sm.sandMoveListen.addToRemoveList(plr.getUniqueId(), toReplace);
 
-        schedulerWrapper.scheduleDelayedTaskAtLocation(targetLocation, () -> sm.sandMoveListen.removeFromList(plr.getUniqueId()), 50L*level);
+        schedulerWrapper.scheduleDelayedTaskAtLocation(targetLocation, () -> sm.sandMoveListen.removeFromList(plr.getUniqueId()), 50L * level);
     }
 
     @Override

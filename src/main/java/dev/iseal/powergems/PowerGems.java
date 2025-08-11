@@ -1,30 +1,38 @@
 package dev.iseal.powergems;
 
+import dev.iseal.powergems.commands.*;
+import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
+import dev.iseal.powergems.listeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleGemsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.powergems.tasks.PermanentEffectsGiverTask;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
-import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
-import org.bukkit.Bukkit;
-
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.gems.powerClasses.tasks.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.*;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.*;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class PowerGems extends JavaPlugin {
 

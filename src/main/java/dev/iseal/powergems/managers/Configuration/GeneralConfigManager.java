@@ -1,13 +1,12 @@
 package dev.iseal.powergems.managers.Configuration;
 
-import java.util.List;
-
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+
+import java.util.List;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 

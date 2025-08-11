@@ -1,10 +1,8 @@
 package dev.iseal.powergems.listeners.passivePowerListeners;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
+import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Bukkit;
@@ -23,9 +21,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.NamespacedKeyManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WaterMoveListener implements Listener {
 

@@ -1,10 +1,18 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -13,12 +21,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 

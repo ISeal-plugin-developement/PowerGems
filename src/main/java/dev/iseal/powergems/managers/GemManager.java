@@ -1,10 +1,9 @@
 package dev.iseal.powergems.managers;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
@@ -18,13 +17,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is responsible for managing the creation, identification, and
