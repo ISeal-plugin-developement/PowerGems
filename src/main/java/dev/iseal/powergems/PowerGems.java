@@ -1,6 +1,11 @@
 package dev.iseal.powergems;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -9,6 +14,7 @@ import java.util.logging.Logger;
 
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.sealUtils.SealUtils;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -44,7 +50,7 @@ public class PowerGems extends JavaPlugin {
         plugin = this;
 
         if (System.getenv().containsKey("POWERGEMS_DISABLE_DEPENDENCY_CHECK") && System.getenv("POWERGEMS_DISABLE_DEPENDENCY_CHECK").equalsIgnoreCase("true")) {
-            l.warning("Ignoring SealLib dependency due to environment variable.");
+            l.warning("Ignoring dependency check due to environment variable.");
         } else {
             checkHardDependencies();
         }
@@ -232,5 +238,54 @@ public class PowerGems extends JavaPlugin {
                 return;
             }
         }
+    }
+
+    public void handleConfigChecksums() {
+        File configFolder = getDataFolder();
+        TempDataManager manager = SingletonManager.getInstance().tempDataManager;
+        String storedChecksum = manager.readDataFromFile("configChecksum") instanceof String ? (String) manager.readDataFromFile("configChecksum") : null;
+
+        String currentChecksum = calculateFolderChecksum(configFolder);
+        if (storedChecksum == null) {
+            manager.writeDataToFile("configChecksum", currentChecksum);
+        } else {
+            if (!storedChecksum.equals(currentChecksum)) {
+                // do something if folder changed
+            } else {
+                // do something if folder did not change
+            }
+        }
+    }
+
+    private String calculateFolderChecksum(File folder) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            Files.walk(folder.toPath())
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> {
+                        try (InputStream is = Files.newInputStream(path)) {
+                            byte[] buffer = new byte[1024];
+                            int read;
+                            while ((read = is.read(buffer)) != -1) {
+                                digest.update(buffer, 0, read);
+                            }
+                        } catch (IOException e) {
+                            getLogger().warning("Error reading file: " + path);
+                        }
+                    });
+        } catch (NoSuchAlgorithmException | IOException e) {
+            getLogger().warning("Could not calculate checksum: " + e.getMessage());
+            return null;
+        }
+        return bytesToHex(digest.digest());
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

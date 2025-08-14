@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -149,5 +150,10 @@ public class IronGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.CRIT;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

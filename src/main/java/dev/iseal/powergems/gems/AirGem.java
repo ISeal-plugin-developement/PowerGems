@@ -5,6 +5,7 @@ import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -144,5 +145,10 @@ public class AirGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.CLOUD;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

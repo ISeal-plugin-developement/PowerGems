@@ -36,12 +36,20 @@ public class AvoidTargetListener implements Listener {
         }
         LivingEntity target = e.getTarget();
         Entity targeter = e.getEntity();
+        cleanupList();
         if (!avoidTargetList.containsKey(target.getUniqueId())) {
             return;
         }
         if (avoidTargetList.get(target.getUniqueId()).equals(targeter)) {
             e.setCancelled(true);
         }
+    }
+
+    private void cleanupList() {
+        avoidTargetList.entrySet().removeIf(entry -> {
+            LivingEntity target = entry.getValue();
+            return target == null || target.isDead() || !target.isValid(); // Remove the entry if the target is dead or invalid
+        });
     }
 
     @EventHandler
@@ -62,20 +70,8 @@ public class AvoidTargetListener implements Listener {
         * Add the player and its target to the list
         * @param plr The player to add to the list
         * @param target The target that will avoid the player
-        * @param timeUntilRemoval The time until the player is removed from the list
      */
-    public void addToList(Player plr, LivingEntity target, long timeUntilRemoval) {
+    public void addToList(Player plr, LivingEntity target) {
         avoidTargetList.put(plr.getUniqueId(), target);
-        
-        PowerGems.getPlugin().getServer().getScheduler()
-            .runTaskLater(PowerGems.getPlugin(), () -> {
-                if (avoidTargetList.containsKey(plr.getUniqueId())) {
-                    LivingEntity storedTarget = avoidTargetList.get(plr.getUniqueId());
-                    if (!storedTarget.isDead()) {
-                        storedTarget.remove();
-                    }
-                    avoidTargetList.remove(plr.getUniqueId());
-                }
-            }, timeUntilRemoval);
     }
 }

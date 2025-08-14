@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -63,11 +64,13 @@ public class LavaGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
-        blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
-        blaze.setCustomNameVisible(true);
-        blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 1200, level - 1));
-        AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
+        for (int i = 0; i < level; i++) {
+            LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
+            blaze.setCustomName(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName()));
+            blaze.setCustomNameVisible(true);
+            AvoidTargetListener.getInstance().addToList(plr, blaze);
+            blaze.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, PotionEffect.INFINITE_DURATION, level - 1));
+        }
     }
 
     @Override
@@ -94,5 +97,10 @@ public class LavaGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.LAVA;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

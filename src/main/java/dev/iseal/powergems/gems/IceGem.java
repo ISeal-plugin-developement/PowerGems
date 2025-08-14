@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -94,7 +95,7 @@ public class IceGem extends Gem {
             pdc.set(damageKey, PersistentDataType.DOUBLE, 2.0 * level);
 
             // Add to avoid target list and schedule removal after 300 seconds (6000 ticks)
-            AvoidTargetListener.getInstance().addToList(plr, golem, 6000);
+            AvoidTargetListener.getInstance().addToList(plr, golem);
         }
     }
 
@@ -133,5 +134,10 @@ public class IceGem extends Gem {
             .min(Comparator.comparingDouble(player -> 
                 player.getLocation().distanceSquared(golem.getLocation())))
             .orElse(null);
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

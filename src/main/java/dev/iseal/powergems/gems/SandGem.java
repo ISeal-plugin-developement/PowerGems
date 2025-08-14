@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -179,5 +180,10 @@ public class SandGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.FALLING_DUST;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return Bukkit.createBlockData(Material.SAND);
     }
 }

@@ -7,6 +7,7 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -84,5 +85,10 @@ public class StrengthGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.CRIT_MAGIC;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

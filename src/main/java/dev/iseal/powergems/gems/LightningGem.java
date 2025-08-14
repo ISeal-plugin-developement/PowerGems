@@ -8,6 +8,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -93,5 +94,10 @@ public class LightningGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.ELECTRIC_SPARK;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

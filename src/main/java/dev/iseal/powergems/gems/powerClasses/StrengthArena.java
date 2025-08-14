@@ -42,13 +42,31 @@ public class StrengthArena implements Listener {
                     cancel();
                     return;
                 }
-                double angle = 2 * Math.PI / particleCount;
-                for (int i = 0; i < particleCount; i++) {
-                    double x = center.getX() + radius * Math.cos(angle * i);
-                    double y = center.getY();
-                    double z = center.getZ() + radius * Math.sin(angle * i);
-                    Location particleLocation = new Location(startingLocation.getWorld(), x, y, z);
-                    player.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLocation, 2);
+                int latSteps = 16; // Number of latitude steps
+                int lonSteps = 32; // Number of longitude steps
+                for (int i = 0; i <= latSteps; i++) {
+                    double lat = Math.PI * i / latSteps;
+                    double y = center.getY() + radius * Math.cos(lat);
+                    double r = radius * Math.sin(lat);
+                    for (int j = 0; j < lonSteps; j++) {
+                        double lon = 2 * Math.PI * j / lonSteps;
+                        double x = center.getX() + r * Math.cos(lon);
+                        double z = center.getZ() + r * Math.sin(lon);
+                        Location particleLocation = new Location(startingLocation.getWorld(), x, y, z);
+                        player.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLocation, 2, 0.01, 0.01, 0.01, 0.01);
+                    }
+                }
+
+                // Push player away from the sphere if not grounded
+                if (!player.isOnGround()) {
+                    Vector playerPos = player.getLocation().toVector();
+                    Vector fromCenter = playerPos.clone().subtract(center);
+                    if (fromCenter.lengthSquared() > 0.01) {
+                        Vector pushDir = fromCenter.normalize();
+                        double pushStrength = 0.3;
+                        pushDir.setY(player.getVelocity().getY());
+                        player.setVelocity(pushDir.multiply(pushStrength));
+                    }
                 }
                 currentTime++;
             }
