@@ -55,6 +55,9 @@ permissions:
     powergems.debug:
         description: Permission to use /debug
         default: op
+    powergems.admin:
+        description: Permission to receive admin messages
+        default: op
     powergems.*:
         description: Permission to use all PowerGems commands
         default: op
@@ -66,3 +69,4 @@ permissions:
             powergems.reloadconfig: true
             powergems.debug: true
             powergems.movegems: true
+            powergems.admin: true

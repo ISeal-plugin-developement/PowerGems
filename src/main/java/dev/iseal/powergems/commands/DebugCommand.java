@@ -69,9 +69,6 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             case "forceMetricsSave":
                 sm.metricsManager.exitAndSendInfo();
                 break;
-            case "invalidateToken":
-                ConnectionManager.getInstance().invalidateToken();
-                break;
             default:
                 if (!developers.contains(plr.getUniqueId()))
                     plr.sendMessage(I18N.translate("INVALID_SUBCOMMAND"));

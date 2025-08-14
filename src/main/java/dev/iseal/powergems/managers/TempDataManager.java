@@ -24,7 +24,7 @@ public class TempDataManager {
     // Iron right players that left
     public LinkedList<UUID> ironRightLeft = new LinkedList<>();
 
-    private final Json tempData = new Json(PowerGems.getPlugin().getDataFolder()+"/data/", "data.json");
+    private final Json tempData = new Json("data", PowerGems.getPlugin().getDataFolder()+"/data/");
     private final Logger log = PowerGems.getPlugin().getLogger();
 
     public Object readDataFromFile(String key) {

@@ -2,6 +2,7 @@ package dev.iseal.powergems.managers.Configuration;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -55,19 +56,28 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("randomizedColors", false);
         file.setDefault("runUpdater", true);
         file.setDefault("upgradeGemOnKill", false);
+        file.setDefault("analyticsID", generateAnalyticsId());
     }
 
     @Override
     public void lateInit() {
     }
-    
-    // Methods ordered to match configuration keys
+
+    public static String generateAnalyticsId() {
+        int number = ThreadLocalRandom.current().nextInt(0, 1_000_000_000);
+        return String.format("AA-%09d", number);
+    }
+
     public boolean allowCosmeticParticleEffects() {
         return file.getBoolean("allowCosmeticParticleEffects");
     }
 
     public boolean isAllowMetrics() {
         return file.getBoolean("allowMetrics");
+    }
+
+    public String getAnalyticsID() {
+        return file.getString("analyticsID");
     }
 
     public boolean isAllowMovingGems() {

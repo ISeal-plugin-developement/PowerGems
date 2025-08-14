@@ -3,20 +3,34 @@ package dev.iseal.powergems;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
+import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.sealUtils.SealUtils;
+import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
+import net.royawesome.jlibnoise.module.combiner.Power;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import dev.iseal.powergems.commands.*;
@@ -36,38 +50,55 @@ public class PowerGems extends JavaPlugin {
     public static boolean isWorldGuardEnabled = false;
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
-    private final Logger l = this.getLogger();
+    private final Logger log = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.1.3.1"); //NOPMD - This is not an IP.
+        dependencies.put("SealLib", "1.2.0.0"); //NOPMD - This is not an IP.
     }
-    
-    //private final HashMap<UUID, ArrayList<GemUsageInfo>> gemLevelDistributionData = new HashMap<>();
 
     @Override
     public void onEnable() {
-        l.info("Initializing plugin");
+        log.info("Initializing plugin");
         plugin = this;
 
         if (System.getenv().containsKey("POWERGEMS_DISABLE_DEPENDENCY_CHECK") && System.getenv("POWERGEMS_DISABLE_DEPENDENCY_CHECK").equalsIgnoreCase("true")) {
-            l.warning("Ignoring dependency check due to environment variable.");
+            log.warning("Ignoring dependency check due to environment variable.");
         } else {
-            checkHardDependencies();
+            Map<String, String> missingDeps = checkHardDependencies();
+            if (!missingDeps.isEmpty()) {
+                // register join listener to warn admins
+                Bukkit.getPluginManager().registerEvents(new Listener() {
+                    @EventHandler
+                    public void onJoin(PlayerJoinEvent event) {
+                        Player player = event.getPlayer();
+                        if (player.isOp() || player.hasPermission("powergems.admin")) {
+                            player.sendMessage("§cPowerGems might not be operating correctly due to missing dependencies. Please check the console for details.");
+                            player.sendMessage("§cMissing dependencies:");
+                            for (Map.Entry<String, String> entry : missingDeps.entrySet()) {
+                                player.sendMessage("§c- " + entry.getKey() + " (required version: " + entry.getValue() + ")");
+                            }
+                        }
+                    }
+                }, this);
+            } else {
+                log.info("All hard dependencies are satisfied.");
+            }
         }
 
+        ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
         sm = SingletonManager.getInstance();
         sm.init();
         if (!getDataFolder().exists())
-            l.warning("Generating configuration, this WILL spam the console.");
+            log.warning("Generating configuration, this WILL spam the console.");
         firstSetup();
         GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
-        l.info("-----------------------------------------------------------------------------------------");
-        l.info("PowerGems v" + getDescription().getVersion());
-        l.info("Made by " + getDescription().getAuthors().toString().replace("[", "").replace("]", "").replace(",", " &"));
-        l.info("Loading in " + gcm.getLanguageCode() + "_" + gcm.getCountryCode() + " locale");
-        l.info("Loading server version: " + Bukkit.getServer().getVersion());
-        l.info("For info and to interact with the plugin, visit: https://discord.iseal.dev/");
-        l.info("-----------------------------------------------------------------------------------------");
+        log.info("-----------------------------------------------------------------------------------------");
+        log.info("PowerGems v" + getDescription().getVersion());
+        log.info("Made by " + getDescription().getAuthors().toString().replace("[", "").replace("]", "").replace(",", " &"));
+        log.info("Loading in " + gcm.getLanguageCode() + "_" + gcm.getCountryCode() + " locale");
+        log.info("Loading server version: " + Bukkit.getServer().getVersion());
+        log.info("For info and to interact with the plugin, visit: https://discord.iseal.dev/");
+        log.info("-----------------------------------------------------------------------------------------");
         try {
             I18N.getInstance().setBundle(this, gcm.getLanguageCode(), gcm.getCountryCode());
         } catch (IOException e) {
@@ -119,59 +150,49 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(sm.strenghtMoveListener, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
-        l.info(I18N.translate("REGISTERED_LISTENERS"));
-        l.info(I18N.translate("REGISTERING_COMMANDS"));
+        log.info(I18N.translate("REGISTERED_LISTENERS"));
+        log.info(I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
         Bukkit.getServer().getPluginCommand("giveallplayersgem").setExecutor(new GiveAllPlayersGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
-        l.info(I18N.translate("REGISTERED_COMMANDS"));
+        log.info(I18N.translate("REGISTERED_COMMANDS"));
         if (isEnabled("WorldGuard") && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
 
         if (isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
             CombatLogXAddonManager.getInstance().init();
 
+        AnalyticsManager.INSTANCE.setEnabled("PowerGems", gcm.isAllowMetrics());
+        ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
+
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();
-            l.info(I18N.translate("REGISTERING_METRICS"));
+            log.info(I18N.translate("REGISTERING_METRICS"));
             sm.metricsManager = MetricsManager.getInstance();
             sm.metricsManager.addMetrics(PowerGems.getPlugin(), 20723);
-            /*
-            //TODO: this needs a complete rework. disabled for now
-            sm.metricsManager.addJoinMetrics(this::registerPlayerInfo);
-            sm.metricsManager.addQuitMetrics(this::registerPlayerInfo);
-            sm.metricsManager.addShutdownMetrics((player -> {
-                Map<String, Map<String, Integer>> map = new HashMap<>();
-                gemLevelDistributionData.forEach((uuid, gemUsageInfos) -> {
-                    gemUsageInfos.forEach(gemUsageInfo -> {
-                        String gemName = gemUsageInfo.getName();
-                        int level = gemUsageInfo.getLevel();
-                        Map<String, Integer> levelMap = map.getOrDefault(gemName, new HashMap<>());
-                        levelMap.put(String.valueOf(level), levelMap.getOrDefault(String.valueOf(level), 0) + 1);
-                        map.put(gemName, levelMap);
-                    });
-                });
-                if (!map.isEmpty()) {
-                    Gson gson = new Gson();
-                    sm.metricsManager.addInfoToSendOnExit("powergems/gemlevelusage", gson.toJson(map));
-                }
-            }));
-             */
+            AnalyticsManager.INSTANCE.sendEvent(
+                    gcm.getAnalyticsID(),
+                    AnalyticsSerializers.PLUGIN_VERSION_INFO,
+                    new PluginVersionInfo(
+                            plugin.getDescription().getVersion(), // pluginVersion
+                            Bukkit.getServer().getVersion(), // serverVersion
+                            Bukkit.getServer().getName(), // serverSoftware
+                            System.getProperty("java.version"), // serverJavaVersion
+                            System.getProperty("os.name"), // serverOS
+                            System.getProperty("os.version"), // serverOSVersion
+                            System.getProperty("os.arch") // serverArchitecture
+                    )
+            );
+
         }
-        //pluginManager.registerEvents(sm.metricsManager, this);
-        l.info(I18N.translate("INITIALIZED_PLUGIN"));
+        log.info(I18N.translate("INITIALIZED_PLUGIN"));
     }
 
     @Override
     public void onDisable() {
-        /*
-        //TODO: part of the metrics rework. disabled for now, needs a complete rework.
-        if (!errorOnDependencies && sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class).isAllowMetrics())
-            sm.metricsManager.exitAndSendInfo();
-         */
         getLogger().info("Shutting down!");
     }
 
@@ -194,7 +215,7 @@ public class PowerGems extends JavaPlugin {
             cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Left");
             cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Shift");
         });
-        l.warning("Finished generating configuration");
+        log.warning("Finished generating configuration");
     }
 
     public static UUID getAttributeUUID() {
@@ -206,42 +227,23 @@ public class PowerGems extends JavaPlugin {
         return pluginManager.isPluginEnabled(pluginName);
     }
 
-    /*
-    //TODO: part of the metrics rework. disabled for now, needs a complete rework.
-    private void registerPlayerInfo(Player plr){
-        UUID playerUUID = plr.getUniqueId();
-        if (gemLevelDistributionData.containsKey(playerUUID)) {
-            gemLevelDistributionData.remove(playerUUID);
-        }
-
-        ArrayList<GemUsageInfo> usageInfos = new ArrayList<>();
-        sm.utils.getUserGems(plr).forEach(gem -> {
-            usageInfos.add(new GemUsageInfo(sm.gemManager.getGemName(gem), sm.gemManager.getLevel(gem)));
-        });
-
-        gemLevelDistributionData.put(playerUUID, usageInfos);
-    }
-     */
-
-    private void checkHardDependencies() {
+    private Map<String, String> checkHardDependencies() {
+        HashMap<String, String> missingHardDependencies = new HashMap<>();
         for (Map.Entry<String, String> entry : dependencies.entrySet()) {
             if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {
-                l.severe("The plugin " + entry.getKey() + " (version "+entry.getValue()+") is required for this plugin to work. Please install it.");
-                l.severe("PowerGems will shut down now.");
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
+                log.severe("The plugin " + entry.getKey() + " (version "+entry.getValue()+") is required for this plugin to work. Please install it.");
+                missingHardDependencies.put(entry.getKey(), entry.getValue());
             }
             if (!Bukkit.getPluginManager().getPlugin(entry.getKey()).getDescription().getVersion().equals(entry.getValue())) {
-                l.severe("The plugin " + entry.getKey() + " is using the wrong version! Please install version " + entry.getValue());
-                l.severe("PowerGems will shut down now.");
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
+                log.severe("The plugin " + entry.getKey() + " is using the wrong version! Please install version " + entry.getValue());
+                missingHardDependencies.put(entry.getKey(), entry.getValue());
             }
         }
+        return missingHardDependencies;
     }
 
-    public void handleConfigChecksums() {
-        File configFolder = getDataFolder();
+    public static void handleConfigChecksums(String analyticsID) {
+        File configFolder = PowerGems.getPlugin().getDataFolder();
         TempDataManager manager = SingletonManager.getInstance().tempDataManager;
         String storedChecksum = manager.readDataFromFile("configChecksum") instanceof String ? (String) manager.readDataFromFile("configChecksum") : null;
 
@@ -249,20 +251,43 @@ public class PowerGems extends JavaPlugin {
         if (storedChecksum == null) {
             manager.writeDataToFile("configChecksum", currentChecksum);
         } else {
-            if (!storedChecksum.equals(currentChecksum)) {
-                // do something if folder changed
-            } else {
-                // do something if folder did not change
-            }
+            new Thread(() -> {
+                try {
+                    HttpResponse<String> res = HttpClient.newBuilder()
+                            .connectTimeout(Duration.ofSeconds(30L))
+                            .version(HttpClient.Version.HTTP_2)
+                            .build()
+                            .send(
+                                    HttpRequest.newBuilder()
+                                            .POST(HttpRequest.BodyPublishers.ofString(storedChecksum.equals(currentChecksum) ? "false" : "true"))
+                                            .header("AA-ID", analyticsID)
+                                            .uri(new URI((SealUtils.isDebug() ? "http://localhost:8080/" : "https://analytics.iseal.dev/") + "api/v2/PowerGems/config_changed"))
+                                            .build(),
+                                    HttpResponse.BodyHandlers.ofString()
+                            );
+                    if (res.statusCode() == 200) {
+                        PowerGems.getPlugin().getLogger().info("Config checksum event sent successfully: "+res.body());
+                    } else {
+                        PowerGems.getPlugin().getLogger().warning("Failed to send config checksum event, status code: " + res.statusCode());
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_TO_SEND_CONFIG_CHECKSUM_EVENT", false);
+                }
+            }, "Analytics-Sender-PowerGems").start();
         }
     }
 
-    private String calculateFolderChecksum(File folder) {
+    private static String calculateFolderChecksum(File folder) {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
-            Files.walk(folder.toPath())
+            Path dataFolderPath = folder.toPath();
+            Files.walk(dataFolderPath)
                     .filter(Files::isRegularFile)
+                    .filter(path -> {
+                        Path relativePath = dataFolderPath.relativize(path);
+                        return !relativePath.startsWith("data") && !relativePath.startsWith("languages");
+                    })
                     .forEach(path -> {
                         try (InputStream is = Files.newInputStream(path)) {
                             byte[] buffer = new byte[1024];
@@ -271,17 +296,17 @@ public class PowerGems extends JavaPlugin {
                                 digest.update(buffer, 0, read);
                             }
                         } catch (IOException e) {
-                            getLogger().warning("Error reading file: " + path);
+                            PowerGems.getPlugin().getLogger().warning("Error reading file: " + path);
                         }
                     });
         } catch (NoSuchAlgorithmException | IOException e) {
-            getLogger().warning("Could not calculate checksum: " + e.getMessage());
+            PowerGems.getPlugin().getLogger().warning("Could not calculate checksum: " + e.getMessage());
             return null;
         }
         return bytesToHex(digest.digest());
     }
 
-    private String bytesToHex(byte[] bytes) {
+    private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));

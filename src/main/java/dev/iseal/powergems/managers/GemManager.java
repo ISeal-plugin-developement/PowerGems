@@ -1,13 +1,20 @@
 package dev.iseal.powergems.managers;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.PowerGemsAnalyticsSerializers;
+import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PowerGems.PGGemUsagesHourly;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
+import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.ExtraKryoCodecs.Utils.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -25,6 +32,7 @@ import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * This class is responsible for managing the creation, identification, and
@@ -69,6 +77,7 @@ public class GemManager implements Dumpable {
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
     private final HashMap<String, Gem> gems = new HashMap<>();
+    private final HashMap<Pair<String, String>, Integer> gemUsagesByHour = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -533,6 +542,57 @@ public class GemManager implements Dumpable {
             item.setItemMeta(meta);
             l.warning("An error in a gem has been found and fixed!");
         }
+    }
+
+    /**
+     * Starts a scheduled task to send gem usage statistics every hour.
+     * This task collects gem usage data from the `gemUsagesByHour` map and
+     * sends it to the analytics system.
+     * <p>
+     * This method should be called once during the plugin's startup to ensure
+     * that gem usage statistics are collected and sent periodically.
+     */
+    public void startGemUsagesTask() {
+        if (!gcm.isAllowMetrics()) return;
+        try (ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor()) {
+            ses.scheduleAtFixedRate(() -> {
+                HashMap<String, List<Pair<String, Integer>>> gemUsages = new HashMap<>();
+                gemUsagesByHour.forEach((key, value) -> {
+                    String gemName = key.getFirst();
+                    String ability = key.getSecond();
+                    gemUsages.putIfAbsent(gemName, new ArrayList<>());
+                    gemUsages.get(gemName).add(new Pair<>(ability, value));
+                });
+                AnalyticsManager.INSTANCE.sendEvent(
+                        gcm.getAnalyticsID(),
+                        PowerGemsAnalyticsSerializers.GEM_USAGES,
+                        new PGGemUsagesHourly(gemUsages)
+                );
+            }, 1, 1, TimeUnit.HOURS);
+        }
+    }
+
+    /**
+     * Adds a gem usage to the temp storage.
+     * This method is used to track how many times a gem with a specific ability is utilized
+     * @param gemName the name of the gem
+     * @param ability the ability of the gem that was used
+     */
+    public void addGemUsage(String gemName, String ability) {
+        if (!gcm.isAllowMetrics()) return;
+        if (gemName == null || gemName.isEmpty()) {
+            l.warning("Tried to add gem usage with null or empty name, skipping.");
+            return;
+        }
+        if (ability == null || ability.isEmpty()) {
+            l.warning("Tried to add gem usage with null or empty ability, skipping.");
+            return;
+        }
+        Pair<String, String> key = new Pair<>(gemName, ability);
+        gemUsagesByHour.putIfAbsent(key, 0);
+        gemUsagesByHour.put(key, gemUsagesByHour.get(key) + 1);
+        if (gcm.isDebugMode())
+            l.info("Added gem usage for " + gemName + " with ability " + ability + ". Total usages: " + gemUsagesByHour.get(key));
     }
 
     @Override
