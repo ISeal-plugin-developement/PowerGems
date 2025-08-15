@@ -65,7 +65,7 @@ public class IronGem extends Gem {
         plr.getWorld().spawnParticle(Particle.CRIT, plr.getLocation().add(0, 1, 0), 20);
         plr.setAbsorptionAmount(2 * level);
 
-        AttributeInstance knockbackInstance = plr.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
+        AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         if (knockbackInstance != null) {
             try {
                 knockbackInstance.addModifier(knockbackAttribute);
@@ -112,8 +112,8 @@ public class IronGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        AttributeInstance armorAttribute = plr.getAttribute(Attribute.ARMOR);
-        AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.ARMOR_TOUGHNESS);
+        AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
+        AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
 
         if (armorAttribute != null && toughnessAttribute != null) {
             try {
@@ -161,8 +161,8 @@ public class IronGem extends Gem {
     }
 
     public void removeShiftModifiers(Player plr) {
-        AttributeInstance armorAttribute = plr.getAttribute(Attribute.ARMOR);
-        AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.ARMOR_TOUGHNESS);
+        AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
+        AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         if (armorAttribute != null) {
             armorAttribute.removeModifier(armorModifier);
         }
@@ -172,7 +172,7 @@ public class IronGem extends Gem {
     }
 
     public void removeRightModifiers(Player plr) {
-        AttributeInstance knockbackInstance = plr.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
+        AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK);
         if (knockbackInstance != null) {
             knockbackInstance.removeModifier(knockbackAttribute);
         }

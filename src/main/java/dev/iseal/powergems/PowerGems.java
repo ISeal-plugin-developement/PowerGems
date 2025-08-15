@@ -12,6 +12,7 @@ import dev.iseal.powergems.listeners.CraftEventListener;
 import dev.iseal.powergems.listeners.DeathEvent;
 import dev.iseal.powergems.listeners.DropEvent;
 import dev.iseal.powergems.listeners.EnterExitListener;
+import dev.iseal.powergems.listeners.EntityDamageListener;
 import dev.iseal.powergems.listeners.EntityExplodeListener;
 import dev.iseal.powergems.listeners.InventoryCloseListener;
 import dev.iseal.powergems.listeners.InventoryMoveEvent;
@@ -32,6 +33,7 @@ import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.powergems.tasks.AddCooldownToToolBar;
 import dev.iseal.powergems.tasks.CheckMultipleGemsTask;
@@ -58,7 +60,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,17 +71,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.gems.powerClasses.tasks.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.*;
-import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.*;
 
 public class PowerGems extends JavaPlugin {
 
-    private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     public static boolean isWorldGuardEnabled = false;
     public static JavaPlugin plugin = null;
     private static SingletonManager sm = null;
@@ -350,3 +343,4 @@ public class PowerGems extends JavaPlugin {
         return sb.toString();
     }
 }
+
