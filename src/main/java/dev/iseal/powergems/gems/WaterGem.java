@@ -12,6 +12,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -124,5 +125,10 @@ public class WaterGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.BUBBLE;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

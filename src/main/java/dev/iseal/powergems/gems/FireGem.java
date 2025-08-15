@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -24,13 +25,14 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 
-
 public class FireGem extends Gem {
+
     public FireGem() {
         super("Fire");
     }
 
     private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
+
     @Override
     public void call(Action act, Player plr, ItemStack item) {
         caller = this.getClass();
@@ -146,5 +148,10 @@ public class FireGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.FLAME;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

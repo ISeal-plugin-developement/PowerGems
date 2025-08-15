@@ -13,6 +13,11 @@ public class EntityExplodeListener implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
+        preventGemExplosions(e);
+    }
+
+
+    private void preventGemExplosions(EntityExplodeEvent e) {
         if (!e.getEntity().getPersistentDataContainer().has(nkm.getKey("is_gem_explosion"), PersistentDataType.BOOLEAN)) {
             return;
         }

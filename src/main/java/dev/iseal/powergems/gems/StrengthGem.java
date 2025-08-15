@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -95,5 +96,10 @@ public class StrengthGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.ENCHANTED_HIT;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -74,5 +75,10 @@ public class HealingGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.HEART;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

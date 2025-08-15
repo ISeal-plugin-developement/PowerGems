@@ -11,6 +11,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -53,11 +54,11 @@ public class LavaGem extends Gem {
 
                     // Schedule cleanup in the same region
                     schedulerWrapper.scheduleDelayedTaskAtLocation(plr.getLocation(), () ->
-                            blocks.forEach(block -> block.setType(Material.AIR)
-                            ), 600 + (finalCurrentTime * 20L));
+                            blocks.forEach(block -> block.setType(Material.AIR)),
+                            600 + (finalCurrentTime * 20L));
                 }, finalCurrentTime * 20L);
 
-                radius += 3;
+                radius = radius + 3;
             }
         });
     }
@@ -72,11 +73,13 @@ public class LavaGem extends Gem {
     @Override
     protected void shiftClick(Player plr, int level) {
         schedulerWrapper.scheduleTaskForEntity(plr, () -> {
-            LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
-            blaze.customName(Component.text(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName())));
-            blaze.setCustomNameVisible(true);
-            blaze.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 1200, level - 1));
-            AvoidTargetListener.getInstance().addToList(plr, blaze, 1200);
+            for (int i = 0; i < level; i++) {
+                LivingEntity blaze = (LivingEntity) plr.getWorld().spawnEntity(plr.getLocation(), EntityType.BLAZE);
+                blaze.customName(Component.text(I18N.translate("OWNED_BLAZE").replace("{owner}", plr.getName())));
+                blaze.setCustomNameVisible(true);
+                blaze.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 1200, level - 1));
+                AvoidTargetListener.getInstance().addToList(plr, blaze);
+            }
         });
     }
 
@@ -104,5 +107,10 @@ public class LavaGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.LAVA;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

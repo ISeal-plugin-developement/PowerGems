@@ -9,7 +9,7 @@ folia-supported: true
 softdepend: [WorldGuard, CombatLogX]
 commands:
   getallgems:
-    description: Command to give yourself all gem
+    description: Command to give yourself all gems
     usage: /getallgems
     permission: powergems.getallgems
   givegem:
@@ -56,6 +56,9 @@ permissions:
     powergems.debug:
         description: Permission to use /debug
         default: op
+    powergems.admin:
+        description: Permission to receive admin messages
+        default: op
     powergems.*:
         description: Permission to use all PowerGems commands
         default: op
@@ -67,3 +70,4 @@ permissions:
             powergems.reloadconfig: true
             powergems.debug: true
             powergems.movegems: true
+            powergems.admin: true

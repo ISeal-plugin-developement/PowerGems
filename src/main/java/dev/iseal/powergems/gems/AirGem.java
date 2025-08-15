@@ -10,6 +10,8 @@ import dev.iseal.powergems.misc.Utils;
 import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import net.kyori.adventure.text.Component;
+import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -149,5 +151,10 @@ public class AirGem extends Gem {
     @Override
     public Particle getDefaultParticle() {
         return Particle.CLOUD;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

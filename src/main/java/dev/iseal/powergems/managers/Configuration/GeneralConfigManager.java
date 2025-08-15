@@ -1,12 +1,15 @@
 package dev.iseal.powergems.managers.Configuration;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 
-import java.util.List;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 
@@ -57,14 +60,22 @@ public class GeneralConfigManager extends AbstractConfigManager {
     @Override
     public void lateInit() {
     }
-    
-    // Methods ordered to match configuration keys
+
+    public static String generateAnalyticsId() {
+        int number = ThreadLocalRandom.current().nextInt(0, 1_000_000_000);
+        return String.format("AA-%09d", number);
+    }
+
     public boolean allowCosmeticParticleEffects() {
         return file.getBoolean("allowCosmeticParticleEffects");
     }
 
     public boolean isAllowMetrics() {
         return file.getBoolean("allowMetrics");
+    }
+
+    public String getAnalyticsID() {
+        return file.getString("analyticsID");
     }
 
     public boolean isAllowMovingGems() {

@@ -11,6 +11,7 @@ import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -62,6 +63,10 @@ public abstract class Gem {
             if (checkIfCooldown("shift", plr)) {
                 return;
             }
+
+            // add this usage to gemManager's list
+            gm.addGemUsage(caller.getSimpleName(), "Shift");
+
             // finally, call the shift ability
             shiftClick(plr, level);
             // if combatlogx is enabled, set in fight
@@ -73,6 +78,9 @@ public abstract class Gem {
             if (checkIfCooldown("left", plr)) {
                 return;
             }
+            // add this usage to gemManager's list
+            gm.addGemUsage(caller.getSimpleName(), "Left");
+
             leftClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                 CombatLogXAddonManager.getInstance().setInFightAttacker(plr);
@@ -81,6 +89,9 @@ public abstract class Gem {
             if (checkIfCooldown("right", plr)) {
                 return;
             }
+            // add this usage to gemManager's list
+            gm.addGemUsage(caller.getSimpleName(), "Right");
+
             rightClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                 CombatLogXAddonManager.getInstance().setInFightAttacker(plr);
@@ -110,6 +121,14 @@ public abstract class Gem {
     public abstract int getDefaultEffectLevel();
 
     public abstract Particle getDefaultParticle();
+
+    /**
+     * Get the block data for the particle effect.
+     * This is used for particles like BLOCK_CRACK, BLOCK_DUST, and FALLING_DUST.
+     * @return BlockData for the particle effect, or null if not applicable.
+     */
+    public abstract BlockData getParticleBlockData();
+
 
     public Particle particle() {
         if (particle == null) {
