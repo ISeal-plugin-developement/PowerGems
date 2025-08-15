@@ -14,8 +14,8 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prerelease>true</prerelease>
-        <execute>true</execute>
+        <prerelease>false</prerelease>
+        <execute>false</execute>
     </properties>
 
     <build>
