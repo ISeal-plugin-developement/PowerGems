@@ -1,13 +1,12 @@
 package dev.iseal.powergems.managers;
 
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Updater.UpdateChecker;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+
+import java.util.logging.Logger;
 
 /**
  * This class manages the update checking process for the PowerGems plugin.

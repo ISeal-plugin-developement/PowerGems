@@ -1,5 +1,6 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
+import dev.iseal.powergems.PowerGems;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -10,8 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import dev.iseal.powergems.PowerGems;
 
 public class IceGemGolemAi implements Listener {
 

@@ -1,8 +1,8 @@
 package dev.iseal.powergems.listeners.passivePowerListeners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,9 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.SingletonManager;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DamageListener implements Listener {
 

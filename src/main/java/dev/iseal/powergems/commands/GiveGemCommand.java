@@ -1,12 +1,11 @@
 package dev.iseal.powergems.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,9 +14,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GiveGemCommand implements CommandExecutor, TabCompleter {
 
@@ -41,7 +41,7 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
         if (args.length > 2) {
             targetPlayer = Bukkit.getPlayer(args[args.length - 1]);
             if (targetPlayer == null) {
-                player.sendMessage(ChatColor.DARK_RED + "Player not found.");
+                player.sendMessage(Component.text("Player not found.", NamedTextColor.DARK_RED));
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        player.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");
+        player.sendMessage(Component.text("Invalid gem name / ID.", NamedTextColor.DARK_RED));
         return true;
     }
 

@@ -3,6 +3,7 @@ package dev.iseal.powergems.managers;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
@@ -32,6 +33,7 @@ public class RecipeManager implements Listener {
     private GeneralConfigManager gcm = null;
     private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
+    SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     private static RecipeManager instance = null;
     public static RecipeManager getInstance() {
@@ -82,7 +84,7 @@ public class RecipeManager implements Listener {
     }
 
     private void tryUpgradeCrafting(InventoryClickEvent e) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
+        schedulerWrapper.scheduleDelayedTask(() -> {
             CraftingInventory ci = (CraftingInventory) e.getInventory();
             if (!Objects.equals(ci.getResult(), null))
                 return;
@@ -106,7 +108,7 @@ public class RecipeManager implements Listener {
                 gem.setItemMeta(im);
                 ci.setResult(gem);
             }
-        }, 1);
+        }, 1L);
     }
 
     private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
@@ -208,7 +210,7 @@ public class RecipeManager implements Listener {
         };
 
         if (e.isShiftClick()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), replaceRandomGem, 1L);
+           schedulerWrapper.scheduleDelayedTask(replaceRandomGem, 1L);
         } else {
             replaceRandomGem.run();
         }

@@ -1,8 +1,8 @@
 package dev.iseal.powergems.listeners;
 
-import java.util.HashMap;
-import java.util.UUID;
-
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class AvoidTargetListener implements Listener {
 
@@ -28,6 +28,7 @@ public class AvoidTargetListener implements Listener {
     private AvoidTargetListener() {}
 
     private final HashMap<UUID, LivingEntity> avoidTargetList = new HashMap<>();
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @EventHandler
     public void onTarget(EntityTargetLivingEntityEvent e) {
@@ -46,10 +47,10 @@ public class AvoidTargetListener implements Listener {
     }
 
     private void cleanupList() {
-        avoidTargetList.entrySet().removeIf(entry -> {
+        schedulerWrapper.scheduleDelayedTask(() -> avoidTargetList.entrySet().removeIf(entry -> {
             LivingEntity target = entry.getValue();
-            return target == null || target.isDead() || !target.isValid(); // Remove the entry if the target is dead or invalid
-        });
+            return target == null || target.isDead() || !target.isValid();
+        }), 1L);
     }
 
     @EventHandler
@@ -73,5 +74,16 @@ public class AvoidTargetListener implements Listener {
      */
     public void addToList(Player plr, LivingEntity target) {
         avoidTargetList.put(plr.getUniqueId(), target);
+        
+        // Schedule removal after 300 seconds (6000 ticks)
+        schedulerWrapper.scheduleDelayedTaskForEntity(plr, () -> {
+            if (avoidTargetList.containsKey(plr.getUniqueId())) {
+                LivingEntity storedTarget = avoidTargetList.get(plr.getUniqueId());
+                if (!storedTarget.isDead()) {
+                    storedTarget.remove();
+                }
+                avoidTargetList.remove(plr.getUniqueId());
+            }
+        }, 6000L, this::cleanupList);
     }
 }

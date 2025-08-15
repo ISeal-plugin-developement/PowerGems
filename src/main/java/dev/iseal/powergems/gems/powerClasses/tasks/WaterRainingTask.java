@@ -12,11 +12,9 @@ import java.util.UUID;
 
 public class WaterRainingTask extends BukkitRunnable {
 
-    private ArrayList<UUID> hasGemRaining = new ArrayList<>();
-
     @Override
     public void run() {
-        this.hasGemRaining = WaterMoveListener.hasGemRaining;
+        ArrayList<UUID> hasGemRaining = WaterMoveListener.hasGemRaining;
         for (UUID uuid : hasGemRaining) {
             Player plr = Bukkit.getPlayer(uuid);
             double temperature = plr.getLocation().getBlock().getTemperature();

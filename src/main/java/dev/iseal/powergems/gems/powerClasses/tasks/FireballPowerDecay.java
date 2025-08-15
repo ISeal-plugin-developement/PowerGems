@@ -1,35 +1,46 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
-import org.bukkit.ChatColor;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.TempDataManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-
-public class FireballPowerDecay extends BukkitRunnable {
+public class FireballPowerDecay implements Runnable {
 
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
     private final GeneralConfigManager gdm = SingletonManager.getInstance().configManager
             .getRegisteredConfigInstance(GeneralConfigManager.class);
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+
     public Player plr = null;
     public int currentPower = 0;
     public int level = 1;
 
+//    private final Object taskHandle = null;
+    private boolean cancelled = false;
+
+    public void cancel() {
+        cancelled = true;
+//        if (taskHandle != null) {
+//        }
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     @Override
     public void run() {
-        if (!plr.isValid() || !plr.isOnline()) {
-            this.cancel();
+        if (cancelled || !plr.isValid() || !plr.isOnline()) {
+            cancel();
             return;
         }
 
@@ -37,26 +48,25 @@ public class FireballPowerDecay extends BukkitRunnable {
 
         if (currentPower <= 0) {
             tdm.chargingFireball.remove(plr);
-            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(I18N.translate("FIREBALL_FAIL_LAUNCH"))
-            );
-            this.cancel();
+            plr.sendActionBar(Component.text(I18N.translate("FIREBALL_FAIL_LAUNCH"), NamedTextColor.RED));
+            cancel();
             return;
         }
 
         if (currentPower >= 100) {
             spawnFireball();
             tdm.chargingFireball.remove(plr);
-            plr.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(I18N.translate("FIREBALL_LAUNCHED"))
-            );
-            this.cancel();
+            plr.sendActionBar(Component.text(I18N.translate("FIREBALL_LAUNCHED"), NamedTextColor.GREEN));
+            cancel();
             return;
         }
 
         int bars = currentPower / 10;
-        String powerBar = ChatColor.GREEN + "| ".repeat(bars) + ChatColor.GRAY + "| ".repeat(10 - bars);
-        plr.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(powerBar));
+        Component powerBar = Component.text()
+                .append(Component.text("| ".repeat(bars), NamedTextColor.GREEN))
+                .append(Component.text("| ".repeat(10 - bars), NamedTextColor.GRAY))
+                .build();
+        plr.sendActionBar(powerBar);
     }
 
     private void spawnFireball() {
@@ -64,7 +74,7 @@ public class FireballPowerDecay extends BukkitRunnable {
         Fireball fireball = plr.launchProjectile(Fireball.class, direction.multiply(2));
 
         fireball.setYield(5 + level);
-        fireball.setVisualFire(false);
+        fireball.setVisibleByDefault(false);
         fireball.setIsIncendiary(gdm.isExplosionDamageAllowed());
 
         PersistentDataContainer pdc = fireball.getPersistentDataContainer();

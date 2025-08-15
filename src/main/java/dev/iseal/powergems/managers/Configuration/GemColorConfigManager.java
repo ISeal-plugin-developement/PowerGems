@@ -3,11 +3,13 @@ package dev.iseal.powergems.managers.Configuration;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public class GemColorConfigManager extends AbstractConfigManager {
+
     public GemColorConfigManager() {
-        super("GemColors");
+        super("GemColor");
     }
 
     @Override
@@ -18,11 +20,20 @@ public class GemColorConfigManager extends AbstractConfigManager {
     @Override
     public void lateInit() {
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
-            file.setDefault(GemManager.lookUpName(i) + "GemColor", ChatColor.GREEN.name());
+            file.setDefault(GemManager.lookUpName(i) + "GemColor", NamedTextColor.GREEN.asHexString());
         }
     }
 
-    public ChatColor getGemColor(String gemName) {
-        return ChatColor.valueOf(file.getOrSetDefault(gemName+"GemColor", ChatColor.GREEN.name()));
+    public TextColor getGemColor(String gemName) {
+        String colorValue = file.getOrSetDefault(gemName+"GemColor", NamedTextColor.GREEN.asHexString());
+        try {
+            return TextColor.fromHexString(colorValue);
+        } catch (IllegalArgumentException e) {
+            try {
+                return NamedTextColor.NAMES.value(colorValue.toLowerCase());
+            } catch (Exception ex) {
+                return NamedTextColor.GREEN;
+            }
+        }
     }
 }
