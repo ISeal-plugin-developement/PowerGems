@@ -179,6 +179,7 @@ public class PowerGems extends JavaPlugin {
                     AnalyticsSerializers.PLUGIN_VERSION_INFO,
                     new PluginVersionInfo(
                             plugin.getDescription().getVersion(), // pluginVersion
+                            Bukkit.getBukkitVersion().split("-")[0],
                             Bukkit.getServer().getVersion(), // serverVersion
                             Bukkit.getServer().getName(), // serverSoftware
                             System.getProperty("java.version"), // serverJavaVersion
@@ -267,7 +268,9 @@ public class PowerGems extends JavaPlugin {
                                     HttpResponse.BodyHandlers.ofString()
                             );
                     if (res.statusCode() == 200) {
-                        PowerGems.getPlugin().getLogger().info("Config checksum event sent successfully: "+res.body());
+                        PowerGems.getPlugin().getLogger().info("Config checksum event sent successfully");
+                    } else if (res.statusCode() == 429) {
+                        PowerGems.getPlugin().getLogger().info("You are currently being rate-limited by the server. Any \"Rate limit\" or \"Status code 429\" errors can be safely ignored.");
                     } else {
                         PowerGems.getPlugin().getLogger().warning("Failed to send config checksum event, status code: " + res.statusCode());
                     }
