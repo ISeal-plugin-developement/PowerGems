@@ -88,7 +88,7 @@
     <repositories>
         <repository>
             <id>iseal.dev</id>
-            <url>https://maven.iseal.dev/repository/maven-releases/</url>
+            <url>https://maven.iseal.dev/repository/maven-public/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
