@@ -129,6 +129,7 @@ public class FireGem extends Gem {
         PersistentDataContainer pdc = fireball.getPersistentDataContainer();
         pdc.set(nkm.getKey("is_gem_explosion"), PersistentDataType.BOOLEAN, true);
         pdc.set(nkm.getKey("is_gem_projectile"), PersistentDataType.BOOLEAN, true);
+        pdc.set(nkm.getKey("projectile_sender"), PersistentDataType.STRING, plr.getUniqueId().toString());
     }
 
     @Override
