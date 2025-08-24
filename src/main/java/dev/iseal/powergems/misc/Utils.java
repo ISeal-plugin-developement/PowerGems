@@ -240,8 +240,13 @@ public class Utils {
 
         int currentAmplifier = currentEffect.getAmplifier();
 
-        player.removePotionEffect(type);
-        player.addPotionEffect(new PotionEffect(type, duration, Math.max(amplifier, currentAmplifier)));
+        // Only apply the permanent effect if the current effect has a lower or equal amplifier
+        // This prevents temporary high-level ability effects from becoming permanent
+        if (currentAmplifier <= amplifier) {
+            player.removePotionEffect(type);
+            player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+        }
+        // If current effect is higher than the permanent effect, leave it alone to expire naturally
     }
 
 }
