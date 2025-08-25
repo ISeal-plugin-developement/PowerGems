@@ -1,16 +1,15 @@
 package dev.iseal.powergems.tasks;
 
-import java.util.ArrayList;
-import java.util.function.Consumer;
-
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class SpawnColoredLineTask extends BukkitRunnable {
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+public class SpawnColoredLineTask implements Runnable {
 
     // Line colors
     public int lineRed = 255;
@@ -54,6 +53,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
     private double circleRun = 0;
 
     private int counter = 0;
+    private boolean cancelled = false;
 
     public void init() {
         if (spawnLines) {
@@ -69,8 +69,18 @@ public class SpawnColoredLineTask extends BukkitRunnable {
         }
     }
 
+    public void cancel() {
+        cancelled = true;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     @Override
     public void run() {
+        if (cancelled) return;
+        
         boolean doneLine = false;
         boolean doneCircle = false;
         for (int i = 0; i < repeatAmount; i++) {
@@ -109,6 +119,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
             }
             if (doneLine && doneCircle) {
                 cancel();
+                break;
             }
         }
     }
@@ -119,7 +130,7 @@ public class SpawnColoredLineTask extends BukkitRunnable {
             Color.fromRGB(lineRed, lineGreen, lineBlue), 1
         );
         world.spawnParticle(
-            Particle.REDSTONE,
+            Particle.DUST,
             currentLineLocation,
             5,
             0, 0, 0,  
@@ -139,13 +150,12 @@ public class SpawnColoredLineTask extends BukkitRunnable {
                 Location particleLocation = currentCircleLocation.clone().add(x, y, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(circleRed, circleGreen, circleBlue), 1);
                 currentCircleLocation.getWorld().spawnParticle(
-                        Particle.REDSTONE,
+                        Particle.DUST,
                         particleLocation,
                         5,
                         dustOptions);
+                circleConsumer.accept(currentCircleLocation);
             }
         }
-        circleConsumer.accept(currentCircleLocation);
     }
-    
 }

@@ -5,6 +5,7 @@ import dev.iseal.powergems.listeners.powerListeners.SandMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.Utils;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 
 public class SingletonManager {
@@ -33,6 +34,7 @@ public class SingletonManager {
     public TempDataManager tempDataManager;
     public NamespacedKeyManager namespacedKeyManager;
     public MetricsManager metricsManager;
+    public SchedulerWrapper schedulerWrapper;
 
     public void init() {
         configManager = ConfigManager.getInstance();
@@ -42,6 +44,7 @@ public class SingletonManager {
         tempDataManager = new TempDataManager();
         sandMoveListen = new SandMoveListener();
         fallingBlockHitListen = new FallingBlockHitListener();
+        schedulerWrapper = new SchedulerWrapper();
         gemManager = GemManager.getInstance();
         strenghtMoveListener = new StrenghtMoveListener();
         utils = new Utils();

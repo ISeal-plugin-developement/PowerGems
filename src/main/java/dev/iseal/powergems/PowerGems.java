@@ -1,5 +1,51 @@
 package dev.iseal.powergems;
 
+import dev.iseal.powergems.commands.CheckUpdateCommand;
+import dev.iseal.powergems.commands.DebugCommand;
+import dev.iseal.powergems.commands.GetAllGemsCommand;
+import dev.iseal.powergems.commands.GiveAllPlayersGemCommand;
+import dev.iseal.powergems.commands.GiveGemCommand;
+import dev.iseal.powergems.commands.ReloadConfigCommand;
+import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
+import dev.iseal.powergems.listeners.AvoidTargetListener;
+import dev.iseal.powergems.listeners.CraftEventListener;
+import dev.iseal.powergems.listeners.DeathEvent;
+import dev.iseal.powergems.listeners.DropEvent;
+import dev.iseal.powergems.listeners.EnterExitListener;
+import dev.iseal.powergems.listeners.EntityDamageListener;
+import dev.iseal.powergems.listeners.EntityExplodeListener;
+import dev.iseal.powergems.listeners.InventoryCloseListener;
+import dev.iseal.powergems.listeners.InventoryMoveEvent;
+import dev.iseal.powergems.listeners.KillEventListener;
+import dev.iseal.powergems.listeners.NoGemHittingListener;
+import dev.iseal.powergems.listeners.ServerStartupListener;
+import dev.iseal.powergems.listeners.TradeEventListener;
+import dev.iseal.powergems.listeners.UseEvent;
+import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleGemsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.powergems.tasks.PermanentEffectsGiverTask;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,46 +60,34 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
 import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
 import dev.iseal.sealUtils.SealUtils;
 import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
-import net.royawesome.jlibnoise.module.combiner.Power;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.gems.powerClasses.tasks.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.*;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.*;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class PowerGems extends JavaPlugin {
 
-    private static JavaPlugin plugin = null;
     public static boolean isWorldGuardEnabled = false;
+    public static JavaPlugin plugin = null;
     private static SingletonManager sm = null;
-    private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
+
     private final Logger log = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
+
     {
         dependencies.put("SealLib", "1.2.0.0"); //NOPMD - This is not an IP.
+    }
+
+    // getters beyond this point
+    public static JavaPlugin getPlugin() {
+        return plugin;
     }
 
     @Override
@@ -88,6 +122,7 @@ public class PowerGems extends JavaPlugin {
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
         sm = SingletonManager.getInstance();
         sm.init();
+        SchedulerWrapper schedulerWrapper = sm.schedulerWrapper;
         if (!getDataFolder().exists())
             log.warning("Generating configuration, this WILL spam the console.");
         firstSetup();
@@ -106,17 +141,17 @@ public class PowerGems extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        new AddCooldownToToolBar().runTaskTimer(this, 0, 20);
+        schedulerWrapper.scheduleRepeatingTask(new AddCooldownToToolBar(), 0, 20);
 
         if (gcm.allowOnlyOneGem())
-            new CheckMultipleGemsTask().runTaskTimer(this, 100L, 20L);
-
+            schedulerWrapper.scheduleRepeatingTask(new CheckMultipleGemsTask(), 100L, 20L);
 
         if (gcm.allowCosmeticParticleEffects())
-            new CosmeticParticleEffect().runTaskTimer(this, 0L, gcm.cosmeticParticleEffectInterval());
+            schedulerWrapper.scheduleRepeatingTask(new CosmeticParticleEffect(), 0L, gcm.cosmeticParticleEffectInterval());
 
-        if(gcm.giveGemPermanentEffectOnLvlX())
-            new PermanentEffectsGiverTask().runTaskTimer(this, 100L, 80L);
+        if (gcm.giveGemPermanentEffectOnLvlX())
+            schedulerWrapper.scheduleRepeatingTask(new PermanentEffectsGiverTask(), 100L, 80L);
+
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new UseEvent(), this);
@@ -136,7 +171,7 @@ public class PowerGems extends JavaPlugin {
             pluginManager.registerEvents(new DebuffInColdBiomesListener(), this);
             pluginManager.registerEvents(new DebuffInHotBiomesListener(), this);
         }
-        if(gcm.upgradeGemOnKill()) {
+        if (gcm.upgradeGemOnKill()) {
             pluginManager.registerEvents(new KillEventListener(), this);
         }
         pluginManager.registerEvents(new IceGemGolemAi(), this);
@@ -198,10 +233,7 @@ public class PowerGems extends JavaPlugin {
         getLogger().info("Shutting down!");
     }
 
-    // getters beyond this point
-    public static JavaPlugin getPlugin() {
-        return plugin;
-    }
+
 
     private void firstSetup() {
         if (getDataFolder().exists()) {
@@ -218,10 +250,6 @@ public class PowerGems extends JavaPlugin {
             cooldownConfigManager.getStartingCooldown(gemManager.getName(gem), "Shift");
         });
         log.warning("Finished generating configuration");
-    }
-
-    public static UUID getAttributeUUID() {
-        return attributeUUID;
     }
 
     public static boolean isEnabled(String pluginName) {
@@ -318,3 +346,4 @@ public class PowerGems extends JavaPlugin {
         return sb.toString();
     }
 }
+

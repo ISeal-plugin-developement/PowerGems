@@ -1,20 +1,25 @@
 package dev.iseal.powergems.managers;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.PowerGemsAnalyticsSerializers;
 import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PowerGems.PGGemUsagesHourly;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import dev.iseal.ExtraKryoCodecs.Utils.Pair;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -25,14 +30,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * This class is responsible for managing the creation, identification, and
@@ -72,6 +69,7 @@ public class GemManager implements Dumpable {
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
+    //TODO: Replace ChatColor with components
     private final ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
@@ -169,7 +167,7 @@ public class GemManager implements Dumpable {
         if (randomGem == null) {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
-            gemMeta.setDisplayName(I18N.translate("RANDOM_GEM_NAME"));
+            gemMeta.displayName(Component.text(I18N.translate("RANDOM_GEM_NAME")));
             gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
@@ -247,7 +245,7 @@ public class GemManager implements Dumpable {
         int repeating = 0;
         while (true) {
             String randomGemName = lookUpName(random);
-            boolean isExcluded = Arrays.stream(excludedTypes).anyMatch(type -> type.equals(randomGemName));
+            boolean isExcluded = Arrays.asList(excludedTypes).contains(randomGemName);
             if (agcm.isGemActive(randomGemName) && !isExcluded) {
                 break;
             }
@@ -343,8 +341,8 @@ public class GemManager implements Dumpable {
         reGemMeta.setCustomModelData(gemNumber+2);
         gemItem.setItemMeta(reGemMeta);
         //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
-        //l.info(gcm.getPluginPrefix() + "Created a " 
-        //+ lookUpName(gemNumber) 
+        //l.info(gcm.getPluginPrefix() + "Created a "
+        //+ lookUpName(gemNumber)
         //+ " gem with custom model data " + customModelData);
         return gemItem;
     }
@@ -554,22 +552,21 @@ public class GemManager implements Dumpable {
      */
     public void startGemUsagesTask() {
         if (!gcm.isAllowMetrics()) return;
-        try (ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor()) {
-            ses.scheduleAtFixedRate(() -> {
-                HashMap<String, List<Pair<String, Integer>>> gemUsages = new HashMap<>();
-                gemUsagesByHour.forEach((key, value) -> {
-                    String gemName = key.getFirst();
-                    String ability = key.getSecond();
-                    gemUsages.putIfAbsent(gemName, new ArrayList<>());
-                    gemUsages.get(gemName).add(new Pair<>(ability, value));
-                });
-                AnalyticsManager.INSTANCE.sendEvent(
-                        gcm.getAnalyticsID(),
-                        PowerGemsAnalyticsSerializers.GEM_USAGES,
-                        new PGGemUsagesHourly(gemUsages)
-                );
-            }, 1, 1, TimeUnit.HOURS);
-        }
+
+        SingletonManager.getInstance().schedulerWrapper.scheduleRepeatingTask(() -> {
+            HashMap<String, List<Pair<String, Integer>>> gemUsages = new HashMap<>();
+            gemUsagesByHour.forEach((key, value) -> {
+                String gemName = key.getFirst();
+                String ability = key.getSecond();
+                gemUsages.putIfAbsent(gemName, new ArrayList<>());
+                gemUsages.get(gemName).add(new Pair<>(ability, value));
+            });
+            AnalyticsManager.INSTANCE.sendEvent(
+                    gcm.getAnalyticsID(),
+                    PowerGemsAnalyticsSerializers.GEM_USAGES,
+                    new PGGemUsagesHourly(gemUsages)
+            );
+        }, 72000L, 72000L); // 1 hour = 72000 ticks (20 ticks per second * 3600 seconds)
     }
 
     /**

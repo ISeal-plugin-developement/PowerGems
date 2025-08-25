@@ -3,8 +3,11 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.StrengthArena;
 import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.ChatColor;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
@@ -20,10 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StrengthGem extends Gem {
-
     public StrengthGem() {
         super("Strength");
     }
+
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     @Override
     public void call(Action act, Player plr, ItemStack item) {
@@ -33,37 +37,44 @@ public class StrengthGem extends Gem {
 
     @Override
     protected void rightClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300 + level * 20, 1+level / 2));
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 + level * 20, 1 + level / 2));
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 300 + level * 20, 1+level / 2));
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION,300 + level * 20, 1 + level / 2));
+        });
     }
 
     @Override
     protected void leftClick(Player plr, int level) {
-        double distance = 10;
-        double power = 2 + ((double) level / 2);
-        Location playerLocation = plr.getLocation();
-        List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
-        for (Entity entity : nearbyEntities) {
-            if (entity instanceof Player nearbyPlayer && ! entity.equals(plr)) {
-                Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
-                nearbyPlayer.setVelocity(knockbackVector.multiply(power));
-                nearbyPlayer.damage(5);
-                nearbyPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 2));
-                if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
-                    CombatLogXAddonManager.getInstance().setInFight(plr, nearbyPlayer);
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            double distance = 10;
+            double power = 2 + ((double) level / 2);
+            Location playerLocation = plr.getLocation();
+            List<Entity> nearbyEntities = plr.getNearbyEntities(distance, distance, distance);
+
+            for (Entity entity : nearbyEntities) {
+                if (entity instanceof Player nearbyPlayer && !entity.equals(plr)) {
+                    Vector knockbackVector = nearbyPlayer.getLocation().subtract(playerLocation).toVector();
+                    nearbyPlayer.setVelocity(knockbackVector.multiply(power));
+                    nearbyPlayer.damage(5);
+                    nearbyPlayer.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 2));
+                    if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                        CombatLogXAddonManager.getInstance().setInFight(plr, nearbyPlayer);
+                }
             }
-        }
+        });
     }
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200+level*20, 2));
-        new StrengthArena(plr).start();
+        schedulerWrapper.scheduleTaskForEntity(plr, () -> {
+            plr.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 200+level*20, 2));
+            new StrengthArena(plr).start();
+        });
     }
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.FAST_DIGGING;
+        return PotionEffectType.HASTE;
     }
 
     @Override
@@ -74,17 +85,17 @@ public class StrengthGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Saturation, Strength and Resistance (all lvl 2)");
-        lore.add(ChatColor.WHITE + "Shift click: An arena that keeps anyone from entering, useful to heal");
-        lore.add(ChatColor.WHITE + "Left click: A shockwave that sends everyone near flying and damages them");
+        lore.add(Component.text("Level %level%", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Abilities", NamedTextColor.GREEN).toString());
+        lore.add(Component.text("Right click: Saturation, Strength and Resistance (all lvl 2)", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Shift click: An arena that keeps anyone from entering, useful to heal", NamedTextColor.WHITE).toString());
+        lore.add(Component.text("Left click: A shockwave that sends everyone near flying and damages them", NamedTextColor.WHITE).toString());
         return lore;
     }
 
     @Override
     public Particle getDefaultParticle() {
-        return Particle.CRIT_MAGIC;
+        return Particle.ENCHANTED_HIT;
     }
 
     @Override

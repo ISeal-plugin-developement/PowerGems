@@ -1,8 +1,8 @@
 package dev.iseal.powergems.misc;
 
-import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import dev.iseal.powergems.tasks.SpawnColoredLineTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,15 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+
 public class Utils {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     public Location getXBlocksInFrontOfPlayer(Location startLocation, Vector dir, int x) {
         RayTraceResult result = startLocation.getWorld().rayTraceBlocks(startLocation, dir, x);
         Location targetLocation;
 
-        // If a target block is found, use its location; otherwise, use the last block in the raycast
+        // If a target block is found, use its location; otherwise, use the last block in the ray cast
         if (result != null && result.getHitBlock() != null) {
             targetLocation = result.getHitBlock().getLocation();
         } else {
@@ -104,7 +106,7 @@ public class Utils {
         return count >= x;
     }
 
-    public boolean hasAtLeastXAmountOfGems(Inventory inv, int x, ItemStack... moreToCheck){
+    public boolean hasAtLeastXAmountOfGems(Inventory inv, int x, ItemStack... moreToCheck) {
         int totalCount = 0;
         // Iterate over the player's inventory once
         for (ItemStack item : inv.getContents()) {
@@ -154,7 +156,7 @@ public class Utils {
         task.spawnCircles = true;
         task.repeatAmount = repeatAmount;
         task.init();
-        task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
+        schedulerWrapper.scheduleRepeatingTaskAtLocation(start, task, 0, 1);
     }
 
     public void spawnLineParticles(Location start, Location target, int red, int green, int blue, double interval, Consumer<Location> consumer, int repeatAmount) {
@@ -165,20 +167,22 @@ public class Utils {
         task.lineGreen = green;
         task.lineBlue = blue;
         task.lineInterval = interval;
-        task.lineConsumer = (consumer == null) ? loc -> {} : consumer;
+        task.lineConsumer = (consumer == null) ? loc -> {
+        } : consumer;
         task.spawnLines = true;
         task.spawnCircles = false;
         task.repeatAmount = repeatAmount;
         task.init();
-        task.runTaskTimer(PowerGems.getPlugin(), 0, 1);
+        schedulerWrapper.scheduleRepeatingTaskAtLocation(start, task, 0, 1);
+
     }
 
     /*
-        * Returns the direction vector of the player.
-        * @param rotX The rotation on the x-axis (the yaw).
-        * @param rotY The rotation on the y-axis (the pitch).
-        *
-        * @return The direction vector of the player.
+     * Returns the direction vector of the player.
+     * @param rotX The rotation on the x-axis (the yaw).
+     * @param rotY The rotation on the y-axis (the pitch).
+     *
+     * @return The direction vector of the player.
      */
     public Vector getDirection(double rotX, double rotY) {
         Vector vector = new Vector();
@@ -208,7 +212,7 @@ public class Utils {
 
     public Location getRandomLocationCloseToPlayer(Player player) {
         Location playerLocation = player.getLocation();
-        // Get a random locaion in a 3x3x2 area around the player, with the player at its center
+        // Get a random location in a 3x3x2 area around the player, with the player at its center
         double x = playerLocation.getX() + Math.random() * 1.5 - 0.75;
         double y = playerLocation.getY() + Math.random() * 2 - 1;
         double z = playerLocation.getZ() + Math.random() * 1.5 - 0.75;
@@ -227,7 +231,7 @@ public class Utils {
         int currentDuration = currentEffect.getDuration();
 
         player.removePotionEffect(type);
-        player.addPotionEffect(new PotionEffect(type, duration+currentDuration, Math.max(amplifier, currentAmplifier)));
+        player.addPotionEffect(new PotionEffect(type, duration + currentDuration, Math.max(amplifier, currentAmplifier)));
     }
 
     public void addPreciseEffectIgnoringDuration(Player player, PotionEffectType type, int duration, int amplifier) {
@@ -248,5 +252,4 @@ public class Utils {
         }
         // If current effect is higher than the permanent effect, leave it alone to expire naturally
     }
-
 }

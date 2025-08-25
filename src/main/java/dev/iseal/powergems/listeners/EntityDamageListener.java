@@ -6,7 +6,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -31,7 +30,6 @@ public class EntityDamageListener implements Listener {
         if (damaged.getUniqueId().equals(senderUUID)) {
             // if the sender is the same as the damaged entity, cancel the damage
             event.setCancelled(true);
-            return;
         }
         // if the sender is not the same as the damaged entity, do nothing
     }

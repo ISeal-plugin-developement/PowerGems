@@ -1,18 +1,20 @@
 package dev.iseal.powergems.gems.powerClasses.tasks;
 
-import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class AirGemPull extends BukkitRunnable{
+public class AirGemPull {
     private final Entity entity;
     private final Player player;
     private final double pullStrength;
     private final int pullDuration;
     private int currentDuration = 0;
+
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
 
     public AirGemPull(Entity entity, Player player, double pullStrength, int duration) {
         this.entity = entity;
@@ -22,10 +24,9 @@ public class AirGemPull extends BukkitRunnable{
     }
 
     public void start() {
-        runTaskTimer(PowerGems.getPlugin(), 0, 1);
+        schedulerWrapper.scheduleRepeatingTaskForEntity(entity, this::run, 0, 1, null);
     }
 
-    @Override
     public void run() {
         if (entity.isDead()
                 || !entity.isValid()
@@ -33,7 +34,6 @@ public class AirGemPull extends BukkitRunnable{
                 || entity.getLocation().distance(player.getLocation()) < 2
                 || currentDuration >= pullDuration
         ) {
-            cancel();
             return;
         }
 

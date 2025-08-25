@@ -1,10 +1,10 @@
 package dev.iseal.powergems.listeners.passivePowerListeners;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.NamespacedKeyManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.WrapperObjects.SchedulerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,16 +21,16 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.powerClasses.tasks.WaterRainingTask;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.NamespacedKeyManager;
-import dev.iseal.powergems.managers.SingletonManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WaterMoveListener implements Listener {
 
     private final GemManager gm = SingletonManager.getInstance().gemManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+    private final SchedulerWrapper schedulerWrapper = SingletonManager.getInstance().schedulerWrapper;
     private final List<String> allowedGems = List.of("Water");
     private final List<UUID> swimmingPlayers = new ArrayList<>();
     public static final ArrayList<UUID> hasGemRaining = new ArrayList<>();
@@ -39,7 +39,7 @@ public class WaterMoveListener implements Listener {
 
     private boolean playerHasAllowedGem(Player plr) {
         return gm.getPlayerGems(plr).stream()
-                .filter(item -> item != null) 
+                .filter(Objects::nonNull)
                 .filter(ItemStack::hasItemMeta) 
                 .anyMatch(item -> {
                     ItemMeta meta = item.getItemMeta();
@@ -71,10 +71,10 @@ public class WaterMoveListener implements Listener {
         hasGemRaining.addAll(Bukkit.getOnlinePlayers().stream()
                 .filter(this::playerHasAllowedGem)
                 .map(Player::getUniqueId)
-                .collect(Collectors.toList()));
+                .toList());
 
         task = new WaterRainingTask();
-        task.runTaskTimer(PowerGems.getPlugin(), 0, 100);
+        schedulerWrapper.scheduleRepeatingTask(task, 0, 100);
     }
 
     @EventHandler(ignoreCancelled = true) // Add ignoreCancelled for better performance
