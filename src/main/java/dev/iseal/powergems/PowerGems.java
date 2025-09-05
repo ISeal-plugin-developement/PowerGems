@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,7 +54,7 @@ public class PowerGems extends JavaPlugin {
     private final Logger log = this.getLogger();
     private final HashMap<String, String> dependencies = new HashMap<>();
     {
-        dependencies.put("SealLib", "1.2.0.0"); //NOPMD - This is not an IP.
+        dependencies.put("SealLib", "1.2.0.1"); //NOPMD - This is not an IP.
     }
 
     @Override
@@ -160,6 +161,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         log.info(I18N.translate("REGISTERED_COMMANDS"));
+
         if (isEnabled("WorldGuard") && gcm.isWorldGuardEnabled())
             WorldGuardAddonManager.getInstance().init();
 
@@ -179,7 +181,7 @@ public class PowerGems extends JavaPlugin {
                     AnalyticsSerializers.PLUGIN_VERSION_INFO,
                     new PluginVersionInfo(
                             plugin.getDescription().getVersion(), // pluginVersion
-                            Bukkit.getBukkitVersion().split("-")[0],
+                            Bukkit.getBukkitVersion().split("-")[0], // MC version
                             Bukkit.getServer().getVersion(), // serverVersion
                             Bukkit.getServer().getName(), // serverSoftware
                             System.getProperty("java.version"), // serverJavaVersion
@@ -226,10 +228,13 @@ public class PowerGems extends JavaPlugin {
 
     public static boolean isEnabled(String pluginName) {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        return pluginManager.isPluginEnabled(pluginName);
+        Arrays.stream(pluginManager.getPlugins()).forEach(plugin1 -> {
+            System.out.println("Found plugin: " + plugin1.getName() + " version " + plugin1.getDescription().getVersion());
+        });
+        return Arrays.stream(pluginManager.getPlugins()).anyMatch(plugin1 -> plugin1.getName().equals(pluginName));
     }
 
-    private Map<String, String> checkHardDependencies() {
+        private Map<String, String> checkHardDependencies() {
         HashMap<String, String> missingHardDependencies = new HashMap<>();
         for (Map.Entry<String, String> entry : dependencies.entrySet()) {
             if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {

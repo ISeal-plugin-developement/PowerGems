@@ -1,7 +1,6 @@
 package dev.iseal.powergems.listeners;
 
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

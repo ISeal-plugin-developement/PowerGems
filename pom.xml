@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.6.1.0</version>
+    <version>3.6.1.1</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>dev.iseal</groupId>
             <artifactId>SealLib</artifactId>
-            <version>1.2.0.0</version>
+            <version>1.2.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
