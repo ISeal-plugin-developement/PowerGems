@@ -152,6 +152,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(sm.sandMoveListen, this);
         pluginManager.registerEvents(sm.recipeManager, this);
         pluginManager.registerEvents(new EntityDamageListener(), this);
+        pluginManager.registerEvents(new BundleListener(), this);
         log.info(I18N.translate("REGISTERED_LISTENERS"));
         log.info(I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
