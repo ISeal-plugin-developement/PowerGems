@@ -104,26 +104,6 @@ public class Utils {
         return count >= x;
     }
 
-    /*
-        * Returns a list of all the gems in the player's inventory.
-        *
-        * @param plr The player to check for gems.
-        *
-        * @return A list of all the gems in the player's inventory.
-     */
-    public ArrayList<ItemStack> getUserGems(Player plr) {
-        ArrayList<ItemStack> gems = new ArrayList<>();
-        if (!hasAtLeastXAmountOfGems(plr, 1))
-            return gems;
-        for (ItemStack item : plr.getInventory().getContents()) {
-            if (gemManager.isGem(item)) {
-                gems.add(item);
-            }
-        }
-        return gems;
-
-    }
-
     public boolean hasAtLeastXAmountOfGems(Inventory inv, int x, ItemStack... moreToCheck){
         int totalCount = 0;
         // Iterate over the player's inventory once
@@ -185,7 +165,7 @@ public class Utils {
         task.lineGreen = green;
         task.lineBlue = blue;
         task.lineInterval = interval;
-        task.lineConsumer = consumer;
+        task.lineConsumer = (consumer == null) ? loc -> {} : consumer;
         task.spawnLines = true;
         task.spawnCircles = false;
         task.repeatAmount = repeatAmount;
@@ -248,6 +228,25 @@ public class Utils {
 
         player.removePotionEffect(type);
         player.addPotionEffect(new PotionEffect(type, duration+currentDuration, Math.max(amplifier, currentAmplifier)));
+    }
+
+    public void addPreciseEffectIgnoringDuration(Player player, PotionEffectType type, int duration, int amplifier) {
+        PotionEffect currentEffect = player.getPotionEffect(type);
+
+        if (currentEffect == null) {
+            player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+            return;
+        }
+
+        int currentAmplifier = currentEffect.getAmplifier();
+
+        // Only apply the permanent effect if the current effect has a lower or equal amplifier
+        // This prevents temporary high-level ability effects from becoming permanent
+        if (currentAmplifier <= amplifier) {
+            player.removePotionEffect(type);
+            player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+        }
+        // If current effect is higher than the permanent effect, leave it alone to expire naturally
     }
 
 }

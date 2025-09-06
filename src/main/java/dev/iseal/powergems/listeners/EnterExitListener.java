@@ -1,20 +1,20 @@
 package dev.iseal.powergems.listeners;
 
-import de.leonhard.storage.Json;
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.IronGem;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.TempDataManager;
+import java.util.*;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedList;
-import java.util.UUID;
+import de.leonhard.storage.Json;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.gems.IronGem;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 
 public class EnterExitListener implements Listener {
 
@@ -46,11 +46,9 @@ public class EnterExitListener implements Listener {
     }
 
     private void addDelay(Player plr) {
-        if (tdm.cantUseGems.containsKey(plr)) {
-            tdm.cantUseGems.remove(plr);
-        }
+        tdm.cantUseGems.remove(plr);
         // add delay
-        tdm.cantUseGems.put(plr, (System.currentTimeMillis() + delay));
+        tdm.cantUseGems.put(plr, System.currentTimeMillis() + delay);
         LinkedList<ItemStack> gems = new LinkedList<>();
         for (ItemStack i : plr.getInventory().getContents()) {
             if (gm.isGem(i)) {

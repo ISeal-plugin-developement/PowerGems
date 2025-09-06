@@ -5,21 +5,25 @@ import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class IronGem extends Gem {
@@ -44,7 +48,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void rightClick(Player plr) {
+    protected void rightClick(Player plr, int level) {
         plr.getWorld().spawnParticle(Particle.CRIT, plr.getLocation().add(0, 1, 0), 20);
         plr.setAbsorptionAmount(2 * level);
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
@@ -66,7 +70,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void leftClick(Player plr) {
+    protected void leftClick(Player plr, int level) {
         Vector direction = plr.getEyeLocation().getDirection();
         for (int i = 0; i < 20 + (level * 2); i++) {
             Vector coneDirection = direction.clone().rotateAroundY(i * 20);
@@ -88,7 +92,7 @@ public class IronGem extends Gem {
     }
 
     @Override
-    protected void shiftClick(Player plr) {
+    protected void shiftClick(Player plr, int level) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
         try {
@@ -108,6 +112,29 @@ public class IronGem extends Gem {
         }, 200);
     }
 
+    @Override
+    public PotionEffectType getDefaultEffectType() {
+        return PotionEffectType.DAMAGE_RESISTANCE;
+    }
+
+    @Override
+    public int getDefaultEffectLevel() {
+        return 1;
+    }
+
+    @Override
+    public ArrayList<String> getDefaultLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GREEN + "Level %level%");
+        lore.add(ChatColor.GREEN + "Abilities");
+        lore.add(ChatColor.WHITE
+                + "Right click: Temporarily grants the player increased absorption and knockback resistance.");
+        lore.add(ChatColor.WHITE
+                + "Shift click: Temporarily increases the player's armor and armor toughness.");
+        lore.add(ChatColor.WHITE + "Left click: Fires a barrage of spectral arrows in a circle shape.");
+        return lore;
+    }
+
     public void removeShiftModifiers(Player plr) {
         AttributeInstance armorAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR);
         AttributeInstance toughnessAttribute = plr.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS);
@@ -118,5 +145,15 @@ public class IronGem extends Gem {
     public void removeRightModifiers(Player plr) {
         AttributeInstance knockbackInstance = plr.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         knockbackInstance.removeModifier(knockbackAttribute);
+    }
+
+    @Override
+    public Particle getDefaultParticle() {
+        return Particle.CRIT;
+    }
+
+    @Override
+    public BlockData getParticleBlockData() {
+        return null;
     }
 }

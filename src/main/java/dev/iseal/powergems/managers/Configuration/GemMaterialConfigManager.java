@@ -1,19 +1,20 @@
 package dev.iseal.powergems.managers.Configuration;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class GemMaterialConfigManager extends AbstractConfigManager{
 
     private GemManager gemManager = null;
-    private GeneralConfigManager gcm = null;
     private final ArrayList<Material> possibleMaterials = new ArrayList<>();
+    private final Logger log = PowerGems.getPlugin().getLogger();
 
     public GemMaterialConfigManager() {
         super("gemMaterials");
@@ -26,9 +27,8 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
     
     //Initialize after other classes have been instantiated
     public void lateInit() {
-        gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
         gemManager = SingletonManager.getInstance().gemManager;
-        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getGemName(gem)+"GemMaterial", gem.getType().toString()));
+        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getName(gem)+"GemMaterial", gem.getType().toString()));
     }
 
     @Override
@@ -39,8 +39,8 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
             if (key.equals("RandomGemMaterial")) {
                 continue;
             }
-            if (gemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
-                Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
+            if (GemManager.lookUpID(key.replace("GemMaterial", "")) == -1) {
+                log.severe("Invalid gem name in gemMaterials.yml: " + key+" Skipping...");
                 continue;
             }
             if (!possibleMaterials.contains(Material.getMaterial(file.getString(key)))) {
@@ -58,7 +58,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
     public Material getGemMaterial(ItemStack item) {
         if (!gemManager.isGem(item))
             return null;
-        return getGemMaterial(gemManager.getGemName(item));
+        return getGemMaterial(gemManager.getName(item));
     }
 
     /*
@@ -71,7 +71,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
         try {
             return Material.valueOf(file.getOrSetDefault(name + "GemMaterial", Material.EMERALD.name()));
         } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for gem " + name + ". Defaulting to EMERALD");
+            log.severe("Invalid material for gem " + name + ". Defaulting to EMERALD");
             return Material.EMERALD;
         }
     }
@@ -80,7 +80,7 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
         try {
             return Material.valueOf(file.getOrSetDefault("RandomGemMaterial", Material.EMERALD.name()));
         } catch (IllegalArgumentException e) {
-            Bukkit.getLogger().severe(gcm.getPluginPrefix() + "Invalid material for random gem. Defaulting to EMERALD");
+            log.severe("Invalid material for random gem. Defaulting to EMERALD");
             return Material.EMERALD;
         }
     }

@@ -6,17 +6,28 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>PowerGems</artifactId>
-    <version>3.6.0.0</version>
+    <version>3.6.1.2-DEV1</version>
     <packaging>jar</packaging>
 
     <name>PowerGems</name>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prerelease>false</prerelease>
+        <prerelease>true</prerelease>
         <execute>true</execute>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -33,8 +44,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.12.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <!-- By default, exclude the class that requires Java 21 -->
+                    <excludes>
+                        <exclude>**/managers/Addons/CombatLogX/CombatLogXAddonManager.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -49,16 +62,32 @@
                         </goals>
                         <configuration>
                             <outputFile>target/output/${project.artifactId}-${project.version}.jar</outputFile>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.jeff_media.updatechecker</pattern>
-                                    <shadedPattern>dev.iseal.powergems.misc.updatechecker</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+            </plugin>
+
+            <!-- PMD -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.21.0</version>
+                <configuration>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -69,7 +98,38 @@
         </resources>
     </build>
 
+    <profiles>
+        <profile>
+            <id>java21-plus</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.12.1</version>
+                        <configuration>
+                            <source>21</source>
+                            <target>21</target>
+                            <!-- On Java 21+, compile all files by overriding the default exclude -->
+                            <excludes>
+                                <exclude>none</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
     <repositories>
+        <repository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-public/</url>
+        </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -83,25 +143,21 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>jeff-media-public</id>
-            <name>JEFF Media GbR Repository</name>
-            <url>https://repo.jeff-media.com/public</url>
-        </repository>
-        <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+        <!-- combatlogx -->
+        <repository>
+            <id>sirblobman-public</id>
+            <url>https://nexus.sirblobman.xyz/public/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.ISeal-plugin-developement</groupId>
+            <groupId>dev.iseal</groupId>
             <artifactId>SealLib</artifactId>
-            <version>1.1.0.0</version>
+            <version>1.2.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -114,6 +170,22 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.20.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- BlueSlimeCore -->
+        <dependency>
+            <groupId>com.github.sirblobman.api</groupId>
+            <artifactId>core</artifactId>
+            <version>2.9-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- CombatLogX API -->
+        <dependency>
+            <groupId>com.github.sirblobman.combatlogx</groupId>
+            <artifactId>api</artifactId>
+            <version>11.4-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

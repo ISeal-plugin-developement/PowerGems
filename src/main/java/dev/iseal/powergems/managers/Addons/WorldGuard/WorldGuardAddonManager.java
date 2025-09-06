@@ -10,12 +10,14 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorldGuardAddonManager {
     private static WorldGuardAddonManager instance = null;
@@ -26,18 +28,19 @@ public class WorldGuardAddonManager {
         return instance;
     }
 
-    private WorldGuard worldGuard = WorldGuard.getInstance();
+    private final WorldGuard worldGuard = WorldGuard.getInstance();
     public StateFlag GEMS_ENABLED_FLAG = null;
+    private final Logger logger = PowerGems.getPlugin().getLogger();
 
     public void init() {
-        Bukkit.getServer().getLogger().info("[PowerGems] "+ I18N.translate("ATTEMPT_REGISTER_WG_FLAG"));
+        logger.info(I18N.translate("ATTEMPT_REGISTER_WG_FLAG"));
         FlagRegistry registry = worldGuard.getFlagRegistry();
         try {
             // create flag
             StateFlag flag = new StateFlag("powergems-gems-enabled", true);
             registry.register(flag);
             GEMS_ENABLED_FLAG = flag; // only set var if it didn't crash already
-            Bukkit.getLogger().info("[PowerGems] "+I18N.translate("WG_FLAG_REGISTERED_SUCCESS"));
+            logger.info(I18N.translate("WG_FLAG_REGISTERED_SUCCESS"));
         } catch (FlagConflictException e) {
             // some other plugin registered a flag with the same name already.
             // use the existing flag, and hope it doesn't crash - be sure to check type
@@ -45,12 +48,12 @@ public class WorldGuardAddonManager {
             if (existing instanceof StateFlag) {
                 GEMS_ENABLED_FLAG = (StateFlag) existing;
             } else {
-                // types don't match - we're fucked, throw exception or stay silent?
-                // I guess just logging will do
-                Bukkit.getLogger().severe("[PowerGems] "+I18N.translate("ATTEMPT_REGISTER_WG_FLAG_FAILED"));
+                // types don't match - we're fucked, throw exception
+                logger.severe(I18N.translate("ATTEMPT_REGISTER_WG_FLAG_FAILED"));
+                ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "WG_FLAG_REGISTERING_FAILED_WRONG_TYPES", registry);
             }
         } catch (IllegalStateException ex) {
-            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "FLAG_REGISTERING_FAILED", registry, System.currentTimeMillis());
+            ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "WG_FLAG_REGISTERING_FAILED_WRONG_TIME", registry);
         }
     }
 

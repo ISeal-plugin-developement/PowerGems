@@ -16,11 +16,11 @@ public class CheckUpdateCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
         if (sender.hasPermission(command.getPermission())) {
-            sender.sendMessage(I18N.getTranslation("STARTING_UPDATE_CHECK"));
+            sender.sendMessage(I18N.translate("STARTING_UPDATE_CHECK"));
             um.startUpdate(sender);
             return true;
         }
-        sender.sendMessage(I18N.getTranslation("NO_PERMISSION"));
+        sender.sendMessage(I18N.translate("NO_PERMISSION"));
         return true;
     }
 }

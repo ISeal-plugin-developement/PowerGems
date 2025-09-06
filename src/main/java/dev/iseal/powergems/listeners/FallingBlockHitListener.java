@@ -11,15 +11,13 @@ import java.util.UUID;
 
 public class FallingBlockHitListener implements Listener {
 
-    List<String> entityList = new ArrayList<String>();
+    List<String> entityList = new ArrayList<>();
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        if (event.getEntity() instanceof FallingBlock) {
-            if (this.containsBlock(event.getEntity().getUniqueId())) {
-                event.setCancelled(true);
-                this.removeEntityBlock(event.getEntity().getUniqueId());
-            }
+        if (event.getEntity() instanceof FallingBlock && containsBlock(event.getEntity().getUniqueId())) {
+            event.setCancelled(true);
+            this.removeEntityBlock(event.getEntity().getUniqueId());
         }
     }
 
@@ -30,15 +28,11 @@ public class FallingBlockHitListener implements Listener {
 
     public void removeEntityBlock(UUID id) {
         String uuid = id.toString();
-        if (this.entityList.contains(uuid))
-            this.entityList.remove(uuid);
+        this.entityList.remove(uuid);
     }
 
     public boolean containsBlock(UUID id) {
         String uuid = id.toString();
-        if (this.entityList.contains(uuid)) {
-            return true;
-        }
-        return false;
+        return this.entityList.contains(uuid);
     }
 }

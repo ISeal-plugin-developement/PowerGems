@@ -2,10 +2,9 @@ package dev.iseal.powergems.managers;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import dev.iseal.sealLib.Utils.GlobalUtils;
-import org.bukkit.Bukkit;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -13,19 +12,21 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConfigManager implements Dumpable {
 
     private final ArrayList<Class< ? extends AbstractConfigManager>> registeredConfigurations = new ArrayList<>(5);
     private final HashMap<Class<? extends AbstractConfigManager>, Object> registeredConfigInstances = new HashMap<>(5);
-    private final Logger l = Bukkit.getLogger();
 
     private static ConfigManager instance;
     public static ConfigManager getInstance() {
         if (instance == null)
             instance = new ConfigManager();
         return instance;
+    }
+
+    private ConfigManager() {
+        dumpableInit();
     }
 
     public void setUpConfig() {
@@ -124,7 +125,8 @@ public class ConfigManager implements Dumpable {
 
     private void addConfigClass(Class<?> clazz) {
         if (isPossibleConfigClass(clazz)) {
-            registeredConfigurations.add((Class<? extends AbstractConfigManager>) clazz);
+            Class<? extends AbstractConfigManager> gemClass = clazz.asSubclass(AbstractConfigManager.class);
+            registeredConfigurations.add(gemClass);
         }
     }
 
@@ -134,5 +136,25 @@ public class ConfigManager implements Dumpable {
         dump.put("registeredConfigurations", registeredConfigurations);
         dump.put("registeredConfigInstances", registeredConfigInstances);
         return dump;
+    }
+
+    public void save() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
+    public void updateCooldown(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCooldown'");
+    }
+
+    public void saveConfig() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveConfig'");
+    }
+
+    public void set(String string, long newCooldown) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'set'");
     }
 }

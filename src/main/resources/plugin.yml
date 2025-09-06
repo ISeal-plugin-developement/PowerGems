@@ -1,23 +1,24 @@
 name: PowerGems
 version: '${project.version}'
 main: dev.iseal.powergems.PowerGems
-api-version: '1.19'
+api-version: '1.20'
 author: ISeal
 load: STARTUP
-softdepend: [WorldGuard]
+depend: [SealLib]
+softdepend: [WorldGuard, CombatLogX]
 commands:
   getallgems:
-    description: Command to give yourself all gem
+    description: Command to give yourself all gems
     usage: /getallgems
     permission: powergems.getallgems
   givegem:
     description: Command to give yourself a gem
     usage: /givegem <gem>
     permission: powergems.givegem
-  giveallgem:
+  giveallplayersgem:
     description: Command to give everyone a gem
-    usage: /giveallgem <gem>
-    permission: powergems.giveallgem
+    usage: /giveallplayersgem <gem>
+    permission: powergems.giveallplayersgem
   checkupdates:
     description: Command to check for updates
     usage: /checkupdates
@@ -27,19 +28,22 @@ commands:
     usage: /reloadconfig
     aliases: [rc]
     permission: powergems.reloadconfig
-  debug:
+  pgDebug:
     description: Debug command
-    usage: /debug
-    aliases: [d, db]
+    usage: /pgDebug
+    aliases: [pgd, pgdb]
     permission: powergems.debug
 permissions:
+    powergems.movegems:
+      description: Permission to move gems
+      default: op
     powergems.getallgems:
         description: Permission to use /getallgem
         default: op
     powergems.givegem:
         description: Permission to use /givegem
         default: op
-    powergems.giveallgem:
+    powergems.giveallplayersgem:
         description: Permission to use /giveallgem
         default: op
     powergems.checkupdates:
@@ -51,13 +55,18 @@ permissions:
     powergems.debug:
         description: Permission to use /debug
         default: op
+    powergems.admin:
+        description: Permission to receive admin messages
+        default: op
     powergems.*:
         description: Permission to use all PowerGems commands
         default: op
         children:
             powergems.getallgems: true
             powergems.givegem: true
-            powergems.giveallgem: true
+            powergems.giveallplayersgem: true
             powergems.checkupdates: true
             powergems.reloadconfig: true
             powergems.debug: true
+            powergems.movegems: true
+            powergems.admin: true

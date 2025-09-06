@@ -1,16 +1,17 @@
 package dev.iseal.powergems.listeners;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.GemManager;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.TempDataManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class UseEvent implements Listener {
 
@@ -50,7 +51,7 @@ public class UseEvent implements Listener {
     }
 
     private void handlePower(Player p, Action a, ItemStack item) {
-        if (agcm.isGemActive(gm.getGemName(item))) {
+        if (agcm.isGemActive(gm.getName(item))) {
             gm.runCall(item, a, p);
         } else {
             p.sendMessage(I18N.translate("GEM_DISABLED"));

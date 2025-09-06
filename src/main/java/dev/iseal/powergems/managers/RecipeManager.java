@@ -4,7 +4,7 @@ import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,9 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,7 +110,7 @@ public class RecipeManager implements Listener {
     }
 
     private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
-        String key = gemManager.getGemName(gem).toLowerCase() + "_" + level + "_upgrade";
+        String key = gemManager.getName(gem).toLowerCase() + "_" + level + "_upgrade";
         ItemStack[] wantedMatrix = new ItemStack[9];
         HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
         String[] shape = arr.get("shape").toString().split(",");
@@ -147,66 +145,86 @@ public class RecipeManager implements Listener {
 
     private void tryRandomGemCrafting(InventoryClickEvent e) {
         CraftingInventory ci = (CraftingInventory) e.getInventory();
-        if (ci.getResult() == null) {
-            return;
-        }
-        if (e.getCurrentItem() == null) {
-            return;
-        }
-        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
-            return;
-        }
+        if (ci.getResult() == null) return;
+        if (e.getCurrentItem() == null) return;
+        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) return;
+
         HumanEntity plr = e.getWhoClicked();
-        if (gcm.allowOnlyOneGem() && SingletonManager.getInstance().utils.hasAtLeastXAmountOfGems(plr.getInventory(), 1, plr.getInventory().getItemInOffHand())) {
-            if (gcm.useNewAllowOnlyOneGemAlgorithm()){
-                long oldestGemCreationTime = -1;
-                int oldIndex = -1;
-                int index = -1;
-                int gemsFound = 0;
-                for (ItemStack is : plr.getInventory().getContents()) {
-                    index++;
-                    if (!gemManager.isGem(is)){
-                        continue;
+
+        Runnable replaceRandomGem = () -> {
+            if (e.isShiftClick()) {
+                for (int i = 0; i < plr.getInventory().getSize(); i++) {
+                    ItemStack is = plr.getInventory().getItem(i);
+                    while (is != null && is.isSimilar(gemManager.getRandomGemItem()) && is.getAmount() > 0) {
+                        // Collect owned gem names again to avoid duplicates
+                        List<String> ownedGemNames = new ArrayList<>();
+                        ownedGemNames.addAll(collectOwnedGemNames(plr.getInventory().getContents()));
+                        String[] excludedTypes = ownedGemNames.toArray(new String[0]);
+                        ItemStack newGem = gemManager.createGem(excludedTypes);
+
+                        if (is.getAmount() > 1) {
+                            is.setAmount(is.getAmount() - 1);
+                            plr.getInventory().setItem(i, is);
+                        } else {
+                            plr.getInventory().setItem(i, null);
+                        }
+                        plr.getInventory().addItem(newGem);
+
+                        // Update reference after modification
+                        is = plr.getInventory().getItem(i);
                     }
-                    if (gemManager.getGemCreationTime(is) > oldestGemCreationTime) {
-                        continue;
-                    }
-                    //Gem is older
-                    oldIndex = index;
-                    gemsFound++;
-                    oldestGemCreationTime = gemManager.getGemCreationTime(is);
-                }
-
-                //Also check offhand
-                ItemStack offhand = plr.getInventory().getItemInOffHand();
-                if (gemManager.isGem(offhand) && gemManager.getGemCreationTime(offhand) < oldestGemCreationTime) {
-                    index = -2;
-                    gemsFound++;
-                }
-
-                if (gemsFound > 2) {
-                    // how do i deal with this
-                    //TODO: implement a way to allow only 1 actual gem. hard to trigger unless server changed config recently.
-                }
-
-                if (index == -1) {
-                    throw new RuntimeException("Player has multiple gems but oldestGemCreationTime < -1 ???!?!?!?");
-                }
-                if (index == -2) {
-                    //its offhand
-                    plr.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-                } else {
-                    plr.getInventory().setItem(oldIndex, new ItemStack(Material.AIR));
                 }
             } else {
-                for (ItemStack is : plr.getInventory().getContents()) {
-                    if (gemManager.isGem(is)) {
-                        plr.getInventory().remove(is);
+                ItemStack current = e.getCurrentItem();
+                while (current != null && current.isSimilar(gemManager.getRandomGemItem()) && current.getAmount() > 0) {
+                    // Collect owned gem names again to avoid duplicates
+
+                    String[] excludedTypes = collectOwnedGemNames(plr.getInventory().getContents()).toArray(new String[0]);
+                    ItemStack newGem = gemManager.createGem(excludedTypes);
+
+                    if (current.getAmount() > 1) {
+                        current.setAmount(current.getAmount() - 1);
+                        e.setCurrentItem(current);
+                    } else {
+                        e.setCurrentItem(null);
+                    }
+                    plr.getInventory().addItem(newGem);
+
+                    current = e.getCurrentItem();
+                }
+            }
+
+            // Clear or decrement the crafting matrix to prevent multiple gems
+            ItemStack[] matrix = ci.getMatrix();
+            for (int j = 0; j < matrix.length; j++) {
+                if (matrix[j] != null) {
+                    matrix[j].setAmount(matrix[j].getAmount() - 1);
+                    if (matrix[j].getAmount() <= 0) {
+                        matrix[j] = null;
                     }
                 }
             }
+            ci.setMatrix(matrix);
+        };
+
+        if (e.isShiftClick()) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), replaceRandomGem, 1L);
+        } else {
+            replaceRandomGem.run();
         }
-        e.setCurrentItem(gemManager.createGem());
+    }
+
+    private List<String> collectOwnedGemNames(ItemStack[] contents) {
+        List<String> ownedGemNames = new ArrayList<>();
+        for (ItemStack is : contents) {
+            if (gemManager.isGem(is)) {
+                String gemName = gemManager.getName(is);
+                if (gemName != null && !ownedGemNames.contains(gemName)) {
+                    ownedGemNames.add(gemName);
+                }
+            }
+        }
+        return ownedGemNames;
     }
 
     private void craftRecipe() {
@@ -257,7 +275,7 @@ public class RecipeManager implements Listener {
             ItemStack newStack;
             for (ItemStack i : gemManager.getAllGems().values()) {
                 oldStack = i;
-                for (int level = 2; level <= 5; level++) {
+                for (int level = 2; level <= gcm.getMaxGemLevel(); level++) {
                     newStack = oldStack.clone();
                     ItemMeta im = newStack.getItemMeta();
                     PersistentDataContainer pdc = im.getPersistentDataContainer();
@@ -265,7 +283,7 @@ public class RecipeManager implements Listener {
                     im = gemManager.createLore(im);
                     newStack.setItemMeta(im);
                     // generate namespacedkey based on name+level
-                    key = gemManager.getGemName(newStack).toLowerCase()  + "_" + level + "_upgrade";
+                    key = gemManager.getName(newStack).toLowerCase()  + "_" + level + "_upgrade";
                     NamespacedKey nk = new NamespacedKey(PowerGems.getPlugin(), key);
                     ShapedRecipe sr = new ShapedRecipe(nk, newStack);
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);

@@ -1,9 +1,10 @@
 package dev.iseal.powergems.managers;
 
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import dev.iseal.sealLib.Utils.GlobalUtils;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -25,14 +26,19 @@ public class GemReflectionManager implements Dumpable {
         return instance;
     }
 
+    private GemReflectionManager() {
+        dumpableInit();
+    }
+
     private final HashMap<Class< ? extends Gem>, Gem> registeredGems = new HashMap<>(10);
     private final Logger l = Bukkit.getLogger();
     private final SingletonManager sm = SingletonManager.getInstance();
     private final GemManager gm = sm.gemManager;
     private final NamespacedKeyManager nkm = SingletonManager.getInstance().namespacedKeyManager;
+    private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 
     public void registerGems() {
-        GlobalUtils .findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
+        GlobalUtils.findAllClassesInPackage("dev.iseal.powergems.gems", Gem.class)
                 .forEach(this::addGemClass);
     }
 
@@ -48,7 +54,8 @@ public class GemReflectionManager implements Dumpable {
         if (isPossibleGemClass(clazz)) {
             try {
                 Gem instance = (Gem) clazz.getDeclaredConstructor().newInstance();
-                registeredGems.put((Class<? extends Gem>) clazz, instance);
+                Class<? extends Gem> gemClass = clazz.asSubclass(Gem.class);
+                registeredGems.put(gemClass, instance);
                 SingletonManager.TOTAL_GEM_AMOUNT++;
                 gm.addGem(instance);
             } catch (Exception e) {
@@ -63,7 +70,13 @@ public class GemReflectionManager implements Dumpable {
     public Class<? extends Gem> getGemClass(ItemStack gem ,Player plr) {
         if (!gm.isGem(gem))
             return null;
+
+        if (gcm.doAttemptFixOldGems()){
+            gm.attemptFixGem(gem);
+        }
+
         String gem_power = gem.getItemMeta().getPersistentDataContainer().get(nkm.getKey("gem_power"), PersistentDataType.STRING)+"Gem";
+
         if (gem_power.equals("ErrorGem")) {
             l.warning("A bugged gem has been found! Attempting to fix this.");
             plr.getInventory().remove(gem);
@@ -71,7 +84,7 @@ public class GemReflectionManager implements Dumpable {
             plr.getInventory().addItem(gem);
         }
         Class<? extends Gem> gemclass = registeredGems.keySet().stream()
-                .filter(clazz -> clazz.getSimpleName().equals(gem_power))
+                .filter(clazz -> gem_power.equals(clazz.getSimpleName()))
                 .findFirst()
                 .orElse(null);
         if (gemclass == null) {
@@ -80,6 +93,7 @@ public class GemReflectionManager implements Dumpable {
             gem = gm.createGem();
             plr.getInventory().addItem(gem);
         }
+
         return gemclass;
     }
 
@@ -106,6 +120,19 @@ public class GemReflectionManager implements Dumpable {
         return true;
     }
 
+    /**
+     * Gets the instance of a gem by its name, or null if it does not exist
+     *
+     * @param gemName The name of the gem
+     * @return The instance of the gem, or null if it does not exist
+     */
+    public Gem getSingletonGemInstance(String gemName) {
+        return registeredGems.values().stream()
+                .filter( gem -> gemName.equals(gem.getName()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public Particle runParticleCall(ItemStack item, Player plr) {
         if (!gm.isGem(item)) {
             ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
@@ -122,6 +149,23 @@ public class GemReflectionManager implements Dumpable {
         }
         Gem gemInstance = registeredGems.get(gemClass);
         return gemInstance.particle();
+    }
+
+    public Gem getGemInstance(ItemStack item, Player plr) {
+        if (!gm.isGem(item)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The item passed in is not a gem"), Level.WARNING, "NOT_A_GEM", item);
+            return null;
+        }
+        Class<? extends Gem> gemClass = getGemClass(item, plr);
+        if (gemClass == null) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem class was not found"), Level.WARNING, "GEM_CLASS_NOT_FOUND", item);
+            return null;
+        }
+        if (!registeredGems.containsKey(gemClass)) {
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("The gem has not been registered"), Level.WARNING, "GEM_NOT_REGISTERED", item);
+            return null;
+        }
+        return registeredGems.get(gemClass);
     }
 
     @Override

@@ -1,11 +1,20 @@
 package dev.iseal.powergems.managers;
 
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Interfaces.Dumpable;
-import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.bukkit.Bukkit;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.PowerGemsAnalyticsSerializers;
+import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PowerGems.PGGemUsagesHourly;
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealUtils.Interfaces.Dumpable;
+import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.ExtraKryoCodecs.Utils.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -16,9 +25,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * This class is responsible for managing the creation, identification, and
@@ -38,6 +52,10 @@ public class GemManager implements Dumpable {
         return instance;
     }
 
+    private GemManager() {
+        dumpableInit();
+    }
+
     // Fields for storing gem-related data and configurations
     private ItemStack randomGem = null;
     private SingletonManager sm = null;
@@ -49,15 +67,17 @@ public class GemManager implements Dumpable {
     private GemReflectionManager grm = null;
     private GemLoreConfigManager glcm = null;
     private GemColorConfigManager gccm = null;
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
-    private ArrayList<ChatColor> possibleColors = new ArrayList<>();
-    private final Logger l = Bukkit.getLogger();
+    private final ArrayList<ChatColor> possibleColors = new ArrayList<>();
+    private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
+    private final HashMap<String, Gem> gems = new HashMap<>();
+    private final HashMap<Pair<String, String>, Integer> gemUsagesByHour = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.
@@ -65,17 +85,21 @@ public class GemManager implements Dumpable {
     public void initLater() {
         sm = SingletonManager.getInstance();
         // register default gems
+        ArrayList<String> oldGems = new ArrayList<>(gemIdLookup);
+        gemIdLookup.clear();
         grm = GemReflectionManager.getInstance();
         grm.registerGems();
+        Collections.sort(gemIdLookup);
+        gemIdLookup.addAll(oldGems);
         cm = sm.configManager;
         nkm = sm.namespacedKeyManager;
         isGemKey = nkm.getKey("is_power_gem");
         gemPowerKey = nkm.getKey("gem_power");
         gemLevelKey = nkm.getKey("gem_level");
         gemCreationTimeKey = nkm.getKey("gem_creation_time");
-        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach((o -> {
+        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach(o -> {
             if (o instanceof ChatColor) possibleColors.add((ChatColor) o);
-        }));
+        });
         gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
         agcm = cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
         gmcm = cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
@@ -133,9 +157,7 @@ public class GemManager implements Dumpable {
             return false;
         if (!is.hasItemMeta())
             return false;
-        if (is.getItemMeta().getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN))
-            return true;
-        return false;
+        return is.getItemMeta().getPersistentDataContainer().has(isGemKey, PersistentDataType.BOOLEAN);
     }
 
     /**
@@ -147,7 +169,8 @@ public class GemManager implements Dumpable {
         if (randomGem == null) {
             randomGem = new ItemStack(gmcm.getRandomGemMaterial());
             ItemMeta gemMeta = randomGem.getItemMeta();
-            gemMeta.setDisplayName(ChatColor.GREEN + "Random Gem");
+            gemMeta.setDisplayName(I18N.translate("RANDOM_GEM_NAME"));
+            gemMeta.setCustomModelData(1);
             PersistentDataContainer pdc = gemMeta.getPersistentDataContainer();
             pdc.set(nkm.getKey("is_random_gem"), PersistentDataType.BOOLEAN, true);
             randomGem.setItemMeta(gemMeta);
@@ -200,9 +223,41 @@ public class GemManager implements Dumpable {
             repeating++;
         }
         if (repeating >= gcm.getGemCreationAttempts()) {
-            l.warning(gcm.getPluginPrefix()+"Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
-            l.warning(gcm.getPluginPrefix()+"You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
+            l.warning("Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
+            l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
             return null;
+        }
+        return generateItemStack(random, 1);
+    }
+
+    /**
+     * Creates a random gem with level 1.
+     *
+     * @return An ItemStack representing the created gem.
+     */
+    public ItemStack createGem(String[] excludedTypes) {
+        if (excludedTypes == null || excludedTypes.length == 0) {
+            return createGem();
+        }
+        if (excludedTypes.length >= SingletonManager.TOTAL_GEM_AMOUNT) {
+            l.warning("You have excluded all gems, returning null.");
+            return null;
+        }
+        int random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
+        int repeating = 0;
+        while (true) {
+            String randomGemName = lookUpName(random);
+            boolean isExcluded = Arrays.stream(excludedTypes).anyMatch(type -> type.equals(randomGemName));
+            if (agcm.isGemActive(randomGemName) && !isExcluded) {
+                break;
+            }
+            if (repeating >= gcm.getGemCreationAttempts()) {
+                l.warning("Could not find a gem to create, either you got extremely unlucky or you have too many gems disabled.");
+                l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
+                return null;
+            }
+            random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
+            repeating++;
         }
         return generateItemStack(random, 1);
     }
@@ -226,7 +281,7 @@ public class GemManager implements Dumpable {
         ArrayList<String> lore = new ArrayList<>();
         meta.setLore(lore);
         lore.addAll(glcm.getLore(gemNumber));
-        // add level as first line of lore
+        // replace %level% with the actual level
         lore.forEach(line -> {
             if (line.contains("%level%"))
                 lore.set(lore.indexOf(line), line.replace("%level%", gemLevel + ""));
@@ -283,8 +338,14 @@ public class GemManager implements Dumpable {
         reDataContainer.set(gemLevelKey, PersistentDataType.INTEGER, gemLevel);
         reDataContainer.set(gemCreationTimeKey, PersistentDataType.LONG, System.currentTimeMillis());
         reGemMeta = createLore(reGemMeta, gemNumber);
-        reGemMeta.setCustomModelData(gemNumber);
+        // index 0 empty, index 1 random gem, index 2-x gems
+        // might want to make an index for every level of gem in the future, could be fun
+        reGemMeta.setCustomModelData(gemNumber+2);
         gemItem.setItemMeta(reGemMeta);
+        //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
+        //l.info(gcm.getPluginPrefix() + "Created a " 
+        //+ lookUpName(gemNumber) 
+        //+ " gem with custom model data " + customModelData);
         return gemItem;
     }
 
@@ -312,13 +373,23 @@ public class GemManager implements Dumpable {
      *         inventory.
      */
     public ArrayList<ItemStack> getPlayerGems(Player plr) {
-        if (gemCache.containsKey(plr.getUniqueId()) && !gemCache.get(plr.getUniqueId()).isExpired()) {
+        // isValid() checks if the cache is expired or if something became null - bukkit be weird fr fr
+        if (gemCache.containsKey(plr.getUniqueId()) && gemCache.get(plr.getUniqueId()).isValid()) {
             return gemCache.get(plr.getUniqueId()).getOwnedGems();
         }
         ArrayList<ItemStack> foundGems = new ArrayList<>(1);
         Arrays.stream(plr.getInventory().getContents().clone()).filter(this::isGem).forEach(foundGems::add);
+        if (isGem(plr.getInventory().getItemInOffHand()))
+            foundGems.add(plr.getInventory().getItemInOffHand());
         gemCache.put(plr.getUniqueId(), new GemCacheItem(foundGems));
         return foundGems;
+    }
+
+    public Gem getGemInstance(ItemStack item, Player plr) {
+        if (!isGem(item)) {
+            return null;
+        }
+        return grm.getGemInstance(item, plr);
     }
 
     /**
@@ -370,19 +441,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Returns the name of a gem.
-     * If the item is not a gem, returns null.
-     * 
-     * @param item The ItemStack to check.
-     * @return The name of the gem, or null if the item is not a gem.
-     */
-    public String getGemName(ItemStack item) {
-        if (!isGem(item))
-            return null;
-        return item.getItemMeta().getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING);
-    }
-
-    /**
      * Runs a method call on a gem.
      * If the item is not a gem, throws an IllegalArgumentException.
      * 
@@ -402,7 +460,7 @@ public class GemManager implements Dumpable {
         if (!isGem(gem1) || !isGem(gem2)) {
             return false;
         }
-        boolean powerEqual = getGemName(gem1).equals(getGemName(gem2));
+        boolean powerEqual = getName(gem1).equals(getName(gem2));
         boolean levelEqual = getLevel(gem1) == getLevel(gem2);
         return powerEqual && levelEqual;
     }
@@ -428,13 +486,85 @@ public class GemManager implements Dumpable {
         return grm.runParticleCall(item, plr);
     }
 
+    /**
+     * Adds a gem to the manager.
+     *
+     * @param gem The Gem object to add.
+     */
     public void addGem(Gem gem) {
         String name = gem.getName();
         if (gemIdLookup.contains(name)) {
-            l.warning(gcm.getPluginPrefix()+"Gem with name " + name + " already exists, skipping.");
+            l.warning("Gem with name " + name + " already exists, skipping.");
             return;
         }
         gemIdLookup.add(gem.getName());
+        gems.put(name, gem);
+        l.info("Registered gem: " + name);
+    }
+
+    /**
+     * Returns a HashMap of all gems.
+     * Each gem is represented as an ItemStack, and the key is the gem number.
+     * 
+     * @return A HashMap where the keys are gem numbers and the values are
+     *         ItemStacks representing the gems.
+     */
+    public HashMap<String, Gem> getGems() {
+        return gems; // Return the internal HashMap containing all registered gems
+    }
+
+    public void attemptFixGem(ItemStack item) {
+        String name = getName(item);
+        if (Objects.equals(name, "")) {
+            // gem is just too fucking broken
+            // or is not an actual gem
+            return;
+        }
+
+        boolean broken = false;
+        int id = lookUpID(name);
+        ItemMeta meta = item.getItemMeta();
+
+        // fix for broken model data
+        if (meta.getCustomModelData() != id+2) {
+            meta.setCustomModelData(id + 2);
+            broken = true;
+        }
+
+        // fix for gems having "Gem" in the name
+        if (name.endsWith("Gem")) {
+            meta.getPersistentDataContainer().set(gemPowerKey, PersistentDataType.STRING, name.substring(0, name.length() - 3));
+            broken = true;
+        }
+
+        if (broken) {
+            // finally, set the new meta.
+            item.setItemMeta(meta);
+            l.warning("An error in a gem has been found and fixed!");
+        }
+    }
+
+    /**
+     * Adds a gem usage to the temp storage.
+     * This method is used to track how many times a gem with a specific ability is utilized
+     * @param gemName the name of the gem
+     * @param ability the ability of the gem that was used
+     */
+    public void addGemUsage(String gemName, String ability) {
+        if (!gcm.isAllowMetrics()) return;
+        if (gemName == null || gemName.isEmpty()) {
+            l.warning("Tried to add gem usage with null or empty name, skipping.");
+            return;
+        }
+        if (ability == null || ability.isEmpty()) {
+            l.warning("Tried to add gem usage with null or empty ability, skipping.");
+            return;
+        }
+        Pair<String, String> key = new Pair<>(gemName, ability);
+        gemUsagesByHour.putIfAbsent(key, 0);
+        gemUsagesByHour.put(key, gemUsagesByHour.get(key) + 1);
+        if (gcm.isDebugMode())
+            l.info("Added gem usage for " + gemName + " with ability " + ability + ". Total usages: " + gemUsagesByHour.get(key));
     }
 
     @Override
