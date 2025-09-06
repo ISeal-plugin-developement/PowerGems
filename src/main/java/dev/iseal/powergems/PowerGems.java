@@ -21,12 +21,10 @@ import java.util.logging.Logger;
 
 import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
 import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
-import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Addons.AddonsManager;
 import dev.iseal.sealUtils.SealUtils;
 import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
-import net.royawesome.jlibnoise.module.combiner.Power;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -163,11 +161,7 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         log.info(I18N.translate("REGISTERED_COMMANDS"));
 
-        if (isEnabled("WorldGuard") && gcm.isWorldGuardEnabled())
-            WorldGuardAddonManager.getInstance().init();
-
-        if (isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
-            CombatLogXAddonManager.getInstance().init();
+        AddonsManager.INSTANCE.loadAddons();
 
         AnalyticsManager.INSTANCE.setEnabled("PowerGems", gcm.isAllowMetrics());
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());

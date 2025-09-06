@@ -1,6 +1,6 @@
 package dev.iseal.powergems.gems;
 
-import dev.iseal.powergems.managers.Addons.CombatLogX.CombatLogXAddonManager;
+import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.Location;
@@ -21,7 +21,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.gems.powerClasses.tasks.FireballPowerDecay;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 
@@ -72,7 +71,7 @@ public class FireGem extends Gem {
                 entity.setFireTicks(100);
                 if (entity instanceof Player attackedPlayer) {
                     if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
-                        CombatLogXAddonManager.getInstance().setInFight(plr, attackedPlayer);
+                        ICombatLogXAddonImpl.getInstance().setInFight(plr, attackedPlayer);
                 }
             }
         }

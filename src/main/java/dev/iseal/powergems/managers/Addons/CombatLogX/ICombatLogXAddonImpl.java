@@ -7,15 +7,15 @@ import com.github.sirblobman.combatlogx.api.object.TagType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class CombatLogXAddonManager {
-    private static CombatLogXAddonManager INSTANCE;
-    public static CombatLogXAddonManager getInstance() {
+public class ICombatLogXAddonImpl implements ICombatLogXAddon {
+    private static ICombatLogXAddonImpl INSTANCE;
+    public static ICombatLogXAddonImpl getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new CombatLogXAddonManager();
+            INSTANCE = new ICombatLogXAddonImpl();
         }
         return INSTANCE;
     }
-    private CombatLogXAddonManager() {
+    private ICombatLogXAddonImpl() {
         // Private constructor to prevent instantiation
     }
 

@@ -545,34 +545,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Starts a scheduled task to send gem usage statistics every hour.
-     * This task collects gem usage data from the `gemUsagesByHour` map and
-     * sends it to the analytics system.
-     * <p>
-     * This method should be called once during the plugin's startup to ensure
-     * that gem usage statistics are collected and sent periodically.
-     */
-    public void startGemUsagesTask() {
-        if (!gcm.isAllowMetrics()) return;
-        try (ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor()) {
-            ses.scheduleAtFixedRate(() -> {
-                HashMap<String, List<Pair<String, Integer>>> gemUsages = new HashMap<>();
-                gemUsagesByHour.forEach((key, value) -> {
-                    String gemName = key.getFirst();
-                    String ability = key.getSecond();
-                    gemUsages.putIfAbsent(gemName, new ArrayList<>());
-                    gemUsages.get(gemName).add(new Pair<>(ability, value));
-                });
-                AnalyticsManager.INSTANCE.sendEvent(
-                        gcm.getAnalyticsID(),
-                        PowerGemsAnalyticsSerializers.GEM_USAGES,
-                        new PGGemUsagesHourly(gemUsages)
-                );
-            }, 1, 1, TimeUnit.HOURS);
-        }
-    }
-
-    /**
      * Adds a gem usage to the temp storage.
      * This method is used to track how many times a gem with a specific ability is utilized
      * @param gemName the name of the gem
