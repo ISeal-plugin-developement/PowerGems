@@ -223,9 +223,6 @@ public class PowerGems extends JavaPlugin {
 
     public static boolean isEnabled(String pluginName) {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        Arrays.stream(pluginManager.getPlugins()).forEach(plugin1 -> {
-            System.out.println("Found plugin: " + plugin1.getName() + " version " + plugin1.getDescription().getVersion());
-        });
         return Arrays.stream(pluginManager.getPlugins()).anyMatch(plugin1 -> plugin1.getName().equals(pluginName));
     }
 
