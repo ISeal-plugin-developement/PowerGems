@@ -139,6 +139,7 @@ public class GemManager implements Dumpable {
      * @param gemID The ID of the gem.
      * @return The name of the gem, or "Error" if the gem ID is not recognized.
      */
+    //TODO: make this return the unified <type>Gem name.
     public static String lookUpName(int gemID) {
         if (gemID >= 0 && gemID < gemIdLookup.size()) {
             return gemIdLookup.get(gemID);
@@ -542,29 +543,6 @@ public class GemManager implements Dumpable {
             item.setItemMeta(meta);
             l.warning("An error in a gem has been found and fixed!");
         }
-    }
-
-    /**
-     * Adds a gem usage to the temp storage.
-     * This method is used to track how many times a gem with a specific ability is utilized
-     * @param gemName the name of the gem
-     * @param ability the ability of the gem that was used
-     */
-    public void addGemUsage(String gemName, String ability) {
-        if (!gcm.isAllowMetrics()) return;
-        if (gemName == null || gemName.isEmpty()) {
-            l.warning("Tried to add gem usage with null or empty name, skipping.");
-            return;
-        }
-        if (ability == null || ability.isEmpty()) {
-            l.warning("Tried to add gem usage with null or empty ability, skipping.");
-            return;
-        }
-        Pair<String, String> key = new Pair<>(gemName, ability);
-        gemUsagesByHour.putIfAbsent(key, 0);
-        gemUsagesByHour.put(key, gemUsagesByHour.get(key) + 1);
-        if (gcm.isDebugMode())
-            l.info("Added gem usage for " + gemName + " with ability " + ability + ". Total usages: " + gemUsagesByHour.get(key));
     }
 
     @Override

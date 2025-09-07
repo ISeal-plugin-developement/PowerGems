@@ -64,9 +64,6 @@ public abstract class Gem {
                 return;
             }
 
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Shift");
-
             // finally, call the shift ability
             shiftClick(plr, level);
             // if combatlogx is enabled, set in fight
@@ -78,8 +75,6 @@ public abstract class Gem {
             if (checkIfCooldown("left", plr)) {
                 return;
             }
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Left");
 
             leftClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
@@ -89,8 +84,6 @@ public abstract class Gem {
             if (checkIfCooldown("right", plr)) {
                 return;
             }
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Right");
 
             rightClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
