@@ -31,7 +31,7 @@ public class HealingGem extends Gem {
 
     @Override
     protected void leftClick(Player plr, int level) {
-        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, level - 1));
+        plr.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, level));
     }
 
     @Override
