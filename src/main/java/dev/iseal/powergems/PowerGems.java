@@ -1,5 +1,38 @@
 package dev.iseal.powergems;
 
+import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
+import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
+import dev.iseal.powergems.commands.*;
+import dev.iseal.powergems.gems.powerClasses.tasks.IceGemGolemAi;
+import dev.iseal.powergems.listeners.*;
+import dev.iseal.powergems.listeners.passivePowerListeners.DamageListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
+import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
+import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
+import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.GemManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
+import dev.iseal.powergems.tasks.AddCooldownToToolBar;
+import dev.iseal.powergems.tasks.CheckMultipleGemsTask;
+import dev.iseal.powergems.tasks.CosmeticParticleEffect;
+import dev.iseal.powergems.tasks.PermanentEffectsGiverTask;
+import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import dev.iseal.sealUtils.SealUtils;
+import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,30 +51,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
-import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
-import dev.iseal.powergems.managers.Addons.AddonsManager;
-import dev.iseal.sealUtils.SealUtils;
-import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
-import dev.iseal.sealUtils.utils.ExceptionHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import dev.iseal.powergems.commands.*;
-import dev.iseal.powergems.gems.powerClasses.tasks.*;
-import dev.iseal.powergems.listeners.*;
-import dev.iseal.powergems.listeners.passivePowerListeners.*;
-import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
-import dev.iseal.powergems.managers.*;
-import dev.iseal.powergems.managers.Configuration.*;
-import dev.iseal.powergems.tasks.*;
-import dev.iseal.sealLib.Metrics.MetricsManager;
-import dev.iseal.sealLib.Systems.I18N.I18N;
 
 public class PowerGems extends JavaPlugin {
 
@@ -161,9 +170,9 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         log.info(I18N.translate("REGISTERED_COMMANDS"));
 
-        AddonsManager.INSTANCE.loadAddons();
+        // AddonsManager.INSTANCE.loadAddons(); - currently moved to ServerStartupListener, just throwing shit at the wall
 
-        AnalyticsManager.INSTANCE.setEnabled("PowerGems", gcm.isAllowMetrics());
+        AnalyticsManager.INSTANCE.setEnabled("PowerGems", false);
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
 
         if (gcm.isAllowMetrics()) {
@@ -226,7 +235,7 @@ public class PowerGems extends JavaPlugin {
         return Arrays.stream(pluginManager.getPlugins()).anyMatch(plugin1 -> plugin1.getName().equals(pluginName));
     }
 
-        private Map<String, String> checkHardDependencies() {
+    private Map<String, String> checkHardDependencies() {
         HashMap<String, String> missingHardDependencies = new HashMap<>();
         for (Map.Entry<String, String> entry : dependencies.entrySet()) {
             if (Bukkit.getPluginManager().getPlugin(entry.getKey()) == null) {
@@ -245,11 +254,12 @@ public class PowerGems extends JavaPlugin {
         File configFolder = PowerGems.getPlugin().getDataFolder();
         TempDataManager manager = SingletonManager.getInstance().tempDataManager;
         String storedChecksum = manager.readDataFromFile("configChecksum") instanceof String ? (String) manager.readDataFromFile("configChecksum") : null;
+        GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 
         String currentChecksum = calculateFolderChecksum(configFolder);
         if (storedChecksum == null) {
             manager.writeDataToFile("configChecksum", currentChecksum);
-        } else {
+        } else if (gcm.isAllowMetrics()) {
             new Thread(() -> {
                 try {
                     HttpResponse<String> res = HttpClient.newBuilder()

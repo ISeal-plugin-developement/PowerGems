@@ -1,8 +1,6 @@
 package dev.iseal.powergems.listeners;
 
-import java.util.HashMap;
-import java.util.UUID;
-
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -11,8 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class AvoidTargetListener implements Listener {
 
