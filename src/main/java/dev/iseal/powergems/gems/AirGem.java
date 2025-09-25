@@ -3,6 +3,9 @@ package dev.iseal.powergems.gems;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.tasks.AirGemPull;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -15,10 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.Utils;
 
 import java.util.ArrayList;
 

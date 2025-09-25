@@ -1,15 +1,13 @@
 package dev.iseal.powergems.gems;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.Utils;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -20,12 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.SingletonManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.Utils;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class SandGem extends Gem {
 

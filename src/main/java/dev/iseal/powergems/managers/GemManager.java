@@ -1,20 +1,12 @@
 package dev.iseal.powergems.managers;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.PowerGemsAnalyticsSerializers;
-import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PowerGems.PGGemUsagesHourly;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Configuration.*;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
-import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
-import dev.iseal.ExtraKryoCodecs.Utils.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -25,14 +17,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import dev.iseal.powergems.managers.Configuration.ActiveGemsConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemColorConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemLoreConfigManager;
-import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
-import org.bukkit.scheduler.BukkitRunnable;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is responsible for managing the creation, identification, and
@@ -77,7 +64,6 @@ public class GemManager implements Dumpable {
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
     private final HashMap<String, Gem> gems = new HashMap<>();
-    private final HashMap<Pair<String, String>, Integer> gemUsagesByHour = new HashMap<>();
 
     /**
      * Initializes the gem manager with necessary keys and configurations.

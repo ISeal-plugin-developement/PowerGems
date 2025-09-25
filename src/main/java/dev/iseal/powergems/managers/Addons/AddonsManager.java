@@ -1,13 +1,15 @@
 package dev.iseal.powergems.managers.Addons;
 
 import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.managers.Addons.CombatLogX.DummyCombatLogXAddon;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddon;
+import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
 import dev.iseal.powergems.managers.ConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
+
+import java.util.HashMap;
 
 public class AddonsManager {
 
@@ -16,6 +18,7 @@ public class AddonsManager {
     private AddonsManager() {}
 
     private final GeneralConfigManager gcm = ConfigManager.getInstance().getRegisteredConfigInstance(GeneralConfigManager.class);
+    private final HashMap<String, Boolean> loadedAddons = new HashMap<>();
 
     public void loadAddons() {
         if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled()) {
@@ -25,18 +28,23 @@ public class AddonsManager {
                     // This is the only place with a direct reference to the real manager
                     addon = ICombatLogXAddonImpl.getInstance();
                     Bukkit.getLogger().info("Successfully loaded CombatLogX addon.");
+                    loadedAddons.put("CombatLogX", true);
                 } catch (Throwable t) {
                     Bukkit.getLogger().warning("Failed to load CombatLogX addon, likely due to a version mismatch.");
                     addon = new DummyCombatLogXAddon();
+                    loadedAddons.put("CombatLogX", false);
                 }
             } else {
                 addon = new DummyCombatLogXAddon();
+                Bukkit.getLogger().warning("CombatLogX addon requires Java 21 or newer. Running in dummy mode.");
+                loadedAddons.put("CombatLogX", false);
             }
             addon.init();
         }
 
         if (PowerGems.isEnabled("WorldGuard") && gcm.isWorldGuardEnabled()) {
             WorldGuardAddonManager.getInstance().init();
+            loadedAddons.put("WorldGuard", true);
         }
     }
 
@@ -53,5 +61,9 @@ public class AddonsManager {
             }
         }
         return false;
+    }
+
+    public boolean isAddonLoaded(String addonName) {
+        return loadedAddons.getOrDefault(addonName, false);
     }
 }

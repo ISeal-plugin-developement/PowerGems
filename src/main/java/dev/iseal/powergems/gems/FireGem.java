@@ -1,12 +1,12 @@
 package dev.iseal.powergems.gems;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.managers.NamespacedKeyManager;
 import dev.iseal.powergems.managers.SingletonManager;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -19,14 +19,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import org.bukkit.ChatColor;
-import org.bukkit.util.Vector;
 
 public class FireGem extends Gem {
 
@@ -69,10 +64,9 @@ public class FireGem extends Gem {
             if (entity instanceof LivingEntity) {
                 ((LivingEntity) entity).damage(5 * ((double) level / 2), plr);
                 entity.setFireTicks(100);
-                if (entity instanceof Player attackedPlayer) {
-                    if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
+                if (entity instanceof Player attackedPlayer &&
+                    PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                         ICombatLogXAddonImpl.getInstance().setInFight(plr, attackedPlayer);
-                }
             }
         }
     }
