@@ -10,6 +10,8 @@ import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInColdBiomesLis
 import dev.iseal.powergems.listeners.passivePowerListeners.DebuffInHotBiomesListener;
 import dev.iseal.powergems.listeners.passivePowerListeners.WaterMoveListener;
 import dev.iseal.powergems.listeners.powerListeners.IronProjectileLandListener;
+import dev.iseal.powergems.managers.Addons.AddonLoadOrder;
+import dev.iseal.powergems.managers.Addons.AddonsManager;
 import dev.iseal.powergems.managers.Configuration.CooldownConfigManager;
 import dev.iseal.powergems.managers.Configuration.GemMaterialConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
@@ -55,7 +57,6 @@ import java.util.logging.Logger;
 public class PowerGems extends JavaPlugin {
 
     private static JavaPlugin plugin = null;
-    public static boolean isWorldGuardEnabled = false;
     private static SingletonManager sm = null;
     private static final UUID attributeUUID = UUID.fromString("d21d674e-e7ec-4cd0-8258-4667843f26fd");
     private final Logger log = this.getLogger();
@@ -174,6 +175,8 @@ public class PowerGems extends JavaPlugin {
 
         AnalyticsManager.INSTANCE.setEnabled("PowerGems", false);
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
+        // plugin addons init
+        AddonsManager.INSTANCE.initAddons(AddonLoadOrder.ON_ENABLE);
 
         if (gcm.isAllowMetrics()) {
             sm.metricsManager = MetricsManager.getInstance();

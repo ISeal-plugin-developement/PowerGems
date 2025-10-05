@@ -73,18 +73,18 @@ public class RecipeManager implements Listener {
         }
 
         // Check if the player is clicking on a random gem result
-        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null &&
+        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null && 
             e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
             // Cancel the vanilla event to handle it ourselves
             e.setCancelled(true);
-
+            
             CraftingInventory ci = (CraftingInventory) e.getInventory();
             HumanEntity player = e.getWhoClicked();
-
+            
             // Create a new specific gem instead of the random one
             String[] excludedTypes = collectOwnedGemNames(player.getInventory().getContents()).toArray(new String[0]);
             ItemStack newGem = gemManager.createGem(excludedTypes);
-
+            
             // Add the new gem to player's inventory
             HashMap<Integer, ItemStack> notAdded = player.getInventory().addItem(newGem);
             if (!notAdded.isEmpty()) {
@@ -93,7 +93,7 @@ public class RecipeManager implements Listener {
                     player.getWorld().dropItem(player.getLocation(), item);
                 }
             }
-
+            
             // Consume one item from each slot in the crafting grid
             ItemStack[] matrix = ci.getMatrix();
             for (int i = 0; i < matrix.length; i++) {
@@ -106,10 +106,10 @@ public class RecipeManager implements Listener {
                 }
             }
             ci.setMatrix(matrix);
-
+            
             // Play crafting sound for feedback
             player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.BLOCK_ANVIL_USE, 0.5f, 1.0f);
-
+            
             return; // Skip other processing since we handled this event
         }
 

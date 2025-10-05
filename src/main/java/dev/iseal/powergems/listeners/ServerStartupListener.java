@@ -4,6 +4,7 @@ import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.PowerGemsAn
 import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PowerGems.PGAddonsLoaded;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.api.ApiManager;
+import dev.iseal.powergems.managers.Addons.AddonLoadOrder;
 import dev.iseal.powergems.managers.Addons.AddonsManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.SingletonManager;
@@ -25,8 +26,7 @@ public class ServerStartupListener implements Listener {
         //stop accepting gems
         ApiManager.getInstance().acceptsGems = false;
 
-        // plugin addons init
-        AddonsManager.INSTANCE.loadAddons();
+        AddonsManager.INSTANCE.initAddons(AddonLoadOrder.AFTER_SERVER_LOAD);
 
         // send addons loaded to analytics
         GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);

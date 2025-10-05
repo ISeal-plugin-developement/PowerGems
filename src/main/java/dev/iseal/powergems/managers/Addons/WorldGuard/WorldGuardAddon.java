@@ -11,6 +11,8 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Addons.AbstractAddon;
+import dev.iseal.powergems.managers.Addons.AddonLoadOrder;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.entity.Player;
@@ -18,13 +20,17 @@ import org.bukkit.entity.Player;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WorldGuardAddonManager {
-    private static WorldGuardAddonManager instance = null;
-    public static WorldGuardAddonManager getInstance() {
+public class WorldGuardAddon extends AbstractAddon {
+    private static WorldGuardAddon instance = null;
+    public static WorldGuardAddon getInstance() {
         if (instance == null) {
-            instance = new WorldGuardAddonManager();
+            instance = new WorldGuardAddon();
         }
         return instance;
+    }
+
+    private WorldGuardAddon() {
+        super(AddonLoadOrder.ON_ENABLE);
     }
 
     private final WorldGuard worldGuard = WorldGuard.getInstance();
@@ -63,4 +69,13 @@ public class WorldGuardAddonManager {
         return query.testState(BukkitAdapter.adapt(p.getLocation()), localPlayer, GEMS_ENABLED_FLAG);
     }
 
+    @Override
+    public String getPluginName() {
+        return "WorldGuard";
+    }
+
+    @Override
+    public boolean isEnabledInConfig() {
+        return gcm.isWorldGuardEnabled();
+    }
 }
