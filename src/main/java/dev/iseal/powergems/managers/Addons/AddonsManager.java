@@ -3,8 +3,6 @@ package dev.iseal.powergems.managers.Addons;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddon;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
-import dev.iseal.powergems.managers.ConfigManager;
-import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import org.bukkit.Bukkit;
 
 import java.util.Arrays;

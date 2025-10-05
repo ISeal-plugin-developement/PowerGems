@@ -1,7 +1,6 @@
 package dev.iseal.powergems.managers.Addons;
 
 import dev.iseal.powergems.managers.Addons.CombatLogX.DummyCombatLogXAddon;
-import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddon;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddon;
 
