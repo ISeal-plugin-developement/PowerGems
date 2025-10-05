@@ -20,6 +20,7 @@ public class AddonsManager {
 
     public void initAddons(AddonLoadOrder loadOrder) {
         Arrays.stream(Addon.values())
+                .filter(Addon::hasRequiredPlugins)
                 .map(Addon::getAddon)
                 .filter(addon -> addon.getLoadOrder() == loadOrder)
                 .forEach(this::tryInitAddon);
