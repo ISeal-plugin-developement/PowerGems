@@ -24,6 +24,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RecipeManager implements Listener {
 
@@ -33,12 +34,20 @@ public class RecipeManager implements Listener {
     private NamespacedKeyManager nkm = null;
     private final Logger l = Bukkit.getLogger();
 
+    // Material cache to avoid repeated Material.getMaterial calls
+    private final Map<String, Material> materialCache = new ConcurrentHashMap<>();
+
     private static RecipeManager instance = null;
     public static RecipeManager getInstance() {
         if (instance == null) {
             instance = new RecipeManager();
         }
         return instance;
+    }
+
+    // Helper method to get Material from cache or load it if not present
+    private Material getCachedMaterial(String materialName) {
+        return materialCache.computeIfAbsent(materialName, Material::getMaterial);
     }
 
     public void initiateRecipes() {
@@ -63,18 +72,42 @@ public class RecipeManager implements Listener {
             return;
         }
 
-        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCursor() != null && gemManager.isGem(e.getCursor())) {
+        // Handle when player takes an item from the result slot
+        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null) {
             CraftingInventory ci = (CraftingInventory) e.getInventory();
-            ItemStack[] matrix = ci.getMatrix().clone();
-            for (int j = 0; j < 9; j++) {
-                if (matrix[j] != null) {
-                    matrix[j].setAmount(matrix[j].getAmount() - 1);
-                    if (matrix[j].getAmount() <= 0) {
-                        matrix[j] = null;
+
+            // Handle gem upgrade result
+            if (gemManager.isGem(e.getCurrentItem()) && !e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
+                    ItemStack[] matrix = ci.getMatrix();
+
+                    // Find the gem in the matrix
+                    for (int i = 0; i < matrix.length; i++) {
+                        if (matrix[i] != null) {
+                            if (matrix[i].getAmount() > 1) {
+                                matrix[i].setAmount(matrix[i].getAmount() - 1);
+                            } else {
+                                matrix[i] = null;
+                            }
+                        }
+                    }
+
+                    ci.setMatrix(matrix);
+                }, 1L);
+            }
+            // Handle random gem crafting
+            else if (e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
+                ItemStack[] matrix = ci.getMatrix().clone();
+                for (int j = 0; j < 9; j++) {
+                    if (matrix[j] != null) {
+                        matrix[j].setAmount(matrix[j].getAmount() - 1);
+                        if (matrix[j].getAmount() <= 0) {
+                            matrix[j] = null;
+                        }
                     }
                 }
+                ci.setMatrix(matrix);
             }
-            ci.setMatrix(matrix);
         }
 
         tryRandomGemCrafting(e);
@@ -124,20 +157,41 @@ public class RecipeManager implements Listener {
                 if (c == 'g') {
                     wantedMatrix[i] = gem;
                     gemIndex = i;
-                } else {
-                    wantedMatrix[i] = new ItemStack(Material.getMaterial(ingredients.get(String.valueOf(c))));
+                } else if (ingredients.containsKey(String.valueOf(c))) {
+                    Material material = getCachedMaterial(ingredients.get(String.valueOf(c)));
+                    if (material != null) {
+                        wantedMatrix[i] = new ItemStack(material);
+                    }
                 }
                 i++;
             }
         }
 
         for (int j = 0; j < 9; j++) {
+            // If this position has no requirement in the recipe
+            if (wantedMatrix[j] == null) {
+                if (matrix[j] != null) {
+                    return false;  // Recipe requires an empty slot here
+                }
+                continue;
+            }
+
+            // If this position has a requirement but matrix is empty
+            if (matrix[j] == null) {
+                return false;
+            }
+
             if (j == gemIndex) {
+                // Check gem specifically since it needs special comparison
                 if (!gemManager.areGemsEqual(matrix[j], wantedMatrix[j])) {
                     return false;
                 }
-            } else if (wantedMatrix[j] == null || matrix[j] == null || !wantedMatrix[j].equals(matrix[j])) {
-                return false;
+            } else {
+                // For other ingredients, just check if the material type matches
+                // This ignores the quantity requirement
+                if (matrix[j].getType() != wantedMatrix[j].getType()) {
+                    return false;
+                }
             }
         }
         return true;
@@ -260,7 +314,10 @@ public class RecipeManager implements Listener {
             sr.shape(shape[0], shape[1], shape[2]);
             Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
             for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-                sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+                Material material = getCachedMaterial(entry.getValue());
+                if (material != null) {
+                    sr.setIngredient(entry.getKey().charAt(0), material);
+                }
             }
             Bukkit.getServer().addRecipe(sr);
         } catch (Exception e) {
@@ -312,7 +369,10 @@ public class RecipeManager implements Listener {
                     Map<String, String> ingredients = (Map<String, String>) arr.get("ingredients");
 
                     for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-                        sr.setIngredient(entry.getKey().charAt(0), Material.getMaterial(entry.getValue()));
+                        Material material = getCachedMaterial(entry.getValue());
+                        if (material != null) {
+                            sr.setIngredient(entry.getKey().charAt(0), material);
+                        }
                     }
 
                     if (!arr.get("shape").toString().contains("g"))
