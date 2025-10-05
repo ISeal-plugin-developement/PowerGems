@@ -72,7 +72,48 @@ public class RecipeManager implements Listener {
             return;
         }
 
-        // Handle when player takes an item from the result slot
+        // Check if the player is clicking on a random gem result
+        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null &&
+            e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
+            // Cancel the vanilla event to handle it ourselves
+            e.setCancelled(true);
+
+            CraftingInventory ci = (CraftingInventory) e.getInventory();
+            HumanEntity player = e.getWhoClicked();
+
+            // Create a new specific gem instead of the random one
+            String[] excludedTypes = collectOwnedGemNames(player.getInventory().getContents()).toArray(new String[0]);
+            ItemStack newGem = gemManager.createGem(excludedTypes);
+
+            // Add the new gem to player's inventory
+            HashMap<Integer, ItemStack> notAdded = player.getInventory().addItem(newGem);
+            if (!notAdded.isEmpty()) {
+                // If inventory is full, drop the item at player's location
+                for (ItemStack item : notAdded.values()) {
+                    player.getWorld().dropItem(player.getLocation(), item);
+                }
+            }
+
+            // Consume one item from each slot in the crafting grid
+            ItemStack[] matrix = ci.getMatrix();
+            for (int i = 0; i < matrix.length; i++) {
+                if (matrix[i] != null) {
+                    if (matrix[i].getAmount() > 1) {
+                        matrix[i].setAmount(matrix[i].getAmount() - 1);
+                    } else {
+                        matrix[i] = null;
+                    }
+                }
+            }
+            ci.setMatrix(matrix);
+
+            // Play crafting sound for feedback
+            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.BLOCK_ANVIL_USE, 0.5f, 1.0f);
+
+            return; // Skip other processing since we handled this event
+        }
+
+        // Handle when player takes an item from the result slot for gem upgrades
         if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null) {
             CraftingInventory ci = (CraftingInventory) e.getInventory();
 
@@ -81,7 +122,6 @@ public class RecipeManager implements Listener {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
                     ItemStack[] matrix = ci.getMatrix();
 
-                    // Find the gem in the matrix
                     for (int i = 0; i < matrix.length; i++) {
                         if (matrix[i] != null) {
                             if (matrix[i].getAmount() > 1) {
@@ -95,22 +135,9 @@ public class RecipeManager implements Listener {
                     ci.setMatrix(matrix);
                 }, 1L);
             }
-            // Handle random gem crafting
-            else if (e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
-                ItemStack[] matrix = ci.getMatrix().clone();
-                for (int j = 0; j < 9; j++) {
-                    if (matrix[j] != null) {
-                        matrix[j].setAmount(matrix[j].getAmount() - 1);
-                        if (matrix[j].getAmount() <= 0) {
-                            matrix[j] = null;
-                        }
-                    }
-                }
-                ci.setMatrix(matrix);
-            }
         }
 
-        tryRandomGemCrafting(e);
+        // Try to update the result slot with a gem upgrade if possible
         tryUpgradeCrafting(e);
     }
 
@@ -195,77 +222,6 @@ public class RecipeManager implements Listener {
             }
         }
         return true;
-    }
-
-    private void tryRandomGemCrafting(InventoryClickEvent e) {
-        CraftingInventory ci = (CraftingInventory) e.getInventory();
-        if (ci.getResult() == null) return;
-        if (e.getCurrentItem() == null) return;
-        if (!e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) return;
-
-        HumanEntity plr = e.getWhoClicked();
-
-        Runnable replaceRandomGem = () -> {
-            if (e.isShiftClick()) {
-                for (int i = 0; i < plr.getInventory().getSize(); i++) {
-                    ItemStack is = plr.getInventory().getItem(i);
-                    while (is != null && is.isSimilar(gemManager.getRandomGemItem()) && is.getAmount() > 0) {
-                        // Collect owned gem names again to avoid duplicates
-                        List<String> ownedGemNames = new ArrayList<>();
-                        ownedGemNames.addAll(collectOwnedGemNames(plr.getInventory().getContents()));
-                        String[] excludedTypes = ownedGemNames.toArray(new String[0]);
-                        ItemStack newGem = gemManager.createGem(excludedTypes);
-
-                        if (is.getAmount() > 1) {
-                            is.setAmount(is.getAmount() - 1);
-                            plr.getInventory().setItem(i, is);
-                        } else {
-                            plr.getInventory().setItem(i, null);
-                        }
-                        plr.getInventory().addItem(newGem);
-
-                        // Update reference after modification
-                        is = plr.getInventory().getItem(i);
-                    }
-                }
-            } else {
-                ItemStack current = e.getCurrentItem();
-                while (current != null && current.isSimilar(gemManager.getRandomGemItem()) && current.getAmount() > 0) {
-                    // Collect owned gem names again to avoid duplicates
-
-                    String[] excludedTypes = collectOwnedGemNames(plr.getInventory().getContents()).toArray(new String[0]);
-                    ItemStack newGem = gemManager.createGem(excludedTypes);
-
-                    if (current.getAmount() > 1) {
-                        current.setAmount(current.getAmount() - 1);
-                        e.setCurrentItem(current);
-                    } else {
-                        e.setCurrentItem(null);
-                    }
-                    plr.getInventory().addItem(newGem);
-
-                    current = e.getCurrentItem();
-                }
-            }
-
-            // Clear or decrement the crafting matrix to prevent multiple gems
-            ItemStack[] matrix = ci.getMatrix();
-            for (int j = 0; j < matrix.length; j++) {
-                if (matrix[j] != null) {
-                    matrix[j].setAmount(matrix[j].getAmount() - 1);
-                    if (matrix[j].getAmount() <= 0) {
-                        matrix[j] = null;
-                    }
-                }
-            }
-            ci.setMatrix(matrix);
-        };
-
-        if (e.isShiftClick()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), replaceRandomGem, 1L);
-        } else {
-            replaceRandomGem.run();
-        }
     }
 
     private List<String> collectOwnedGemNames(ItemStack[] contents) {
