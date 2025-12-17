@@ -1,23 +1,15 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-# Idea project files   
+/build/
+/.gradle/
+/out/
+*.iml
 /.idea/
-/.idea/*
-# Build files
 /target/
-/target/*
-# Test server
-/Server/
-/Server/*
-# VS code files
-/.vscode/
-/.vscode/*
-PowerGems.iml
-/scripts/
-/oldLogs/
+/.idea/
+.gradle/
+gradle-wrapper.jar
+.gradle/
+
+# OS files
+.DS_Store
+Thumbs.db
+

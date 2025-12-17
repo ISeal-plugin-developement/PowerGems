@@ -170,9 +170,6 @@ public class PowerGems extends JavaPlugin {
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
         log.info(I18N.translate("REGISTERED_COMMANDS"));
-
-        // AddonsManager.INSTANCE.loadAddons(); - currently moved to ServerStartupListener, just throwing shit at the wall
-
         AnalyticsManager.INSTANCE.setEnabled("PowerGems", false);
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());
         // plugin addons init
