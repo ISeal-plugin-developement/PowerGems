@@ -40,12 +40,12 @@ jobs:
         if: env.RELEASE_EXISTS == 'true'
         run: echo "Release v${{ env.VERSION }} already exists. Stopping workflow."
 
-      - name: Ensure gradlew is executable
-        run: chmod +x ./gradlew
-
       - name: Run Gradle build
         if: ${{ env.EXECUTE == 'true' && env.RELEASE_EXISTS == 'false' }}
-        run: ./gradlew clean build --no-daemon
+        uses: gradle/gradle-build-action@v2
+        with:
+          # Run clean and build so the shadowJar (configured to run with build) is produced.
+          arguments: clean build
 
       - name: Create prerelease
         if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' && env.RELEASE_EXISTS == 'false' }}
@@ -77,3 +77,4 @@ jobs:
           body: |
             This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from gradle.properties.
             Changelog for this version: ${{ github.event.head_commit.message }}
+
