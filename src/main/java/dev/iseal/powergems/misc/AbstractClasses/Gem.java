@@ -78,6 +78,7 @@ public abstract class Gem {
                 return;
             }
 
+            // TODO: this does not affect the root cause.
             cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
             leftClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
