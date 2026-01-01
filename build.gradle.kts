@@ -54,9 +54,14 @@ tasks.processResources {
 // Configure jar names and shadow
 tasks.withType<ShadowJar>().configureEach {
     archiveBaseName.set("${project.name}")
-    archiveClassifier.set("all")
+    archiveClassifier.set("") // remove the separate "-all" classifier so the shaded jar uses the normal jar filename
     archiveVersion.set(project.version.toString())
     mergeServiceFiles()
+}
+
+// Disable the default plain jar so the shaded jar becomes the primary artifact
+tasks.named("jar") {
+    enabled = false
 }
 
 // Make the build task produce the shadow jar
