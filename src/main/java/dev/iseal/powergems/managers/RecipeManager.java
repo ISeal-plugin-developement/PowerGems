@@ -1,5 +1,6 @@
 package dev.iseal.powergems.managers;
 
+import com.sk89q.worldedit.internal.util.NonAbstractForCompatibility;
 import de.leonhard.storage.Yaml;
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
@@ -9,17 +10,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -36,6 +37,8 @@ public class RecipeManager implements Listener {
 
     // Material cache to avoid repeated Material.getMaterial calls
     private final Map<String, Material> materialCache = new ConcurrentHashMap<>();
+
+    private final @NotNull Map<UUID, ItemStack[]> queuedMatrixes = new ConcurrentHashMap<>();
 
     private static RecipeManager instance = null;
     public static RecipeManager getInstance() {
@@ -113,40 +116,84 @@ public class RecipeManager implements Listener {
             return; // Skip other processing since we handled this event
         }
 
-        // Handle when player takes an item from the result slot for gem upgrades
-        if (e.getSlotType() == InventoryType.SlotType.RESULT && e.getCurrentItem() != null) {
-            CraftingInventory ci = (CraftingInventory) e.getInventory();
-
-            // Handle gem upgrade result
-            if (gemManager.isGem(e.getCurrentItem()) && !e.getCurrentItem().isSimilar(gemManager.getRandomGemItem())) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
-                    ItemStack[] matrix = ci.getMatrix();
-
-                    for (int i = 0; i < matrix.length; i++) {
-                        if (matrix[i] != null) {
-                            if (matrix[i].getAmount() > 1) {
-                                matrix[i].setAmount(matrix[i].getAmount() - 1);
-                            } else {
-                                matrix[i] = null;
-                            }
-                        }
-                    }
-
-                    ci.setMatrix(matrix);
-                }, 1L);
-            }
+        final UUID uuid = e.getWhoClicked().getUniqueId();
+        final Inventory clickedInventory = e.getClickedInventory();
+        if (clickedInventory != null && clickedInventory.getType().equals(InventoryType.WORKBENCH) && this.queuedMatrixes.containsKey(uuid)) {
+            e.setCancelled(true);
+            return;
         }
 
-        // Try to update the result slot with a gem upgrade if possible
-        tryUpgradeCrafting(e);
+        // Handle when player takes an item from the result slot for gem upgrades
+        final ItemStack current = e.getCurrentItem();
+        if (e.getSlotType() == InventoryType.SlotType.RESULT && current != null) {
+            CraftingInventory ci = (CraftingInventory) e.getInventory();
+            // Handle gem upgrade result
+            if (!gemManager.isGem(current) || current.isSimilar(gemManager.getRandomGemItem())) return;
+
+            this.queuedMatrixes.put(uuid, copyMatrix(ci.getMatrix()));
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
+                final ItemStack[] matrix = this.queuedMatrixes.remove(uuid);
+                if (matrix == null) return;
+
+                this.decreaseMatrix(matrix);
+                ci.setMatrix(matrix);
+            }, 1L);
+        } else {
+
+            // Try to update the result slot with a gem upgrade if possible
+            tryUpgradeCrafting((CraftingInventory) e.getInventory());
+        }
     }
 
-    private void tryUpgradeCrafting(InventoryClickEvent e) {
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent ev) {
+        final Inventory inventory = ev.getInventory();
+        if (inventory.getType() != InventoryType.WORKBENCH) return;
+        if (!(inventory instanceof CraftingInventory)) return;
+
+        final HumanEntity holder = inventory.getViewers().getFirst();
+        if (holder == null) return;
+
+        final ItemStack[] matrix = this.queuedMatrixes.remove(holder.getUniqueId());
+        if (matrix == null) return;
+
+        this.decreaseMatrix(matrix);
+        ((CraftingInventory) inventory).setMatrix(matrix);
+    }
+
+    private void decreaseMatrix(ItemStack[] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i] == null) continue;
+
+            final int currentAmount = matrix[i].getAmount();
+            if (currentAmount > 1) {
+                matrix[i].setAmount(currentAmount - 1);
+            } else {
+                matrix[i] = null;
+            }
+        }
+    }
+
+    private ItemStack[] copyMatrix(ItemStack[] matrix) {
+        ItemStack[] newMatrix = new ItemStack[9];
+        for (int i = 0; i < matrix.length; i++) {
+            final ItemStack item = matrix[i];
+            if (item != null) {
+                newMatrix[i] = item.clone();
+            } else {
+                newMatrix[i] = null;
+            }
+        }
+        return newMatrix;
+    }
+
+    private void tryUpgradeCrafting(CraftingInventory inventory) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(PowerGems.getPlugin(), () -> {
-            CraftingInventory ci = (CraftingInventory) e.getInventory();
-            if (!Objects.equals(ci.getResult(), null))
-                return;
-            ItemStack[] matrix = ci.getMatrix().clone();
+            if (!Objects.equals(inventory.getResult(), null)) return;
+
+            final ItemStack[] matrix = copyMatrix(inventory.getMatrix());
+
             ItemStack gem = null;
             for (ItemStack is : matrix) {
                 if (gemManager.isGem(is) && gemManager.getLevel(is) < gcm.getMaxGemLevel()) {
@@ -154,9 +201,9 @@ public class RecipeManager implements Listener {
                     break;
                 }
             }
-            if (gem == null) {
-                return;
-            }
+
+            if (gem == null) return;
+
             int currentLevel = gemManager.getLevel(gem);
             if (isMatrixCorrect(matrix, gem, currentLevel + 1)) {
                 ItemMeta im = gem.getItemMeta();
@@ -164,9 +211,9 @@ public class RecipeManager implements Listener {
                 pdc.set(nkm.getKey("gem_level"), PersistentDataType.INTEGER, currentLevel + 1);
                 im = gemManager.createLore(im);
                 gem.setItemMeta(im);
-                ci.setResult(gem);
+                inventory.setResult(gem.clone());
             }
-        }, 1);
+        }, 1L);
     }
 
     private boolean isMatrixCorrect(ItemStack[] matrix, ItemStack gem, int level) {
@@ -298,7 +345,7 @@ public class RecipeManager implements Listener {
                     // generate namespacedkey based on name+level
                     key = gemManager.getName(newStack).toLowerCase()  + "_" + level + "_upgrade";
                     NamespacedKey nk = new NamespacedKey(PowerGems.getPlugin(), key);
-                    ShapedRecipe sr = new ShapedRecipe(nk, newStack);
+                    ShapedRecipe sr = new ShapedRecipe(nk, oldStack.clone());
                     HashMap<String, Object> arr = (HashMap<String, Object>) recipes.getMap(key);
 
                     boolean changed = false;
