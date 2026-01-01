@@ -22,9 +22,10 @@ jobs:
 
       - name: Set env variables
         run: |
-          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-          echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
-          echo "EXECUTE=$(mvn help:evaluate -Dexpression=execute -q -DforceStdout)" >> $GITHUB_ENV
+          # Read version/prerelease/execute from gradle.properties if present
+          echo "VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_ENV
+          echo "PRERELEASE=$(grep '^prerelease=' gradle.properties | cut -d'=' -f2 || true)" >> $GITHUB_ENV
+          echo "EXECUTE=$(grep '^execute=' gradle.properties | cut -d'=' -f2 || true)" >> $GITHUB_ENV
 
       - name: Check if release exists
         id: check_release
@@ -39,9 +40,12 @@ jobs:
         if: env.RELEASE_EXISTS == 'true'
         run: echo "Release v${{ env.VERSION }} already exists. Stopping workflow."
 
-      - name: Run Maven package
+      - name: Ensure gradlew is executable
+        run: chmod +x ./gradlew
+
+      - name: Run Gradle build
         if: ${{ env.EXECUTE == 'true' && env.RELEASE_EXISTS == 'false' }}
-        run: mvn clean package
+        run: ./gradlew clean build --no-daemon
 
       - name: Create prerelease
         if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' && env.RELEASE_EXISTS == 'false' }}
@@ -49,13 +53,13 @@ jobs:
         id: preRelease
         with:
           name: "v${{ env.VERSION }}"
-          artifacts: "target/output/*.jar"
+          artifacts: "build/libs/*.jar"
           commit: ${{ github.sha }}
           tag: "${{ env.VERSION }}-${{ github.sha }}"
           draft: false
           prerelease: true
           body: |
-            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from gradle.properties.
             Changelog for this version: ${{ github.event.head_commit.message }}
             !! THIS IS A PRERELEASE AND NOT FINAL !!
 
@@ -65,11 +69,11 @@ jobs:
         id: finalRelease
         with:
           name: "v${{ env.VERSION }}"
-          artifacts: "target/output/*.jar"
+          artifacts: "build/libs/*.jar"
           commit: ${{ github.sha }}
           tag: ${{ env.VERSION }}
           draft: false
           prerelease: false
           body: |
-            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from gradle.properties.
             Changelog for this version: ${{ github.event.head_commit.message }}
