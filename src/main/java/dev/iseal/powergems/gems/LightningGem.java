@@ -49,7 +49,7 @@ public class LightningGem extends Gem {
         Location playerLocation = plr.getLocation();
         World world = playerLocation.getWorld();
         plr.setVelocity(playerLocation.getDirection().multiply(5));
-        world.spawnParticle(Particle.FLASH, playerLocation, 100, 0, 0, 0, 0.2);
+        world.spawnParticle(Particle.FLASH, playerLocation.add(0,1,0), 1, 0, 0, 0, Color.YELLOW);
     }
 
     @Override

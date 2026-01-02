@@ -78,11 +78,11 @@ public abstract class Gem {
                 return;
             }
 
-            // TODO: this does not affect the root cause.
-            cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
             leftClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                 ICombatLogXAddonImpl.getInstance().setInFightAttacker(plr);
+
+            cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             if (checkIfCooldown("right", plr)) {
                 return;

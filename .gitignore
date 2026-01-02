@@ -9,6 +9,9 @@
 gradle-wrapper.jar
 .gradle/
 
+!src/**/run
+**/run/**
+
 # OS files
 .DS_Store
 Thumbs.db

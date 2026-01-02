@@ -151,6 +151,7 @@ public class CooldownManager implements Dumpable {
     public void cancelCooldowns() {
         rightClickCooldowns.clear();
         leftClickCooldowns.clear();
+        shiftClickCooldowns.clear();
     }
 
     @Override

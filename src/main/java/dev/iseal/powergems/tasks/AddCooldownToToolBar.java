@@ -40,9 +40,6 @@ public class AddCooldownToToolBar extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getServer().getOnlinePlayers().forEach(plr -> {
-            if (tdm.chargingFireball.containsKey(plr)) {
-                return;
-            }
             ItemStack mainHand = plr.getInventory().getItemInMainHand();
             ItemStack offHand = plr.getInventory().getItemInOffHand();
 

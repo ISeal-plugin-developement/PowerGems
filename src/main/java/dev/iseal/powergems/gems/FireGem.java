@@ -73,12 +73,7 @@ public class FireGem extends Gem {
 
     @Override
     protected void shiftClick(Player plr, int level) {
-        if (sm.tempDataManager.chargingFireball.containsKey(plr)) {
-            plr.sendMessage(I18N.translate("FIREBALL_ALREADY_CHARGING"));
-            return;
-        }
-
-       spawnFireball(level);
+        spawnFireball(level);
         
         Location plrEyeLoc = plr.getEyeLocation();
         plrEyeLoc.add(plr.getLocation().getDirection().multiply(10));
@@ -115,7 +110,7 @@ public class FireGem extends Gem {
         Vector direction = plr.getEyeLocation().getDirection();
         Fireball fireball = plr.launchProjectile(Fireball.class, direction.multiply(2));
 
-        fireball.setYield(5 + level);
+        fireball.setYield(3f + level/3f);
         fireball.setVisualFire(false);
         fireball.setIsIncendiary(gcm.isExplosionDamageAllowed());
 
