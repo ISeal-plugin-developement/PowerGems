@@ -1,7 +1,6 @@
 package dev.iseal.powergems.listeners;
 
 import dev.iseal.powergems.managers.GemManager;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

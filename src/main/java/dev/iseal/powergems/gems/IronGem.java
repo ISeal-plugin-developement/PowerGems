@@ -75,7 +75,6 @@ public class IronGem extends Gem {
         for (int i = 0; i < 20 + (level * 2); i++) {
             Vector coneDirection = direction.clone().rotateAroundY(i * 20);
             Arrow sa = plr.launchProjectile(Arrow.class, coneDirection);
-            sa.setBounce(true);
             sa.setDamage(level);
             sa.setVelocity(sa.getVelocity().multiply(level));
             sa.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
@@ -84,7 +83,6 @@ public class IronGem extends Gem {
         }
         for (int i = 0; i < 5 + level; i++) {
             Arrow sa = plr.launchProjectile(Arrow.class);
-            sa.setBounce(true);
             sa.setDamage(level);
             sa.setVelocity(sa.getVelocity().multiply(level));
             sa.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);

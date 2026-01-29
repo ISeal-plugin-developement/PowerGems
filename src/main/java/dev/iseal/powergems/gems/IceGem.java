@@ -1,21 +1,14 @@
 package dev.iseal.powergems.gems;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-
+import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.listeners.AvoidTargetListener;
+import dev.iseal.powergems.listeners.FallingBlockHitListener;
+import dev.iseal.powergems.misc.AbstractClasses.Gem;
+import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowman;
+import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -23,11 +16,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import dev.iseal.powergems.PowerGems;
-import dev.iseal.powergems.listeners.AvoidTargetListener;
-import dev.iseal.powergems.listeners.FallingBlockHitListener;
-import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import dev.iseal.sealLib.Systems.I18N.I18N;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class IceGem extends Gem {
     private final FallingBlockHitListener fbhl = sm.fallingBlockHitListen;
@@ -62,8 +52,8 @@ public class IceGem extends Gem {
             return;
         }
 
-        ent.setFreezeTicks(100 + (level * 2) * 20);
-        ent.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100 + (level * 2) * 20, level - 1));
+        ent.setFreezeTicks(100 + level * 40);
+        ent.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100 + level * 40, level - 1));
     }
 
     @Override

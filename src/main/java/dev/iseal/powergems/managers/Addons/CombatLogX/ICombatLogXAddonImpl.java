@@ -4,10 +4,12 @@ import com.github.sirblobman.combatlogx.api.ICombatLogX;
 import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import com.github.sirblobman.combatlogx.api.object.TagReason;
 import com.github.sirblobman.combatlogx.api.object.TagType;
+import dev.iseal.powergems.managers.Addons.AbstractAddon;
+import dev.iseal.powergems.managers.Addons.AddonLoadOrder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class ICombatLogXAddonImpl implements ICombatLogXAddon {
+public class ICombatLogXAddonImpl extends AbstractAddon implements ICombatLogXAddon {
     private static ICombatLogXAddonImpl INSTANCE;
     public static ICombatLogXAddonImpl getInstance() {
         if (INSTANCE == null) {
@@ -16,7 +18,7 @@ public class ICombatLogXAddonImpl implements ICombatLogXAddon {
         return INSTANCE;
     }
     private ICombatLogXAddonImpl() {
-        // Private constructor to prevent instantiation
+        super(AddonLoadOrder.AFTER_SERVER_LOAD);
     }
 
     ICombatLogX plugin;
@@ -41,5 +43,15 @@ public class ICombatLogXAddonImpl implements ICombatLogXAddon {
         ICombatManager combatManager = getAPI().getCombatManager();
         combatManager.tag(attacker, defender, TagType.UNKNOWN, TagReason.ATTACKER);
         combatManager.tag(defender, attacker, TagType.UNKNOWN, TagReason.ATTACKED);
+    }
+
+    @Override
+    public String getPluginName() {
+        return "CombatLogX";
+    }
+
+    @Override
+    public boolean isEnabledInConfig() {
+        return gcm.isCombatLogXEnabled();
     }
 }

@@ -34,7 +34,8 @@ public class GemPermanentEffectConfigManager extends AbstractConfigManager {
         if (file.contains(GemManager.lookUpName(i) + "GemEffect")) return;
         if (i == -1) ExceptionHandler.getInstance().dealWithException(new IllegalArgumentException("Invalid gem ID: " + i), Level.WARNING, "CREATE_DEFAULT_EFFECT_SETTINGS");
         // this is dogshit. I'm sorry.
-        file.setDefault(GemManager.lookUpName(i) + "GemEffect", GemReflectionManager.getInstance().getSingletonGemInstance(GemManager.lookUpName(i)).getDefaultEffectType().getName());
+        PotionEffectType type = GemReflectionManager.getInstance().getSingletonGemInstance(GemManager.lookUpName(i)).getDefaultEffectType();
+        file.setDefault(GemManager.lookUpName(i) + "GemEffect", type == null ? "NONE" : type.getName());
     }
 
     public PotionEffectType getType(String gemName) {

@@ -1,8 +1,9 @@
 package dev.iseal.powergems.misc.AbstractClasses;
 
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.Addons.AddonsManager;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
-import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddonManager;
+import dev.iseal.powergems.managers.Addons.WorldGuard.WorldGuardAddon;
 import dev.iseal.powergems.managers.Configuration.GemParticleConfigManager;
 import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.CooldownManager;
@@ -30,6 +31,7 @@ public abstract class Gem {
     protected CooldownManager cm = sm.cooldownManager;
     protected GemParticleConfigManager gpcm = sm.configManager.getRegisteredConfigInstance(GemParticleConfigManager.class);
     protected GeneralConfigManager gcm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
+    protected AddonsManager am = AddonsManager.INSTANCE;
     protected Particle particle;
     protected String name;
 
@@ -47,7 +49,7 @@ public abstract class Gem {
 
         this.plr = plr;
         int level = gm.getLevel(item);
-        if (PowerGems.isWorldGuardEnabled && !WorldGuardAddonManager.getInstance().isGemUsageAllowedInRegion(plr)) {
+        if (am.isAddonLoaded("WorldGuard") && !WorldGuardAddon.getInstance().isGemUsageAllowedInRegion(plr)) {
             plr.sendMessage(I18N.translate("CANNOT_USE_GEMS_IN_REGION"));
             return;
         }
@@ -64,9 +66,6 @@ public abstract class Gem {
                 return;
             }
 
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Shift");
-
             // finally, call the shift ability
             shiftClick(plr, level);
             // if combatlogx is enabled, set in fight
@@ -78,19 +77,16 @@ public abstract class Gem {
             if (checkIfCooldown("left", plr)) {
                 return;
             }
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Left");
 
             leftClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())
                 ICombatLogXAddonImpl.getInstance().setInFightAttacker(plr);
+
             cm.setLeftClickCooldown(plr, cm.getFullCooldown(level, caller.getSimpleName(), "Left"), caller);
         } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             if (checkIfCooldown("right", plr)) {
                 return;
             }
-            // add this usage to gemManager's list
-            gm.addGemUsage(caller.getSimpleName(), "Right");
 
             rightClick(plr, level);
             if (PowerGems.isEnabled("CombatLogX") && gcm.isCombatLogXEnabled())

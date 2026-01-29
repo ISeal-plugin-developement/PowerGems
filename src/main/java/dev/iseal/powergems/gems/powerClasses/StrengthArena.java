@@ -16,7 +16,6 @@ public class StrengthArena implements Listener {
     private final Player player;
     private final Location startingLocation;
     private final int radius = 5;
-    private final int particleCount = 40;
 
     public StrengthArena(Player player) {
         this.player = player;

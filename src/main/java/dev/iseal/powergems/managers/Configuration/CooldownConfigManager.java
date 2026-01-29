@@ -18,9 +18,9 @@ public class CooldownConfigManager extends AbstractConfigManager {
     @Override
     public void lateInit() {
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
-            file.setDefault(GemManager.lookUpName(i) + "LeftCooldown", 60);
-            file.setDefault(GemManager.lookUpName(i) + "RightCooldown", 60);
-            file.setDefault(GemManager.lookUpName(i) + "ShiftCooldown", 60);
+            file.setDefault(GemManager.lookUpName(i) + "GemLeftCooldown", 60);
+            file.setDefault(GemManager.lookUpName(i) + "GemRightCooldown", 60);
+            file.setDefault(GemManager.lookUpName(i) + "GemShiftCooldown", 60);
         }
     }
 
