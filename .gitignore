@@ -4,10 +4,9 @@
 *.iml
 /.idea/
 /target/
-/.idea/
 .gradle/
 gradle-wrapper.jar
-.gradle/
+gradlew*
 
 !src/**/run
 **/run/**
