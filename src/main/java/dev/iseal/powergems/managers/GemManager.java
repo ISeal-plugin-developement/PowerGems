@@ -7,6 +7,8 @@ import dev.iseal.powergems.misc.WrapperObjects.GemCacheItem;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -293,22 +295,6 @@ public class GemManager implements Dumpable {
     }
 
     /**
-     * Returns a color code string based on the gem number.
-     * If the configuration allows randomized colors, a random color is chosen from
-     * the possible colors.
-     * Otherwise, a specific color is assigned based on the gem number.
-     * 
-     * @param gemName the name of the gem, as specified in gemLookupMap.
-     * @return A string representing the color code.
-     */
-    private String getColor(String gemName) {
-        if (gcm.isRandomizedColors()) {
-            return possibleColors.get(rand.nextInt(possibleColors.size())).toString();
-        }
-        return gccm.getGemColor(gemName).toString();
-    }
-
-    /**
      * Generates an ItemStack for a gem.
      * 
      * @param gemNumber The power of the gem.
@@ -318,7 +304,9 @@ public class GemManager implements Dumpable {
     private ItemStack generateItemStack(int gemNumber, int gemLevel) {
         ItemStack gemItem = new ItemStack(gmcm.getGemMaterial(lookUpName(gemNumber)));
         ItemMeta reGemMeta = gemItem.getItemMeta();
-        reGemMeta.setDisplayName(getColor(lookUpName(gemNumber)) + lookUpName(gemNumber) + " Gem");
+        reGemMeta.displayName(
+                gccm.getGemDisplayName(lookUpName(gemNumber))
+        );
         PersistentDataContainer reDataContainer = reGemMeta.getPersistentDataContainer();
         reDataContainer.set(isGemKey, PersistentDataType.BOOLEAN, true);
         reDataContainer.set(gemPowerKey, PersistentDataType.STRING, lookUpName(gemNumber));
@@ -329,10 +317,6 @@ public class GemManager implements Dumpable {
         // might want to make an index for every level of gem in the future, could be fun
         reGemMeta.setCustomModelData(gemNumber+2);
         gemItem.setItemMeta(reGemMeta);
-        //int customModelData = reGemMeta.hasCustomModelData() ? reGemMeta.getCustomModelData() : -1;
-        //l.info(gcm.getPluginPrefix() + "Created a " 
-        //+ lookUpName(gemNumber) 
-        //+ " gem with custom model data " + customModelData);
         return gemItem;
     }
 
