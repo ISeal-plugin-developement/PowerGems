@@ -2,21 +2,47 @@ package dev.iseal.powergems.managers.Configuration;
 
 import de.leonhard.storage.Config;
 import dev.iseal.powergems.PowerGems;
+import dev.iseal.powergems.managers.SingletonManager;
+import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.AbstractClasses.AbstractConfigManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.checkerframework.checker.units.qual.C;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 public class GeneralConfigManager extends AbstractConfigManager {
 
     public GeneralConfigManager() {
         super(null);
-        file = new Config("config", PowerGems.getPlugin().getDataFolder()+"");
+        file = new Config("config", PowerGems.getPlugin().getDataFolder().getPath());
     }
 
+    private static final Integer CONFIG_VERSION = 1;
+
+    private final Logger logger = PowerGems.getPlugin().getLogger();
+    private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
+
+    private final Map<Integer, String> upgradeWarnings = Map.of(
+            1, "In GemColor.yml the colors now use Hex color codes. All previous colors will not work. \n" +
+                    "Please regenerate the config or rewrite it yourself"
+    );
+
     public void setUpConfig() {
+        int lastConfigVersion = tdm.readDataFromFile("lastConfigVersion") == null ? 0 : (int) tdm.readDataFromFile("lastConfigVersion");
+        if (lastConfigVersion != CONFIG_VERSION) {
+            for (int i = lastConfigVersion+1; i <= CONFIG_VERSION; i++) {
+                if (upgradeWarnings.containsKey(i)) logger.warning(upgradeWarnings.get(i));
+            }
+            tdm.writeDataToFile("lastConfigVersion", CONFIG_VERSION);
+        }
+
+        file.set("configVersion", CONFIG_VERSION);
+        file.setDefault("gemStartingLevel", 1);
         file.setDefault("allowCosmeticParticleEffects", true);
         file.setDefault("allowMetrics", true);
         file.setDefault("allowMovingGems", false);
