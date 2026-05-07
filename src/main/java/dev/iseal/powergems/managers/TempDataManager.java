@@ -36,4 +36,9 @@ public class TempDataManager {
         tempData.set(key, value);
         log.info("Data written to file: " + key + " = " + value);
     }
+
+    public void writeDefaultDataToFile(String key, Object value) {
+        tempData.setDefault(key, value);
+        log.info("Default data set in file: " + key + " = " + value);
+    }
 }
