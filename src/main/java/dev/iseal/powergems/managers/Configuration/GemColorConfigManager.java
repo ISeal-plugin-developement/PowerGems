@@ -31,7 +31,7 @@ public class GemColorConfigManager extends AbstractConfigManager {
     @Override
     public void lateInit() {
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
-            file.setDefault(GemManager.lookUpName(i) + "GemColor", NamedTextColor.GREEN.value());
+            file.setDefault(GemManager.lookUpName(i) + "GemColor", NamedTextColor.GREEN.asHexString());
         }
     }
 
