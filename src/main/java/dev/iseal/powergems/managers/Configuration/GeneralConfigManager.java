@@ -32,6 +32,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
                     "Please regenerate the config or rewrite it yourself"
     );
 
+    @Override
     public void setUpConfig() {
         int lastConfigVersion = tdm.readDataFromFile("lastConfigVersion") == null ? 0 : (int) tdm.readDataFromFile("lastConfigVersion");
         if (lastConfigVersion != CONFIG_VERSION) {
@@ -240,5 +241,9 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public int unlockNewAbilitiesOnLevelX() {
         return file.getInt("unlockNewAbilitiesOnLevelX");
+    }
+
+    public int getGemStartingLevel() {
+        return file.getInt("gemStartingLevel");
     }
 }

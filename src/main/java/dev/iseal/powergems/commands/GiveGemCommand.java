@@ -3,6 +3,8 @@ package dev.iseal.powergems.commands;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -26,8 +28,6 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] args) {
-
-
         if (!sender.hasPermission(command.getPermission())) {
             sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
@@ -56,20 +56,36 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
         }
 
         String gemNumString = args[0];
-        int gemLevel = args.length >= 2 && isNumber(args[1]) ? Integer.parseInt(args[1]) : 1;
+        int gemLevel = 1;
+        boolean useDefaultLevel = false;
+        if (args.length >= 2) {
+            if ("default".equalsIgnoreCase(args[1])) {
+                useDefaultLevel = true;
+            } else if (isNumber(args[1])) {
+                gemLevel = Integer.parseInt(args[1]);
+            }
+        }
 
         if (isNumber(gemNumString)) {
-            targetPlayer.getInventory().addItem(sm.gemManager.createGem(Integer.parseInt(gemNumString), gemLevel));
+            if (useDefaultLevel) {
+                targetPlayer.getInventory().addItem(sm.gemManager.createGem(Integer.parseInt(gemNumString)));
+            } else {
+                targetPlayer.getInventory().addItem(sm.gemManager.createGem(Integer.parseInt(gemNumString), gemLevel));
+            }
             return true;
         }
 
         int gemId = GemManager.lookUpID(gemNumString);
         if (gemId != -1) {
-            targetPlayer.getInventory().addItem(sm.gemManager.createGem(gemId, gemLevel));
+            if (useDefaultLevel) {
+                targetPlayer.getInventory().addItem(sm.gemManager.createGem(gemId));
+            } else {
+                targetPlayer.getInventory().addItem(sm.gemManager.createGem(gemId, gemLevel));
+            }
             return true;
         }
 
-        sender.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");
+        sender.sendMessage(Component.text("Invalid gem name / ID.").color(NamedTextColor.DARK_RED));
         return true;
     }
 

@@ -185,7 +185,7 @@ public class GemManager implements Dumpable {
      * @return An ItemStack representing the created gem.
      */
     public ItemStack createGem(int gemInt) {
-        return generateItemStack(gemInt, 1);
+        return generateItemStack(gemInt, gcm.getGemStartingLevel());
     }
 
     /**
@@ -216,7 +216,7 @@ public class GemManager implements Dumpable {
             l.warning("You can try to turn up \"gemCreationAttempts\" in the config to fix this issue.");
             return null;
         }
-        return generateItemStack(random, 1);
+        return generateItemStack(random, gcm.getGemStartingLevel());
     }
 
     /**
@@ -248,7 +248,7 @@ public class GemManager implements Dumpable {
             random = rand.nextInt(SingletonManager.TOTAL_GEM_AMOUNT);
             repeating++;
         }
-        return generateItemStack(random, 1);
+        return generateItemStack(random, gcm.getGemStartingLevel());
     }
 
     /**
@@ -330,7 +330,7 @@ public class GemManager implements Dumpable {
     public HashMap<Integer, ItemStack> getAllGems() {
         HashMap<Integer, ItemStack> allGems = new HashMap<>(10);
         for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
-            allGems.put(i, generateItemStack(i, 1));
+            allGems.put(i, generateItemStack(i, gcm.getGemStartingLevel()));
         }
         return allGems;
     }

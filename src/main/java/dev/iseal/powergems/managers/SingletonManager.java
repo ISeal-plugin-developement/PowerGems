@@ -35,11 +35,11 @@ public class SingletonManager {
     public MetricsManager metricsManager;
 
     public void init() {
+        tempDataManager = new TempDataManager();
         configManager = ConfigManager.getInstance();
         configManager.setUpConfig();
         namespacedKeyManager = new NamespacedKeyManager();
         updaterManager = UpdaterManager.getInstance();
-        tempDataManager = new TempDataManager();
         sandMoveListen = new SandMoveListener();
         fallingBlockHitListen = new FallingBlockHitListener();
         gemManager = GemManager.getInstance();
