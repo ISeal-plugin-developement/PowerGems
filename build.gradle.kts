@@ -1,9 +1,11 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     java
     id("pmd")
+    `maven-publish`
     id("com.gradleup.shadow") version "9.3.0"
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
@@ -68,6 +70,36 @@ tasks.named("jar") {
 // Make the build task produce the shadow jar
 tasks.named("build") {
     dependsOn(tasks.named("shadowJar"))
+}
+
+val isealRepoUser = providers.gradleProperty("repoUser")
+    .orElse(providers.environmentVariable("REPO_USER"))
+val isealRepoPassword = providers.gradleProperty("repoPassword")
+    .orElse(providers.environmentVariable("REPO_PASSWORD"))
+val isSnapshotVersion = version.toString().contains("SNAPSHOT", ignoreCase = true) ||
+    version.toString().contains("DEV", ignoreCase = true)
+val isealRepoPath = providers.gradleProperty("repoPath")
+    .orElse(if (isSnapshotVersion) "maven-snapshots" else "maven-releases")
+
+publishing {
+    publications {
+        create<MavenPublication>("plugin") {
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = project.version.toString()
+            artifact(tasks.named("shadowJar"))
+        }
+    }
+    repositories {
+        maven {
+            name = "iseal.dev"
+            url = uri("https://maven.iseal.dev/repository/${isealRepoPath.get()}/")
+            credentials {
+                username = isealRepoUser.orNull
+                password = isealRepoPassword.orNull
+            }
+        }
+    }
 }
 
 pmd {
