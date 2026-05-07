@@ -24,25 +24,30 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
     private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] args) {
-        if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(I18N.translate("NOT_PLAYER"));
+
+
+        if (!sender.hasPermission(command.getPermission())) {
+            sender.sendMessage(I18N.translate("NO_PERMISSION"));
             return true;
         }
 
-        if (!player.hasPermission(command.getPermission())) {
-            player.sendMessage(I18N.translate("NO_PERMISSION"));
-            return true;
-        }
-
-        Player targetPlayer = player;
+        Player targetPlayer = null;
         if (args.length > 2) {
             targetPlayer = Bukkit.getPlayer(args[args.length - 1]);
             if (targetPlayer == null) {
-                player.sendMessage(ChatColor.DARK_RED + "Player not found.");
+                sender.sendMessage(ChatColor.DARK_RED + "Player not found.");
                 return true;
             }
+        }
+
+        if (targetPlayer == null) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(I18N.translate("NOT_PLAYER"));
+                return true;
+            }
+            targetPlayer = (Player) sender;
         }
 
         if (args.length < 1) {
@@ -64,7 +69,7 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        player.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");
+        sender.sendMessage(ChatColor.DARK_RED + "Invalid gem name / ID.");
         return true;
     }
 
