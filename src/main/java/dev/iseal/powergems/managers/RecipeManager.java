@@ -381,6 +381,9 @@ public class RecipeManager implements Listener {
                     if (!arr.get("shape").toString().contains("g"))
                         throw new RuntimeException("No gem ingredient found for " + key + " (is the file malformed?)");
 
+                    if (arr.get("ingredients").toString().contains("g"))
+                        throw new RuntimeException("Ingredient key 'g' is reserved for the gem in " + key);
+
                     sr.setIngredient('g', new RecipeChoice.ExactChoice(oldStack));
                     // Register the recipe to test the validity
                     Bukkit.getServer().addRecipe(sr);
@@ -391,6 +394,8 @@ public class RecipeManager implements Listener {
             }
         } catch (Exception e) {
             ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "RECIPE_REGISTER_UPGRADE", key);
+            // fatal exception during config load. Send a message and quit
+            Bukkit.getServer().getPluginManager().disablePlugin(PowerGems.getPlugin());
         }
     }
 }

@@ -49,14 +49,14 @@ dependencies {
 // replace literal ${project.version} in plugin.yml with project.version
 tasks.processResources {
     filesMatching("plugin.yml") {
-        filter { line -> line.replace("\${project.version}", project.version.toString()) }
+        filter { line -> line.replace($$"${project.version}", project.version.toString()) }
         expand("version" to project.version.toString())
     }
 }
 
 // Configure jar names and shadow
 tasks.withType<ShadowJar>().configureEach {
-    archiveBaseName.set("${project.name}")
+    archiveBaseName.set(project.name)
     archiveClassifier.set("") // remove the separate "-all" classifier so the shaded jar uses the normal jar filename
     archiveVersion.set(project.version.toString())
     mergeServiceFiles()
