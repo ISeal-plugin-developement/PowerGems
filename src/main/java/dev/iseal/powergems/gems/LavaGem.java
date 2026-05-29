@@ -7,7 +7,6 @@ import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.powergems.misc.Utils;
 import dev.iseal.sealLib.Systems.I18N.I18N;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -87,11 +86,11 @@ public class LavaGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Make a wall of lava");
-        lore.add(ChatColor.WHITE + "Shift click: Spawn a blaze to fight for you");
-        lore.add(ChatColor.WHITE + "Left click: 1 minute of Fire resistance");
+        lore.add("<gradient:#FF7F00:#7F0000>Level <level></gradient>");
+        lore.add("<gradient:#FF7F00:#7F0000>Abilities</gradient>");
+        lore.add("<white>Right click: Make a wall of lava</white>");
+        lore.add("<white>Shift click: Spawn a blaze to fight for you</white>");
+        lore.add("<white>Left click: 1 minute of Fire resistance</white>");
         return lore;
     }
 

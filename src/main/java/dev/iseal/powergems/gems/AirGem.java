@@ -120,14 +120,11 @@ public class AirGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Creates a tether of wind between the player and a target player, pulling the target closer.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Creates a cloud of smoke, granting temporary invisibility and propelling the player forward.");
-        lore.add(ChatColor.WHITE
-                + "Left click: Unleashes a burst of wind, launching nearby entities into the air and dealing damage.");
+        lore.add("<gradient:#E0FFFF:#00BFFF>Level <level></gradient>");
+        lore.add("<gradient:#E0FFFF:#00BFFF>Abilities</gradient>");
+        lore.add("<white>Right click: Creates a tether of wind between the player and a target player, pulling the target closer.</white>");
+        lore.add("<white>Shift click: Creates a cloud of smoke, granting temporary invisibility and propelling the player forward.</white>");
+        lore.add("<white>Left click: Unleashes a burst of wind, launching nearby entities into the air and dealing damage.</white>");
         return lore;
     }
 

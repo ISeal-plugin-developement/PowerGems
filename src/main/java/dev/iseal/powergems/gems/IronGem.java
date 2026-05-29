@@ -7,7 +7,6 @@ import dev.iseal.powergems.managers.TempDataManager;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
@@ -123,13 +122,11 @@ public class IronGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Temporarily grants the player increased absorption and knockback resistance.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Temporarily increases the player's armor and armor toughness.");
-        lore.add(ChatColor.WHITE + "Left click: Fires a barrage of spectral arrows in a circle shape.");
+        lore.add("<gradient:#DADDE0:#7A7F84>Level <level></gradient>");
+        lore.add("<gradient:#DADDE0:#7A7F84>Abilities</gradient>");
+        lore.add("<white>Right click: Temporarily grants the player increased absorption and knockback resistance.</white>");
+        lore.add("<white>Shift click: Temporarily increases the player's armor and armor toughness.</white>");
+        lore.add("<white>Left click: Fires a barrage of spectral arrows in a circle shape.</white>");
         return lore;
     }
 

@@ -9,6 +9,9 @@ import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
@@ -18,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -267,15 +271,7 @@ public class GemManager implements Dumpable {
             pdc.set(gemLevelKey, PersistentDataType.INTEGER, 1);
         }
         int gemLevel = pdc.get(gemLevelKey, PersistentDataType.INTEGER);
-        ArrayList<String> lore = new ArrayList<>();
-        meta.setLore(lore);
-        lore.addAll(glcm.getLore(gemNumber));
-        // replace %level% with the actual level
-        lore.forEach(line -> {
-            if (line.contains("%level%"))
-                lore.set(lore.indexOf(line), line.replace("%level%", gemLevel + ""));
-        });
-        meta.setLore(lore);
+        meta.lore(glcm.getLore(gemNumber, generateLevelledTagResolver(gemLevel)));
         return meta;
     }
 
@@ -513,6 +509,10 @@ public class GemManager implements Dumpable {
             item.setItemMeta(meta);
             l.warning("An error in a gem has been found and fixed!");
         }
+    }
+
+    private TagResolver generateLevelledTagResolver(int level) {
+        return TagResolver.builder().tag("level", (a,b) -> Tag.inserting(Component.text(level))).build();
     }
 
     @Override

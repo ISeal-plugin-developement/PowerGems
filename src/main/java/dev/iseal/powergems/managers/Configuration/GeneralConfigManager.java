@@ -22,14 +22,17 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file = new Config("config", PowerGems.getPlugin().getDataFolder().getPath());
     }
 
-    private static final Integer CONFIG_VERSION = 1;
+    private static final Integer CONFIG_VERSION = 2;
 
     private final Logger logger = PowerGems.getPlugin().getLogger();
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
 
     private final Map<Integer, String> upgradeWarnings = Map.of(
             1, "In GemColor.yml the colors now use Hex color codes. All previous colors will not work. \n" +
-                    "Please regenerate the config or rewrite it yourself"
+                    "Please regenerate the config or rewrite it yourself",
+            2, "Both GemColor.yml and GemLore.yml support the minimessage standard. \n" +
+                    "Please regenerate the config or rewrite it yourself. \n" +
+                    "Documentation for the standard is available at https://docs.papermc.io/adventure/minimessage/format/"
     );
 
     @Override

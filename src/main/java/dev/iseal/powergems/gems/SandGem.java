@@ -162,13 +162,11 @@ public class SandGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Weakens the target player, reducing their strength temporarily.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Engulfs the target player in darkness, impairing their vision and movement.");
-        lore.add(ChatColor.WHITE + "Left click: Creates a sand block temporarily that slows enemies passing on it.");
+        lore.add("<gradient:#F5E1A4:#C2A95C>Level <level></gradient>");
+        lore.add("<gradient:#F5E1A4:#C2A95C>Abilities</gradient>");
+        lore.add("<white>Right click: Weakens the target player, reducing their strength temporarily.</white>");
+        lore.add("<white>Shift click: Engulfs the target player in darkness, impairing their vision and movement.</white>");
+        lore.add("<white>Left click: Creates a sand block temporarily that slows enemies passing on it.</white>");
         return lore;
     }
 

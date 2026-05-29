@@ -77,13 +77,11 @@ public class LightningGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Strikes lightning at the target location and nearby entities, damaging them.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Emits a thunder sound effect and applies a glowing potion effect to nearby entities, excluding the player.");
-        lore.add(ChatColor.WHITE + "Left click: Launches the player forward in the direction rail.");
+        lore.add("<gradient:#FFFF66:#FFD700>Level <level></gradient>");
+        lore.add("<gradient:#FFFF66:#FFD700>Abilities</gradient>");
+        lore.add("<white>Right click: Strikes lightning at the target location and nearby entities, damaging them.</white>");
+        lore.add("<white>Shift click: Emits a thunder sound effect and applies a glowing potion effect to nearby entities, excluding the player.</white>");
+        lore.add("<white>Left click: Launches the player forward in the direction rail.</white>");
         return lore;
     }
 

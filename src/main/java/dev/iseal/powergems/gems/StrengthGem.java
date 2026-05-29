@@ -4,7 +4,7 @@ import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.gems.powerClasses.StrengthArena;
 import dev.iseal.powergems.managers.Addons.CombatLogX.ICombatLogXAddonImpl;
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.ChatColor;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
@@ -74,11 +74,11 @@ public class StrengthGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Saturation, Strength and Resistance (all lvl 2)");
-        lore.add(ChatColor.WHITE + "Shift click: An arena that keeps anyone from entering, useful to heal");
-        lore.add(ChatColor.WHITE + "Left click: A shockwave that sends everyone near flying and damages them");
+        lore.add("<gradient:#FF9BFF:#8E2DE2>Level <level></gradient>");
+        lore.add("<gradient:#FF9BFF:#8E2DE2>Abilities</gradient>");
+        lore.add("<white>Right click: Saturation, Strength and Resistance (all lvl 2)</white>");
+        lore.add("<white>Shift click: An arena that keeps anyone from entering, useful to heal</white>");
+        lore.add("<white>Left click: A shockwave that sends everyone near flying and damages them</white>");
         return lore;
     }
 

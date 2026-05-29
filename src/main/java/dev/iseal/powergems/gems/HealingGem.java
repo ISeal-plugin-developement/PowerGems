@@ -1,7 +1,6 @@
 package dev.iseal.powergems.gems;
 
 import dev.iseal.powergems.misc.AbstractClasses.Gem;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -53,11 +52,11 @@ public class HealingGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Parry");
-        lore.add(ChatColor.WHITE + "Shift click: Instant heal");
-        lore.add(ChatColor.WHITE + "Left click: 1 minute of regeneration 2");
+        lore.add("<gradient:#A3FFAA:#00C853>Level <level></gradient>");
+        lore.add("<gradient:#A3FFAA:#00C853>Abilities</gradient>");
+        lore.add("<white>Right click: Parry</white>");
+        lore.add("<white>Shift click: Instant heal</white>");
+        lore.add("<white>Left click: 1 minute of regeneration 2</white>");
         return lore;
     }
 

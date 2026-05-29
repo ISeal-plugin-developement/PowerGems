@@ -102,11 +102,11 @@ public class IceGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE + "Right click: Throw an ice block, dealing damage to whoever gets hit");
-        lore.add(ChatColor.WHITE + "Shift click: Spawns snow golems to fight for you");
-        lore.add(ChatColor.WHITE + "Left click: Freezes the player you aim giving him slowness");
+        lore.add("<gradient:#E0F7FF:#66CCFF>Level <level></gradient>");
+        lore.add("<gradient:#E0F7FF:#66CCFF>Abilities</gradient>");
+        lore.add("<white>Right click: Throw an ice block, dealing damage to whoever gets hit</white>");
+        lore.add("<white>Shift click: Spawns snow golems to fight for you</white>");
+        lore.add("<white>Left click: Freezes the player you aim giving him slowness</white>");
         return lore;
     }
 

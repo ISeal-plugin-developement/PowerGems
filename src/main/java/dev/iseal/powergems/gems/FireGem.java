@@ -94,14 +94,11 @@ public class FireGem extends Gem {
     @Override
     public ArrayList<String> getDefaultLore() {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + "Level %level%");
-        lore.add(ChatColor.GREEN + "Abilities");
-        lore.add(ChatColor.WHITE
-                + "Right click: Creates a fiery aura around the player, granting fire resistance and igniting nearby air blocks.");
-        lore.add(ChatColor.WHITE
-                + "Shift click: Triggers a powerful explosion at the player's location, damaging nearby entities and applying fire damage.");
-        lore.add(ChatColor.WHITE
-                + "Left click: Launches a fireball in the direction the player is facing, causing an explosion upon impact.");
+        lore.add("<gradient:#FF9A00:#FF2E2E>Level <level></gradient>");
+        lore.add("<gradient:#FF9A00:#FF2E2E>Abilities</gradient>");
+        lore.add("<white>Right click: Creates a fiery aura around the player, granting fire resistance and igniting nearby air blocks.</white>");
+        lore.add("<white>Shift click: Triggers a powerful explosion at the player's location, damaging nearby entities and applying fire damage.</white>");
+        lore.add("<white>Left click: Launches a fireball in the direction the player is facing, causing an explosion upon impact.</white>");
         return lore;
     }
 
