@@ -164,11 +164,15 @@ public class PowerGems extends JavaPlugin {
         log.info(I18N.translate("REGISTERED_LISTENERS"));
         log.info(I18N.translate("REGISTERING_COMMANDS"));
         Bukkit.getServer().getPluginCommand("givegem").setExecutor(new GiveGemCommand());
+        Bukkit.getServer().getPluginCommand("givegem").setTabCompleter(new ClearPlayerGemsCommand());
         Bukkit.getServer().getPluginCommand("giveallplayersgem").setExecutor(new GiveAllPlayersGemCommand());
         Bukkit.getServer().getPluginCommand("checkupdates").setExecutor(new CheckUpdateCommand());
         Bukkit.getServer().getPluginCommand("reloadconfig").setExecutor(new ReloadConfigCommand());
         Bukkit.getServer().getPluginCommand("pgDebug").setExecutor(new DebugCommand());
+        Bukkit.getServer().getPluginCommand("pgDebug").setTabCompleter(new ClearPlayerGemsCommand());
         Bukkit.getServer().getPluginCommand("getallgems").setExecutor(new GetAllGemsCommand());
+        Bukkit.getServer().getPluginCommand("cleargems").setExecutor(new ClearPlayerGemsCommand());
+        Bukkit.getServer().getPluginCommand("cleargems").setTabCompleter(new ClearPlayerGemsCommand());
         log.info(I18N.translate("REGISTERED_COMMANDS"));
         AnalyticsManager.INSTANCE.setEnabled("PowerGems", false);
         ExceptionHandler.getInstance().setVersion(plugin.getDescription().getVersion());

@@ -1,5 +1,6 @@
 package dev.iseal.powergems.commands;
 
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
@@ -24,6 +25,7 @@ public class ClearPlayerGemsCommand implements CommandExecutor, TabCompleter {
 
     private final SingletonManager sm = SingletonManager.getInstance();
     private final ArrayList<String> possibleTabCompletions = new ArrayList<>();
+    private final GeneralConfigManager cm = sm.configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -53,7 +55,13 @@ public class ClearPlayerGemsCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 2) {
             String arg1 = args[1].toLowerCase();
             if (!arg1.equals("all")) {
-                int id = GemManager.lookUpID(arg1);
+                int id = -1;
+                for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+                    if (GemManager.lookUpName(i).equalsIgnoreCase(args[1])) {
+                        id = i;
+                        break;
+                    }
+                }
                 if (id != -1) {
                     typeId = id;
                 } else if (isNumber(arg1)) {
@@ -138,16 +146,13 @@ public class ClearPlayerGemsCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 2) {
             List<String> completions = new ArrayList<>(possibleTabCompletions);
             completions.add("all");
-            for (int i = 1; i <= 5; i++) {
-                completions.add(String.valueOf(i));
-            }
             return completions.stream()
                     .filter(str -> str.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
         } else if (args.length == 3) {
             List<String> completions = new ArrayList<>();
             completions.add("all");
-            for (int i = 1; i <= 5; i++) {
+            for (int i = 1; i <= cm.getMaxGemLevel(); i++) {
                 completions.add(String.valueOf(i));
             }
             return completions.stream()

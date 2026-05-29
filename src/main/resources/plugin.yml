@@ -28,6 +28,11 @@ commands:
     usage: /reloadconfig
     aliases: [rc]
     permission: powergems.reloadconfig
+  cleargems:
+    description: Command to clear all gems from a player's inventory inventory
+    usage: /cleargems [player] [gem/level] [level]
+    aliases: [cg]
+    permission: powergems.cleargems
   pgDebug:
     description: Debug command
     usage: /pgDebug
@@ -58,6 +63,9 @@ permissions:
     powergems.admin:
         description: Permission to receive admin messages
         default: op
+    powergems.cleargems:
+        description: Permission to use /cleargems
+        default: op
     powergems.*:
         description: Permission to use all PowerGems commands
         default: op
@@ -70,3 +78,4 @@ permissions:
             powergems.debug: true
             powergems.movegems: true
             powergems.admin: true
+            powergems.cleargems: true
