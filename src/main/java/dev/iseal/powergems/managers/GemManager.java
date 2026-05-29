@@ -8,8 +8,6 @@ import dev.iseal.sealLib.Systems.I18N.I18N;
 import dev.iseal.sealUtils.Interfaces.Dumpable;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.ChatColor;
@@ -21,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -59,13 +56,12 @@ public class GemManager implements Dumpable {
     private GemMaterialConfigManager gmcm = null;
     private GemReflectionManager grm = null;
     private GemLoreConfigManager glcm = null;
-    private GemColorConfigManager gccm = null;
+    private GemNameConfigManager gccm = null;
     private final Random rand = new Random();
     private NamespacedKey isGemKey = null;
     private NamespacedKey gemPowerKey = null;
     private NamespacedKey gemLevelKey = null;
     private NamespacedKey gemCreationTimeKey = null;
-    private final ArrayList<ChatColor> possibleColors = new ArrayList<>();
     private final Logger l = PowerGems.getPlugin().getLogger();
     private static final ArrayList<String> gemIdLookup = new ArrayList<>();
     private final HashMap<UUID, GemCacheItem> gemCache = new HashMap<>();
@@ -89,14 +85,11 @@ public class GemManager implements Dumpable {
         gemPowerKey = nkm.getKey("gem_power");
         gemLevelKey = nkm.getKey("gem_level");
         gemCreationTimeKey = nkm.getKey("gem_creation_time");
-        removeElement(ChatColor.values(), ChatColor.MAGIC).forEach(o -> {
-            if (o instanceof ChatColor) possibleColors.add((ChatColor) o);
-        });
         gcm = cm.getRegisteredConfigInstance(GeneralConfigManager.class);
         agcm = cm.getRegisteredConfigInstance(ActiveGemsConfigManager.class);
         gmcm = cm.getRegisteredConfigInstance(GemMaterialConfigManager.class);
         glcm = cm.getRegisteredConfigInstance(GemLoreConfigManager.class);
-        gccm = cm.getRegisteredConfigInstance(GemColorConfigManager.class);
+        gccm = cm.getRegisteredConfigInstance(GemNameConfigManager.class);
     }
 
     /**
@@ -117,7 +110,11 @@ public class GemManager implements Dumpable {
      * 
      * @param gemName The name of the gem.
      * @return The ID of the gem, or -1 if the gem name is not recognized.
+     * @deprecated This creates a distinction between internal name and display name in a way that is quite stupid:
+     *             Instead of just having an internal name and a display one, it adds an ID to the mix that while also being unreadable it makes
+     *             it harder to understand what is going on
      */
+    @Deprecated(since = "3.6.4.0")
     public static int lookUpID(String gemName) {
         if (gemIdLookup.contains(gemName)) {
             return gemIdLookup.indexOf(gemName);
@@ -492,8 +489,31 @@ public class GemManager implements Dumpable {
         int id = lookUpID(name);
         ItemMeta meta = item.getItemMeta();
 
+        if (meta == null) return; // Nothing we can do
+
+        // play it safe: if it doesnt have the key, don't even attempt fixing it
+        if (!meta.getPersistentDataContainer().has(isGemKey)) return;
+
+        // If the stored gem power does not map to a valid id, try to infer it from the display name
+        if (id == -1) {
+            Component currentDisplay = meta.displayName();
+            for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+                String candidateName = lookUpName(i);
+                Component expectedDisplay = gccm.getGemDisplayName(candidateName);
+                if (expectedDisplay != null && expectedDisplay.equals(currentDisplay)) {
+                    // found matching display name -> fix persistent data and id
+                    meta.getPersistentDataContainer().set(gemPowerKey, PersistentDataType.STRING, candidateName);
+                    item.setItemMeta(meta);
+                    id = i;
+                    broken = true;
+                    break;
+                }
+            }
+        }
+
+
         // fix for broken model data
-        if (meta.getCustomModelData() != id+2) {
+        if (id != -1 && meta.getCustomModelData() != id + 2) {
             meta.setCustomModelData(id + 2);
             broken = true;
         }
@@ -502,6 +522,44 @@ public class GemManager implements Dumpable {
         if (name.endsWith("Gem")) {
             meta.getPersistentDataContainer().set(gemPowerKey, PersistentDataType.STRING, name.substring(0, name.length() - 3));
             broken = true;
+            // update id if possible
+            id = lookUpID(meta.getPersistentDataContainer().get(gemPowerKey, PersistentDataType.STRING));
+        }
+
+        // If we have a valid id, ensure display name and lore match the expected values and fix them if not
+        if (id != -1) {
+            // Fix display name
+            if (gccm != null) {
+                Component expectedDisplay = gccm.getGemDisplayName(lookUpName(id));
+                Component currentDisplay = meta.displayName();
+                if (expectedDisplay != null && !expectedDisplay.equals(currentDisplay)) {
+                    meta.displayName(expectedDisplay);
+                    broken = true;
+                }
+            }
+
+            // Fix lore
+            if (glcm != null) {
+                int gemLevel = getLevel(item);
+                List<Component> expectedLore = glcm.getLore(id, generateLevelledTagResolver(gemLevel));
+                List<Component> currentLore = meta.lore();
+                boolean loreMismatch = false;
+                if (expectedLore == null) loreMismatch = (currentLore != null && !currentLore.isEmpty());
+                else if (currentLore == null) loreMismatch = !expectedLore.isEmpty();
+                else if (expectedLore.size() != currentLore.size()) loreMismatch = true;
+                else {
+                    for (int i = 0; i < expectedLore.size(); i++) {
+                        if (!expectedLore.get(i).equals(currentLore.get(i))) {
+                            loreMismatch = true;
+                            break;
+                        }
+                    }
+                }
+                if (loreMismatch) {
+                    meta.lore(expectedLore);
+                    broken = true;
+                }
+            }
         }
 
         if (broken) {
@@ -532,7 +590,6 @@ public class GemManager implements Dumpable {
         dump.put("gemPowerKey", gemPowerKey);
         dump.put("gemLevelKey", gemLevelKey);
         dump.put("gemCreationTimeKey", gemCreationTimeKey);
-        dump.put("possibleColors", possibleColors);
         dump.put("gemIdLookup", gemIdLookup);
         return dump;
     }

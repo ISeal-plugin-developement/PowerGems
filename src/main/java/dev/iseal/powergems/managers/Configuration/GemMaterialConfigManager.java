@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import static dev.iseal.powergems.managers.GemManager.lookUpName;
+
 public class GemMaterialConfigManager extends AbstractConfigManager{
 
     private GemManager gemManager = null;
@@ -28,7 +30,9 @@ public class GemMaterialConfigManager extends AbstractConfigManager{
     //Initialize after other classes have been instantiated
     public void lateInit() {
         gemManager = SingletonManager.getInstance().gemManager;
-        gemManager.getAllGems().values().forEach(gem -> file.setDefault(gemManager.getName(gem)+"GemMaterial", gem.getType().toString()));
+        for (int i = 0; i < SingletonManager.TOTAL_GEM_AMOUNT; i++) {
+            file.setDefault(lookUpName(i)+"GemMaterial", Material.EMERALD.name());
+        }
     }
 
     @Override
