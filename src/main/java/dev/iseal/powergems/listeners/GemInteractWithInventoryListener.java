@@ -7,19 +7,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.VillagerAcquireTradeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantInventory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-public class TradeEventListener implements Listener {
+public class GemInteractWithInventoryListener implements Listener {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
 
     private boolean hasGemInIngredients(List<ItemStack> ingredients) {
         return ingredients.stream()
-                .filter(item -> item != null)
                 .anyMatch(gemManager::isGem);
     }
 
@@ -32,6 +34,16 @@ public class TradeEventListener implements Listener {
         if (hasGemInIngredients(Arrays.asList(inventory.getItem(0), inventory.getItem(1)))) {
             event.setCancelled(true);
             inventory.setItem(2, null);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCraft(InventoryClickEvent event) {
+        if (!(event.getInventory() instanceof CraftingInventory inventory)) {
+            return;
+        }
+        if (hasGemInIngredients(Arrays.asList(inventory.getMatrix()))) {
+            inventory.setResult(null);
         }
     }
 

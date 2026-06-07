@@ -154,7 +154,7 @@ public class PowerGems extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WaterMoveListener(), this);
         pluginManager.registerEvents(new ServerStartupListener(), this);
-        pluginManager.registerEvents(new TradeEventListener(), this);
+        pluginManager.registerEvents(new GemInteractWithInventoryListener(), this);
         pluginManager.registerEvents(new CraftEventListener(), this);
         pluginManager.registerEvents(sm.strenghtMoveListener, this);
         pluginManager.registerEvents(sm.sandMoveListen, this);
