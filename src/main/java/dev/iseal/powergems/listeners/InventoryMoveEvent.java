@@ -1,5 +1,6 @@
 package dev.iseal.powergems.listeners;
 
+import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import dev.iseal.sealLib.Systems.I18N.I18N;
@@ -15,6 +16,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.logging.Logger;
+
 /**
  * InventoryMoveEvent is a listener that prevents players from moving gems
  * into other inventories or containers.
@@ -26,6 +29,7 @@ public class InventoryMoveEvent implements Listener {
      * The GemManager instance
      */
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final Logger logger = PowerGems.getPlugin().getLogger();
 
     /**
      * Prevents the players from moving gems into other inventories,
@@ -44,9 +48,10 @@ public class InventoryMoveEvent implements Listener {
 
         ItemStack clickedItem = event.getCurrentItem();
 
+        /*
         if(player.getGameMode() == GameMode.CREATIVE || player.hasPermission("powergems.movegems")) {
             return;
-        }
+        }*/
 
         boolean isMovingToOtherInventory = event.getClickedInventory() != player.getInventory();
 
@@ -66,6 +71,30 @@ public class InventoryMoveEvent implements Listener {
                 event.setCancelled(true);
                 return;
             }
+        }
+
+        if (event.getSlotType() == InventoryType.SlotType.OUTSIDE
+            && gemManager.isGem(event.getCursor())) {
+            int candidateSlot = player.getInventory().firstEmpty();
+            if (candidateSlot == -1) {
+                for (int i = 0; i < player.getInventory().getSize(); i++) {
+                    if (!gemManager.isGem(player.getInventory().getItem(i))) {
+                        candidateSlot = i;
+                        break;
+                    }
+                }
+            }
+            if (candidateSlot == -1) {
+                logger.severe("Couldn't find any candidate slots for gem movement in "+player.getName()+"'s inventory, this will lead to unintended behaviour.");
+                logger.severe("It should only happen if their inventory is full of gems");
+                return;
+            }
+            ItemStack candidateItem = player.getInventory().getItem(candidateSlot);
+            if (candidateItem != null)
+                player.getWorld().dropItemNaturally(player.getLocation(), candidateItem);
+            player.getInventory().setItem(candidateSlot, event.getCursor());
+            event.setCursor(null);
+            event.setCancelled(true);
         }
 
         if (clickedItem != null && gemManager.isGem(clickedItem)) {
@@ -88,10 +117,5 @@ public class InventoryMoveEvent implements Listener {
             player.sendMessage(I18N.translate("CANNOT_PLACE_GEMS_IN_CONTAINERS"));
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onInventoryMoveItem(PlayerSwapHandItemsEvent event) {
-        System.out.println("called");
     }
 }
