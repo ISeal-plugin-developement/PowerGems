@@ -8,9 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -45,23 +47,33 @@ public class InventoryMoveEvent implements Listener {
         if(player.getGameMode() == GameMode.CREATIVE || player.hasPermission("powergems.movegems")) {
             return;
         }
-        if (clickedItem != null && gemManager.isGem(clickedItem)) {
-            boolean isMovingToOtherInventory = event.getClickedInventory() != player.getInventory();
 
+        boolean isMovingToOtherInventory = event.getClickedInventory() != player.getInventory();
+
+        if (event.getClick() == ClickType.SWAP_OFFHAND && isMovingToOtherInventory) {
+            ItemStack offHandItem = player.getInventory().getItemInOffHand();
+            if (gemManager.isGem(offHandItem)) {
+                player.sendMessage(I18N.translate("CANNOT_MOVE_GEMS"));
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        if (event.getClick() == ClickType.NUMBER_KEY && isMovingToOtherInventory) {
+            ItemStack hotbarItem = player.getInventory().getItem(event.getHotbarButton());
+            if (gemManager.isGem(hotbarItem)) {
+                player.sendMessage(I18N.translate("CANNOT_MOVE_GEMS"));
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        if (clickedItem != null && gemManager.isGem(clickedItem)) {
             boolean isTransferAction = event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY ||
                     event.getAction() == InventoryAction.COLLECT_TO_CURSOR ||
                     event.getAction() == InventoryAction.PLACE_ALL ||
                     event.getAction() == InventoryAction.PLACE_ONE ||
                     event.getAction() == InventoryAction.PLACE_SOME;
-
-            if (event.getClick().name().contains("NUMBER_KEY")) {
-                ItemStack hotbarItem = player.getInventory().getItem(event.getHotbarButton());
-                if (hotbarItem == null || !gemManager.isGem(hotbarItem)) {
-                    player.sendMessage(I18N.translate("CANNOT_MOVE_GEMS"));
-                    event.setCancelled(true);
-                    return;
-                }
-            }
 
             if (isMovingToOtherInventory || isTransferAction) {
                 player.sendMessage(I18N.translate("CANNOT_MOVE_GEMS"));
@@ -70,11 +82,16 @@ public class InventoryMoveEvent implements Listener {
         }
 
         ItemStack cursorItem = event.getCursor();
-        if (cursorItem != null && gemManager.isGem(cursorItem) &&
-                event.getClickedInventory() != null &&
-                event.getClickedInventory() != player.getInventory()) {
+        if (gemManager.isGem(cursorItem)
+                && event.getClickedInventory() != null
+                && event.getClickedInventory() != player.getInventory()) {
             player.sendMessage(I18N.translate("CANNOT_PLACE_GEMS_IN_CONTAINERS"));
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryMoveItem(PlayerSwapHandItemsEvent event) {
+        System.out.println("called");
     }
 }
