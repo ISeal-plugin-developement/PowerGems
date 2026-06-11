@@ -37,7 +37,7 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
         if (args.length > 2) {
             targetPlayer = Bukkit.getPlayer(args[args.length - 1]);
             if (targetPlayer == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "Player not found.");
+                sender.sendMessage(I18N.translate("PLAYER_NOT_FOUND"));
                 return true;
             }
         }
@@ -113,7 +113,7 @@ public class GiveGemCommand implements CommandExecutor, TabCompleter {
                     .collect(Collectors.toList());
         } else if (args.length == 2) {
             return List.of("<level>");
-        } else if (args.length > 2) {
+        } else if (args.length <= 3) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
