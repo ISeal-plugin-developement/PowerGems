@@ -87,7 +87,7 @@ public class AirGem extends Gem {
     protected void leftClick(Player plr, int level) {
             Location playerLocation = plr.getLocation();
             double radius = 10.0 * (level / 2D); // Radius of effect
-            double power = 2.5 + level; // Strength of the burst
+            double power = 2.5 + level/2d; // Strength of the burst
 
             plr.getWorld().getNearbyEntities(playerLocation, radius, radius, radius)
                     .stream()
@@ -130,7 +130,7 @@ public class AirGem extends Gem {
 
     @Override
     public PotionEffectType getDefaultEffectType() {
-        return PotionEffectType.SLOW_FALLING;
+        return PotionEffectType.SPEED;
     }
 
     @Override
