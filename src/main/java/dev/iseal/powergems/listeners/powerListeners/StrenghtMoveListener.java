@@ -10,30 +10,28 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.LinkedList;
 
 public class StrenghtMoveListener implements Listener {
-    private final double radius = 5.0;
+    public static final double RADIUS = 5.0;
+    public static final double RADIUS_SQUARED = RADIUS * RADIUS;
     private final LinkedList<Location> startingLocations = new LinkedList<>();
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) { //NOPMD - This is a listener.
         for (Location startingLocation : startingLocations) {
-            Player player = event.getPlayer();
             Location from = event.getFrom();
             Location to = event.getTo();
 
             if (startingLocation.getWorld() != to.getWorld()) {
                 return;
             }
-            if (to.distance(startingLocation) > radius && from.distance(startingLocation) > 6) {
-                return;
-            } else if (to.distance(startingLocation) < radius) {
-                if (from.distance(startingLocation) < radius) {
-                    return;
-                } else {
-                    event.setCancelled(true);
-                    player.teleport(from);
-                    player.sendMessage(I18N.translate("CANNOT_ENTER_ARENA"));
-                    return;
-                }
+            double toDistance = to.distanceSquared(startingLocation);
+            if (toDistance > 2*RADIUS_SQUARED) {
+                return; // clearly has nothing to do with us, ignore it.
+            }
+            double fromDistance = from.distanceSquared(startingLocation);
+            boolean toInside = toDistance < RADIUS_SQUARED;
+            boolean fromInside = fromDistance < RADIUS_SQUARED;
+            if (toInside ^ fromInside) {
+                event.setCancelled(true);
             }
         }
     }

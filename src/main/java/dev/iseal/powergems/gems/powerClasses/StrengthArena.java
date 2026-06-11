@@ -2,12 +2,18 @@ package dev.iseal.powergems.gems.powerClasses;
 
 import dev.iseal.powergems.PowerGems;
 import dev.iseal.powergems.managers.SingletonManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import static dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener.RADIUS;
+import static dev.iseal.powergems.listeners.powerListeners.StrenghtMoveListener.RADIUS_SQUARED;
 
 public class StrengthArena implements Listener {
 
@@ -15,15 +21,12 @@ public class StrengthArena implements Listener {
 
     private final Player player;
     private final Location startingLocation;
-    private final int radius = 5;
+    private final int level;
 
-    public StrengthArena(Player player) {
+    public StrengthArena(Player player, int level) {
         this.player = player;
-        if (player == null) {
-            this.startingLocation = null;
-        } else {
-            this.startingLocation = player.getLocation();
-        }
+        this.startingLocation = player.getLocation();
+        this.level = level;
     }
 
     public void start() {
@@ -34,9 +37,10 @@ public class StrengthArena implements Listener {
         sm.strenghtMoveListener.addStartingLocation(startingLocation);
         new BukkitRunnable() {
             int currentTime = 0;
+            final int length = (level*level)*2;
 
             public void run() {
-                if (currentTime >= 20) {
+                if (currentTime >= length) {
                     sm.strenghtMoveListener.removeStartingLocation(startingLocation);
                     cancel();
                     return;
@@ -45,8 +49,8 @@ public class StrengthArena implements Listener {
                 int lonSteps = 32; // Number of longitude steps
                 for (int i = 0; i <= latSteps; i++) {
                     double lat = Math.PI * i / latSteps;
-                    double y = center.getY() + radius * Math.cos(lat);
-                    double r = radius * Math.sin(lat);
+                    double y = center.getY() + RADIUS * Math.cos(lat);
+                    double r = RADIUS * Math.sin(lat);
                     for (int j = 0; j < lonSteps; j++) {
                         double lon = 2 * Math.PI * j / lonSteps;
                         double x = center.getX() + r * Math.cos(lon);
@@ -56,6 +60,15 @@ public class StrengthArena implements Listener {
                     }
                 }
 
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(candidate -> !candidate.equals(player))
+                        .filter(candidate -> candidate.getLocation().distanceSquared(startingLocation) < RADIUS_SQUARED)
+                        .forEach( candidate -> {
+                            candidate.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 15, (level - 1 )/2));
+                            candidate.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 15, (level - 1 )/2));
+                        });
+
+                /*
                 // Push player away from the sphere if not grounded
                 if (!player.isOnGround()) {
                     Vector playerPos = player.getLocation().toVector();
@@ -66,7 +79,7 @@ public class StrengthArena implements Listener {
                         pushDir.setY(player.getVelocity().getY());
                         player.setVelocity(pushDir.multiply(pushStrength));
                     }
-                }
+                }*/
                 currentTime++;
             }
         }.runTaskTimer(PowerGems.getPlugin(), 0L, 10L);

@@ -58,7 +58,7 @@ public class StrengthGem extends Gem {
     @Override
     protected void shiftClick(Player plr, int level) {
         plr.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200+level*20, 2));
-        new StrengthArena(plr).start();
+        new StrengthArena(plr, level).start();
     }
 
     @Override
