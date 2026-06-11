@@ -22,7 +22,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file = new Config("config", PowerGems.getPlugin().getDataFolder().getPath());
     }
 
-    private static final Integer CONFIG_VERSION = 2;
+    private static final Integer CONFIG_VERSION = 3;
 
     private final Logger logger = PowerGems.getPlugin().getLogger();
     private final TempDataManager tdm = SingletonManager.getInstance().tempDataManager;
@@ -32,7 +32,9 @@ public class GeneralConfigManager extends AbstractConfigManager {
                     "Please regenerate the config or rewrite it yourself",
             2, "Both GemColor.yml and GemLore.yml support the minimessage standard. \n" +
                     "Please regenerate the config or rewrite it yourself. \n" +
-                    "Documentation for the standard is available at https://docs.papermc.io/adventure/minimessage/format/"
+                    "Documentation for the standard is available at https://docs.papermc.io/adventure/minimessage/format/",
+            3, "The \"allowGemCraftingUsage\" config option has been added. It defines whether crafting items with gems is " +
+                    "allowed (like emerald blocks)"
     );
 
     @Override
@@ -52,6 +54,7 @@ public class GeneralConfigManager extends AbstractConfigManager {
         file.setDefault("allowMovingGems", false);
         file.setDefault("allowOnlyOneGem", false);
         file.setDefault("attemptFixOldGems", true);
+        file.setDefault("allowGemCraftingUsage", false);
         file.setDefault("blockedReplacingBlocks",
                 new Material[] { Material.BEDROCK, Material.WATER, Material.NETHERITE_BLOCK });
         file.setDefault("canCraftGems", true);
@@ -248,5 +251,9 @@ public class GeneralConfigManager extends AbstractConfigManager {
 
     public int getGemStartingLevel() {
         return file.getInt("gemStartingLevel");
+    }
+
+    public boolean isAllowGemCraftingUsage() {
+        return file.getBoolean("allowGemCraftingUsage");
     }
 }

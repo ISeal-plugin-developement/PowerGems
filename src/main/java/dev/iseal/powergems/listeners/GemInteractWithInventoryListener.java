@@ -1,5 +1,6 @@
 package dev.iseal.powergems.listeners;
 
+import dev.iseal.powergems.managers.Configuration.GeneralConfigManager;
 import dev.iseal.powergems.managers.GemManager;
 import dev.iseal.powergems.managers.SingletonManager;
 import org.bukkit.event.EventHandler;
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class GemInteractWithInventoryListener implements Listener {
 
     private final GemManager gemManager = SingletonManager.getInstance().gemManager;
+    private final GeneralConfigManager gcm = SingletonManager.getInstance().configManager.getRegisteredConfigInstance(GeneralConfigManager.class);
 
     private boolean hasGemInIngredients(List<ItemStack> ingredients) {
         return ingredients.stream()
@@ -34,16 +36,6 @@ public class GemInteractWithInventoryListener implements Listener {
         if (hasGemInIngredients(Arrays.asList(inventory.getItem(0), inventory.getItem(1)))) {
             event.setCancelled(true);
             inventory.setItem(2, null);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCraft(InventoryClickEvent event) {
-        if (!(event.getInventory() instanceof CraftingInventory inventory)) {
-            return;
-        }
-        if (hasGemInIngredients(Arrays.asList(inventory.getMatrix()))) {
-            inventory.setResult(null);
         }
     }
 

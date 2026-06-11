@@ -212,6 +212,11 @@ public class RecipeManager implements Listener {
                 im = gemManager.createLore(im);
                 gem.setItemMeta(im);
                 inventory.setResult(gem.clone());
+            } else {
+                if (gcm.isAllowGemCraftingUsage()) {
+                    return;
+                }
+                inventory.setResult(null);
             }
         }, 1L);
     }
